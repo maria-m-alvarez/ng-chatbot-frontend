@@ -82,22 +82,26 @@ export class ChatbotBrainService {
   updateChatbotConnectionName(newConnectionName: string): void {
     ChatbotBrainService.chatbotSettings.connectionName = newConnectionName;
     this.configService.updateConnectionName(newConnectionName);
-    this.chatbotEventService.onChatbotApiConnectionNameChanged.emit(newConnectionName);
+    this.chatbotEventService.onChatbotSettingsChanged.emit();
   }
 
   updateChatbotModel(newModel: string): void {
     ChatbotBrainService.chatbotSettings.model = newModel;
+    this.chatbotEventService.onChatbotSettingsChanged.emit();
   }
 
   updateChatbotStream(shouldStream: boolean): void {
     ChatbotBrainService.chatbotSettings.stream = shouldStream;
+    this.chatbotEventService.onChatbotSettingsChanged.emit();
   }
 
   updateChatbotUseOptions(shouldUseOptions: boolean): void {
     ChatbotBrainService.chatbotSettings.useOptions = shouldUseOptions;
+    this.chatbotEventService.onChatbotSettingsChanged.emit();
   }
 
   updateChatbotSettings(newSettings: ChatbotSettings): void {
     ChatbotBrainService.chatbotSettings = newSettings;
+    this.chatbotEventService.onChatbotSettingsChanged.emit();
   }
 }

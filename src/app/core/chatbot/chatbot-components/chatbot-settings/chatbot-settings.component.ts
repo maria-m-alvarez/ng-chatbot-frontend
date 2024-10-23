@@ -23,10 +23,6 @@ export class ChatbotSettingsComponent extends ChatbotBaseComponentComponent {
 
   optionsState: string = this.optionStates.options;
 
-  get chatbotSettings(): ChatbotSettings {
-    return ChatbotBrainService.chatbotSettings;
-  }
-
   constructor(
     brain: ChatbotBrainService
   ) {

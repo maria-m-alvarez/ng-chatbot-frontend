@@ -11,10 +11,11 @@ export class ChatbotEventService {
   readonly onPromptSent = new EventEmitter<void>();
   readonly onPromptAnswerReceived = new EventEmitter<WebRequestResult>();
 
-  readonly onChatbotApiConnectionNameChanged = new EventEmitter<string>();
-  readonly onSaveChatbotSettings = new EventEmitter<void>();
-
   readonly onChatbotInputStateChanged = new EventEmitter<string>();
+  
+  readonly onChatbotSettingsChanged = new EventEmitter<void>();
+  readonly onChatbotModelNameChanged = new EventEmitter<string>();
+  readonly onSaveChatbotSettings = new EventEmitter<void>();
 
   isSidebarOpen = true;
 

@@ -33,7 +33,7 @@ export class ChatbotModelSelectorComponent extends InputSelectorComponent {
   }
 
   protected refreshOptions(): void {
-    this.currentSelection = this.brain.chatbotSessionService.selectedModel;
+    this.currentSelection = this.getSelectionOptionsByValue(this.brain.chatbotSettings.model);
     this.options = this.brain.chatbotSessionService.llmModels;
   }
 

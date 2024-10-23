@@ -26,8 +26,8 @@ export class ChatbotApiService {
     private readonly chatbotEventService: ChatbotEventService
   ) {
 
-    chatbotEventService.onChatbotApiConnectionNameChanged.subscribe((connectionName) => {
-      this.connectionName = configService.formatConnectionName(connectionName);
+    chatbotEventService.onChatbotSettingsChanged.subscribe(() => {
+      this.connectionName = configService.formatConnectionName(ChatbotBrainService.chatbotSettings.connectionName);
     });
 
     setTimeout(() => {

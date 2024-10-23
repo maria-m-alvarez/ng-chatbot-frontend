@@ -24,9 +24,6 @@ export class ChatbotSessionService {
     { id: 4, value: 'stablelm2:1.6b' }
   ];
 
-  selectedModel!: SelectorOption;
-  selectedAPI!: SelectorOption;
-
   constructor(
     readonly configService: ConfigService,
     readonly eventService: EventService,
@@ -35,24 +32,11 @@ export class ChatbotSessionService {
   ) {
     this.initializeSessions();
 
-    eventService.selectorClickedEvt.subscribe(({ selectorId, selectedOption }) => {
-      this.filterSelectorEvent(selectorId, selectedOption);
+    this.chatbotEventService.onChatbotSettingsChanged.subscribe(() => {
+      this.getModelNames();
     });
 
     this.getModelNames();
-  }
-
-  filterSelectorEvent(selectorId: string, selectedOption: SelectorOption): void {
-    //console.log('Selector ID:', (selectorId == '') ? '\'undefined\'' : "'" + selectorId + "'",
-    //          '\nSelector Option:', selectedOption);
-
-    if (selectorId === 'chatbot_model') {
-      this.selectedModel = selectedOption;
-    }
-    else if (selectorId === 'chatbot_connection_name') {
-      this.selectedAPI = selectedOption;
-      this.chatbotEventService.onChatbotApiConnectionNameChanged.emit(selectedOption.value);
-    }
   }
 
   private getModelNames() : void {
@@ -74,11 +58,14 @@ export class ChatbotSessionService {
       }
     );
   }
+
+  private getCurrentModel(): string {
+    return ChatbotBrainService.chatbotSettings.model ?? this.llmModels[0].value;
+  }
   
   private selectInitialModel(): void {
     const llamaModel = this.llmModels.find(model => model.value.toLowerCase().includes('llama'));
-    this.selectedModel = llamaModel || this.llmModels[0];
-    this.eventService.selectorClickedEvt.emit({ selectorId: 'modelSelector', selectedOption: this.selectedModel });
+    this.chatbotEventService.onChatbotModelNameChanged.emit(llamaModel?.value ?? this.llmModels[0].value);
   }
 
   private initializeSessions(): void {
@@ -211,7 +198,7 @@ export class ChatbotSessionService {
 
   sendMessage(promptMessage: string) {
     console.log('Sending prompt:', promptMessage);
-    const model = this.selectedModel ? this.selectedModel.value : this.llmModels[0].value;
+    const model = this.getCurrentModel();
 
     const prompt = this.currentSession.addPrompt(promptMessage);
     this.chatbotEventService.onPromptSent.emit();
@@ -240,7 +227,7 @@ export class ChatbotSessionService {
     const prompt = this.currentSession.addPrompt(message);
     this.chatbotEventService.onPromptSent.emit();
 
-    const model = this.selectedModel ? this.selectedModel.value : this.llmModels[0].value;
+    const model = this.getCurrentModel();
     const userGroups = ['generic'];
     const projectName = 'generic';
 

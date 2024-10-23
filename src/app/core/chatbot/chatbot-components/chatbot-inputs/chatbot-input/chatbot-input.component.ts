@@ -3,6 +3,7 @@ import { ChatbotInputAttachmentComponent } from "../chatbot-input-attachment/cha
 import { ChatbotInputOptionsComponent } from "../chatbot-input-options/chatbot-input-options.component";
 import { ChatbotSettingsComponent } from "../../chatbot-settings/chatbot-settings.component";
 import { ChatbotBrainService } from '../../../chatbot-services/chatbot-brain/chatbot-brain.service';
+import { WebRequestResult } from '../../../../common/models/enums';
 
 @Component({
   selector: 'app-chatbot-input',
@@ -26,6 +27,10 @@ export class ChatbotInputComponent {
   constructor(readonly brain: ChatbotBrainService) {
     brain.chatbotEventService.onPromptAnswerReceived.subscribe((result) => {
       this.changeInputState(this.chatbotInputStates.Idle);
+
+      if (result == WebRequestResult.Error) {
+        console.error('Error occurred while processing prompt answer');
+      }
     });
   }
 
