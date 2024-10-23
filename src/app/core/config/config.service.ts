@@ -111,6 +111,11 @@ export class ConfigService {
     return connection?.feedbackURL ?? '';
   }
 
+  updateConnectionName(connectionName: string) : void {
+    this.config.apiSettings.connectionSettings.connectionName = connectionName;
+    console.log("Connection Name Updated:", connectionName);
+  }
+
   // ----------------------------------------------
   // DTO Mapping
   // ----------------------------------------------

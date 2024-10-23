@@ -18,16 +18,21 @@ export class ChatbotApiService {
   readonly apiEndpoint = 'http://localhost:5258/api/'
   readonly chatbotApiEndpoint = 'http://localhost:5258/api/chatbot/'
 
-  connectionName: string = 'python';
+  connectionName: string = '';
 
   constructor(
     private readonly http: HttpClient,
     private readonly configService: ConfigService,
     private readonly chatbotEventService: ChatbotEventService
   ) {
+
     chatbotEventService.onChatbotApiConnectionNameChanged.subscribe((connectionName) => {
       this.connectionName = configService.formatConnectionName(connectionName);
     });
+
+    setTimeout(() => {
+      this.connectionName = configService.formatConnectionName(ChatbotBrainService.chatbotSettings.connectionName);
+    }, 100);
   }
 
 
@@ -41,7 +46,7 @@ export class ChatbotApiService {
       return this.webSocketSubject!;
     }
 
-    const webSocketUrl = `ws://localhost:5000/chatbot/chat/stream`;
+    const webSocketUrl = `ws:${this.configService.getChatUrlByConnectionName(this.connectionName)}/stream`;
     this.webSocket = new WebSocket(webSocketUrl);
     this.webSocketSubject = new Subject<string>();
 

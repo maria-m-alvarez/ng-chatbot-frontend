@@ -6,6 +6,7 @@ import { SelectorOption } from '../../../common/components/input-components/inpu
 import { ChatbotApiService } from '../chatbot-api/chatbot-api.service';
 import { EventService } from '../../../common/services/event-service/event.service';
 import { ChatbotBrainService } from '../chatbot-brain/chatbot-brain.service';
+import { WebRequestResult } from '../../../common/models/enums';
 
 @Injectable({
   providedIn: 'root'
@@ -221,13 +222,15 @@ export class ChatbotSessionService {
         const promptAnswer = apiResponse?.response?.message?.content;
 
         this.handleAssistantResponse(prompt.id, promptAnswer);
+        this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Success);
       },
       error: (error) => {
         console.error('Error from chatbot API:', error);
+        this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Error);
       },
       complete: () => {
-        console.log('API call completed');
-        this.chatbotEventService.onPromptAnswerReceived.emit();
+        console.log('API Prompt call completed');
+        this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Complete);
       }
     });
   }

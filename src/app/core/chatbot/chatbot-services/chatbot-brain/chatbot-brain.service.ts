@@ -79,9 +79,10 @@ export class ChatbotBrainService {
     console.log('Chatbot Settings saved to local storage:', ChatbotBrainService.chatbotSettings);
   }
 
-  updateChatbotConnectionName(newAPI: string): void {
-    ChatbotBrainService.chatbotSettings.connectionName = newAPI;
-    this.chatbotEventService.onChatbotApiConnectionNameChanged.emit(newAPI);
+  updateChatbotConnectionName(newConnectionName: string): void {
+    ChatbotBrainService.chatbotSettings.connectionName = newConnectionName;
+    this.configService.updateConnectionName(newConnectionName);
+    this.chatbotEventService.onChatbotApiConnectionNameChanged.emit(newConnectionName);
   }
 
   updateChatbotModel(newModel: string): void {

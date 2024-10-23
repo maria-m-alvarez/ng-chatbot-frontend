@@ -24,7 +24,7 @@ export class ChatbotInputComponent {
   inputText: string = '';
 
   constructor(readonly brain: ChatbotBrainService) {
-    brain.chatbotEventService.onPromptAnswerReceived.subscribe(() => {
+    brain.chatbotEventService.onPromptAnswerReceived.subscribe((result) => {
       this.changeInputState(this.chatbotInputStates.Idle);
     });
   }
