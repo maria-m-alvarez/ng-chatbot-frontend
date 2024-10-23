@@ -8,7 +8,6 @@ import {
   ChatbotSettings,
 } from '../../chatbot-models/chatbot-settings';
 import { ConfigService } from '../../../config/config.service';
-import { SelectorOption } from '../../../common/components/input-components/input-selector/input-selector.component';
 
 @Injectable({
   providedIn: 'root',
