@@ -9,7 +9,7 @@
 
   "apiSettings": {
     "connectionSettings": {
-      "connectionName": "FastAPI",
+      "connectionName": "Python",
       "connections": [
         {
           "name": "FastAPI",
