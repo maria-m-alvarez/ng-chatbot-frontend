@@ -6,13 +6,46 @@
   {{ currentInputState === chatbotInputStates.Waiting ? 'cursor-not-allowed' : '' }}"
   (dragover)="onDragOver($event)" (drop)="onDrop($event)">
 
+  <!-- Error Message Popup -->
+@if (errorMessage) {
+  <div class="absolute bottom-32 left-0 w-full bg-red-500 text-white rounded-lg shadow-lg flex flex-col overflow-hidden">
+    <div class="p-2 flex justify-between items-center">
+      <span>{{ errorMessage }}</span>
+      <button (click)="clearErrorMessage()" class="text-white ml-2">
+        <svg class="w-6 h-6 text-red-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Countdown Loading Bar -->
+    <div class="w-full h-2 bg-red-700 overflow-hidden">
+      <div class="bg-red-300 h-full transition-all ease-linear"
+           [ngStyle]="{'width': countdownWidth + '%'}">
+      </div>
+    </div>
+  </div>
+}
+
+
   @if (currentInputState === chatbotInputStates.Waiting) {
-    <div class="flex-grow mx-2 flex items-center justify-center text-main-secondary-lighter dark:text-dark-secondary-lighter">
-      <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg>
-      Processing...
+    <div class="flex-grow mx-2 flex items-center justify-center">
+      <div class="flex-grow flex items-center justify-center text-main-secondary-lighter dark:text-dark-secondary-lighter">
+        <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Processing...
+      </div>
+  
+      <!-- Stop Button -->
+      <button (click)="stopProcessing()" class="p-2 rounded-lg ml-4
+      bg-main-primary-darker hover:bg-main-secondary-lighter text-white hover:text-main-primary-darker
+      dark:bg-dark-secondary dark:hover:bg-dark-secondary-darker dark:text-main-bg dark:hover:text-dark-secondary-lighter">
+        <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M7 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H7Z"/>
+        </svg>
+      </button>
     </div>
   }
 
@@ -24,7 +57,7 @@
 
   @if (currentInputState === chatbotInputStates.Idle) {
     @if (files.length > 0) {
-      <div class="absolute -top-16 left-0 w-full h-16 flex items-center justify-between mt-2 p-2">
+      <div class="absolute -top-16 left-0 w-full h-24 flex items-center justify-between mt-2 p-2">
         <div class="slender-scrollbar h-full overflow-x-auto whitespace-nowrap flex space-x-2 items-center px-2 mr-4">
           @for (file of files; track file.name; let i = $index) {
             <app-chatbot-input-attachment

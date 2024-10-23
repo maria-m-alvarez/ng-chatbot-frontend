@@ -4,13 +4,14 @@ import { ChatbotInputOptionsComponent } from "../chatbot-input-options/chatbot-i
 import { ChatbotSettingsComponent } from "../../chatbot-settings/chatbot-settings.component";
 import { ChatbotBrainService } from '../../../chatbot-services/chatbot-brain/chatbot-brain.service';
 import { WebRequestResult } from '../../../../common/models/enums';
+import { NgStyle } from '@angular/common';
 
 @Component({
   selector: 'app-chatbot-input',
   standalone: true,
   templateUrl: './chatbot-input.component.html',
   styleUrls: ['./chatbot-input.component.scss'],
-  imports: [ChatbotInputAttachmentComponent, ChatbotInputOptionsComponent, ChatbotSettingsComponent]
+  imports: [NgStyle, ChatbotInputAttachmentComponent, ChatbotInputOptionsComponent, ChatbotSettingsComponent]
 })
 export class ChatbotInputComponent {
   @ViewChild('chatInput') chatInput!: ElementRef<HTMLDivElement>;
@@ -23,13 +24,18 @@ export class ChatbotInputComponent {
   files: File[] = [];
   dragCounter = 0;
   inputText: string = '';
+  errorMessage: string | null = null;
+  countdownMinWidth: number = 4;
+  countdownWidth: number = 100;
+  countdownDuration: number = 5000;
+  countdownInterval: any = null;
 
   constructor(readonly brain: ChatbotBrainService) {
     brain.chatbotEventService.onPromptAnswerReceived.subscribe((result) => {
       this.changeInputState(this.chatbotInputStates.Idle);
 
       if (result == WebRequestResult.Error) {
-        console.error('Error occurred while processing prompt answer');
+        this.displayErrorMessage('Error occurred while processing the chat request');
       }
     });
   }
@@ -166,5 +172,44 @@ export class ChatbotInputComponent {
     textarea.value = this.inputText;
     textarea.style.height = 'auto';
     textarea.style.height = `${Math.min(textarea.scrollHeight, 128)}px`;
+  }
+  
+  // Display the error message and start the countdown
+  displayErrorMessage(message: string): void {
+    this.errorMessage = message;
+    this.startCountdown();
+  }
+
+  // Start the countdown for the error message
+  startCountdown(): void {
+    const totalDuration = 5000;  // Total duration (5 seconds)
+    const steps = 100;           // Number of steps (width percentage)
+
+    this.countdownWidth = 100;   // Full width at the start
+    this.countdownDuration = totalDuration;  // Set countdown duration for CSS transition
+
+    const intervalStep = totalDuration / steps;  // Interval in milliseconds for each percentage step
+
+    // Update the countdown width progressively until 0%
+    this.countdownInterval = setInterval(() => {
+      this.countdownWidth -= 1;
+      if (this.countdownWidth < -this.countdownMinWidth) {
+        this.clearErrorMessage();  // Clear the message when countdown finishes
+      }
+    }, intervalStep);
+  }
+
+  // Clear the error message and stop the countdown
+  clearErrorMessage(): void {
+    this.errorMessage = null;
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);  // Stop the interval
+      this.countdownInterval = null;
+    }
+    this.countdownWidth = 100;  // Reset the countdown width for the next time
+  }
+
+  stopProcessing() {
+    this.brain.chatbotSessionService.stopProcessing();
   }
 }

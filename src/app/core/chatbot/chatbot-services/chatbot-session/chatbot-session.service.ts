@@ -245,6 +245,10 @@ export class ChatbotSessionService {
       }
     });
   }
+  
+  stopProcessing() {
+    throw new Error('Method not implemented.');
+  }
 
   private generateSessionId(): string {
     return Math.random().toString(36).slice(2, 11);

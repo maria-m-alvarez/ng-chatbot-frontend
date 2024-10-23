@@ -5,6 +5,7 @@ export abstract class PromptBase {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  processResult: string = '';
 
   constructor(id: string, role: 'user' | 'assistant', content: string) {
     this.id = id;
@@ -63,12 +64,64 @@ export class ChatSession {
     return prompt;
   }
 
+  updatePrompt(promptId: string, updatedPrompt: Prompt): void {
+    const targetPrompt = this.prompts.find(p => p.id === promptId);
+    if (targetPrompt) {
+      targetPrompt.content = updatedPrompt.content;
+      targetPrompt.timestamp = new Date();
+      targetPrompt.processResult = updatedPrompt.processResult || targetPrompt.processResult;
+      this.updatedAt = new Date();
+    }
+  }
+  
+  updatePromptMessage(promptId: string, content: string): void {
+    const answer = this.promptAnswers.find(a => a.promptId === promptId);
+    if (answer) {
+      answer.content = content;
+      this.updatedAt = new Date();
+    }
+  }
+
+  updatePromptResult(promptId: string, result: string): void {
+    const prompt = this.prompts.find(p => p.id === promptId);
+    if (prompt) {
+      prompt.processResult = result;
+      this.updatedAt = new Date();
+    }
+  }
+
   // Add an assistant answer and update messages array
   addPromptAnswer(promptId: string, content: string): void {
     const answer = new PromptAnswer(this.generateId(), promptId, content);
     this.promptAnswers.push(answer);
     this.messages.push(new ChatSessionMessage(answer.id, 'assistant', content)); // Add answer as a message
     this.updatedAt = new Date();
+  }
+
+  updatePromptAnswer(promptAnswerId: string, updatedPromptAnswer: PromptAnswer): void {
+    const targetAnswer = this.promptAnswers.find(a => a.id === promptAnswerId);
+    if (targetAnswer) {
+      targetAnswer.content = updatedPromptAnswer.content;
+      targetAnswer.timestamp = new Date();
+      targetAnswer.processResult = updatedPromptAnswer.processResult || targetAnswer.processResult;
+      this.updatedAt = new Date();
+    }
+  }
+  
+  updatePromptAnswerMessage(promptAnswerId: string, content: string): void {
+    const answer = this.promptAnswers.find(a => a.id === promptAnswerId);
+    if (answer) {
+      answer.content = content;
+      this.updatedAt = new Date();
+    }
+  }
+  
+  updatePromptAnswerResult(promptAnswerId: string, result: string): void {
+    const answer = this.promptAnswers.find(a => a.id === promptAnswerId);
+    if (answer) {
+      answer.processResult = result;
+      this.updatedAt = new Date();
+    }
   }
 
   // Generate a unique ID for prompts and answers
