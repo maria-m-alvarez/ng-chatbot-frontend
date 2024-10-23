@@ -75,12 +75,23 @@ export class ChatbotSettingsComponent extends ChatbotBaseComponentComponent {
   }
 
   onInputChanged(inputID: string, value: any): void {
+    if (inputID === 'chatbot_connection_name') {
+      this.brain.updateChatbotConnectionName(value as string);
+    }
+
+    if (inputID === 'chatbot_model') {
+      this.brain.updateChatbotModel(value as string);
+    }
+
     if (inputID === 'chatbot_use_options') {
-      ChatbotBrainService.chatbotSettings.useOptions = value as boolean;
+      this.brain.updateChatbotUseOptions(value as boolean);
     }
 
     if (inputID === 'chatbot_stream') {
-      ChatbotBrainService.chatbotSettings.stream = value as boolean;
+      this.brain.updateChatbotStream(value as boolean);
     }
+
+    console.log('Input changed:', inputID, value);
+    console.log('Configs:', ChatbotBrainService.chatbotSettings);
   }
 }

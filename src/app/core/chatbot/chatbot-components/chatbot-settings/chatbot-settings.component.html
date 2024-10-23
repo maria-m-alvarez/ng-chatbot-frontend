@@ -10,11 +10,15 @@
         <!-- API Selector -->
         <div class="flex items-center space-x-2">
           <h5 class="w-[25%]">API:</h5>
-          <app-input-selector #apiSelector [inputID]="'chatbot_connection_name'" [defaultMessage]="'Select API Type...'"
-            [defaultSelectionID]="1" [options]="[
-              { id: 1, value: 'Python' },
-              { id: 2, value: 'Dot Net' }
-            ]" class="w-full border dark:border-dark-secondary-darker rounded-lg"></app-input-selector>
+          <app-input-selector #apiSelector
+            [inputID]="'chatbot_connection_name'"
+            [defaultMessage]="'Select API Type...'"
+            [defaultSelectionID]="1"
+            [options]="brain.configService.apiConnectionOptions"
+            [stringValue]="brain.chatbotSettings.connectionName"
+            (onValueChange)="onInputChanged(apiSelector.inputID, apiSelector.valueAsString)"
+            class="w-full border dark:border-dark-secondary-darker rounded-lg">
+          </app-input-selector>
         </div>
 
         <!-- Model Selector -->

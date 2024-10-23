@@ -42,31 +42,10 @@ export class ChatbotBrainService {
     chatbotEventService.onChatbotInputStateChanged.subscribe((state) => {
       ChatbotBrainService.chatbotInputState = state;
     });
-
-    eventService.selectorClickedEvt.subscribe(({ selectorId, selectedOption }) => {
-      this.filterSelectorEvent(selectorId, selectedOption);
-    });
   }
-  
-  filterSelectorEvent(selectorId: string, selectedOption: SelectorOption): void {
-    console.log('Selector ID:', (selectorId == '') ? '\'undefined\'' : "'" + selectorId + "'",
-              '\nSelector Option:', selectedOption);
 
-    if (selectorId === 'chatbot_model') {
-      ChatbotBrainService.chatbotSettings.model = selectedOption.value;
-    }
-    else if (selectorId === 'chatbot_connection_name') {
-      ChatbotBrainService.chatbotSettings.connectionName = selectedOption.value;
-      this.chatbotEventService.onChatbotApiConnectionNameChanged.emit(selectedOption.value);
-    }
-    else if (selectorId === 'chatbot_stream') {
-      ChatbotBrainService.chatbotSettings.stream = selectedOption.value.toLowerCase() === 'true';
-    }
-    else if (selectorId === 'chatbot_use_options') {
-      ChatbotBrainService.chatbotSettings.useOptions = selectedOption.value.toLowerCase() === 'true';
-    }
-
-    console.log('Chatbot Settings:', ChatbotBrainService.chatbotSettings);
+  get chatbotSettings(): ChatbotSettings {
+    return ChatbotBrainService.chatbotSettings;
   }
 
   // Load chatbot settings from local storage, or use the config defaults if no saved settings
@@ -101,19 +80,24 @@ export class ChatbotBrainService {
     console.log('Chatbot Settings saved to local storage:', ChatbotBrainService.chatbotSettings);
   }
 
-  public static updateChatbotModel(newModel: string): void {
+  updateChatbotConnectionName(newAPI: string): void {
+    ChatbotBrainService.chatbotSettings.connectionName = newAPI;
+    this.chatbotEventService.onChatbotApiConnectionNameChanged.emit(newAPI);
+  }
+
+  updateChatbotModel(newModel: string): void {
     ChatbotBrainService.chatbotSettings.model = newModel;
   }
 
-  public static updateChatbotApiProvider(newAPI: string): void {
-    ChatbotBrainService.chatbotSettings.connectionName = newAPI;
-  }
-
-  public static updateChatbotStream(shouldStream: boolean): void {
+  updateChatbotStream(shouldStream: boolean): void {
     ChatbotBrainService.chatbotSettings.stream = shouldStream;
   }
 
-  public static updateChatbotSettings(newSettings: ChatbotSettings): void {
+  updateChatbotUseOptions(shouldUseOptions: boolean): void {
+    ChatbotBrainService.chatbotSettings.useOptions = shouldUseOptions;
+  }
+
+  updateChatbotSettings(newSettings: ChatbotSettings): void {
     ChatbotBrainService.chatbotSettings = newSettings;
   }
 }

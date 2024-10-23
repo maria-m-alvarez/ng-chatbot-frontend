@@ -9,8 +9,14 @@
 
   "apiSettings": {
     "connectionSettings": {
-      "connectionName": "Python",
+      "connectionName": "FastAPI",
       "connections": [
+        {
+          "name": "FastAPI",
+          "chatURL": "http://127.0.0.1:8000//chatbot/chat",
+          "feedbackURL": "http://127.0.0.1:8000/chatbot/chat/vote",
+          "availableModelsURL": "http://127.0.0.1:8000/chatbot/model_names"
+        },
         {
           "name": "Python",
           "chatURL": "http://127.0.0.1:5000/chatbot/chat",

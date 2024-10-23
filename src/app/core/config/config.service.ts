@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ChatbotOptions, ChatbotSettings } from '../chatbot/chatbot-models/chatbot-settings';
+import { SelectorOption } from '../common/components/input-components/input-selector/input-selector.component';
 
 @Injectable({
   providedIn: 'root',
@@ -51,6 +52,22 @@ export class ConfigService {
   // ----------------------------------------------
   // API Settings
   // ----------------------------------------------
+  get apiConnectionNames(): {connectionName:string, formattedConnectionName:string}[] {
+    return this.config?.apiSettings?.connectionSettings?.connections.map((connection: any) =>
+    {
+      return {
+        connectionName: connection.name,
+        formattedConnectionName: this.formatConnectionName(connection.name)
+      };
+    });
+  }
+
+  get apiConnectionOptions(): SelectorOption[] {
+    return this.apiConnectionNames.map((connection, index) => {
+      return new SelectorOption(index, connection.connectionName);
+    });
+  }
+
   get apiConnectionName(): string {
     return this.config?.apiSettings?.connectionSettings?.connectionName ?? '';
   }
@@ -71,8 +88,11 @@ export class ConfigService {
   }
 
   getApiConnectionByName(connectionName: string): any {
+    const formattedConnectionName = this.formatConnectionName(connectionName);
+    console.log('Formatted Connection Name:', formattedConnectionName);
+
     return this.config?.apiSettings?.connectionSettings?.connections.find(
-      (connection: any) => this.formatConnectionName(connection.name) === connectionName
+      (connection: any) => this.formatConnectionName(connection.name) === formattedConnectionName
     ) ?? null;
   }
 

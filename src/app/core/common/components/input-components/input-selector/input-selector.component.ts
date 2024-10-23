@@ -1,5 +1,4 @@
 import { Component, Input, HostListener, ViewChild, ElementRef } from '@angular/core';
-import { EventService } from '../../../services/event-service/event.service';
 import { InputBaseComponent } from '../input-base/input-base.component';
 
 export class SelectorOption {
@@ -21,6 +20,7 @@ export class SelectorOption {
 export class InputSelectorComponent extends InputBaseComponent<SelectorOption> {
   @ViewChild('selector', { static: false }) selectorRef!: ElementRef;
 
+  @Input() stringValue: string = '';
   @Input() defaultMessage: string = 'Select an option';
   @Input() options: SelectorOption[] = [];
   @Input() defaultSelectionID: number = -1;
@@ -30,6 +30,10 @@ export class InputSelectorComponent extends InputBaseComponent<SelectorOption> {
 
   constructor() {
     super();
+  }
+
+  get valueAsString(): string {
+    return this.currentSelection?.value ?? '';
   }
 
   ngOnInit() {
@@ -42,7 +46,7 @@ export class InputSelectorComponent extends InputBaseComponent<SelectorOption> {
 
   refreshCurrentValue() {
     this.setDefaultSelection();
-    this.setValue();
+    this.setStringValueSelection();
   }
 
   setDefaultSelection() {
@@ -64,6 +68,15 @@ export class InputSelectorComponent extends InputBaseComponent<SelectorOption> {
       }
     }
   }
+
+  setStringValueSelection() {
+    if (this.stringValue !== null && this.stringValue !== undefined) {
+      const targetOption = this.options.find(option => option.value === this.stringValue);
+      if (targetOption) {
+        this.currentSelection = targetOption;
+      }
+    }
+  }
   
 
   public toggleDropdown() {
@@ -81,6 +94,10 @@ export class InputSelectorComponent extends InputBaseComponent<SelectorOption> {
     if (option) {
       this.selectOption(option);
     }
+  }
+
+  public getSelectionOptionsByValue(value: string): SelectorOption {
+    return this.options.find(option => option.value === value) ?? this.options[0];
   }
 
   @HostListener('document:click', ['$event'])

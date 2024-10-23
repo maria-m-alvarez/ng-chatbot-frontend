@@ -52,7 +52,6 @@ export class InputBooleanSelectorComponent extends InputBaseComponent<BooleanSel
 
   refreshCurrentValue() {
     this.setDefaultSelection();
-    //this.setValue();
     this.setBooleanValueSelection();
   }
 
