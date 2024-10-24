@@ -43,6 +43,7 @@ export class ChatbotSessionService {
     this.chatbotApiService.getAvailableModelNames().subscribe(
       {
         next: (response) => {
+          console.log('Model names:', response);
           this.modelNames = response;
           this.llmModels = this.modelNames.map((name, index) => ({ id: index + 1, value: name }));
           this.selectInitialModel();
@@ -218,30 +219,6 @@ export class ChatbotSessionService {
       complete: () => {
         console.log('API Prompt call completed');
         this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Complete);
-      }
-    });
-  }
-  
-  private sendMessage_deprecated(message: string): void {
-    console.log('Sending message:', message);
-    const prompt = this.currentSession.addPrompt(message);
-    this.chatbotEventService.onPromptSent.emit();
-
-    const model = this.getCurrentModel();
-    const userGroups = ['generic'];
-    const projectName = 'generic';
-
-    this.chatbotApiService.py_sendPromptAndGetPromptAnswer(message, userGroups, projectName, model).subscribe({
-      next: (response) => {
-        console.log('API response:', response);
-        const promptAnswer = response.prompt_answer;
-        this.handleAssistantResponse(prompt.id, promptAnswer.content);
-      },
-      error: (error) => {
-        console.error('Error from chatbot API:', error);
-      },
-      complete: () => {
-        console.log('API call completed');
       }
     });
   }

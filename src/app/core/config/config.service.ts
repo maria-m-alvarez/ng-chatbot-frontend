@@ -88,8 +88,13 @@ export class ConfigService {
   }
 
   getApiConnectionByName(connectionName: string): any {
+    if (connectionName === '') {
+      connectionName = this.apiConnectionName || 'fastapi';
+      console.log("Connection Name is empty. Using Active Connection Name:", connectionName);
+    }
+
     const formattedConnectionName = this.formatConnectionName(connectionName);
-    console.log('Formatted Connection Name:', formattedConnectionName);
+    console.log("Connection Name:", connectionName, 'Formatted Connection Name:', formattedConnectionName);
 
     return this.config?.apiSettings?.connectionSettings?.connections.find(
       (connection: any) => this.formatConnectionName(connection.name) === formattedConnectionName

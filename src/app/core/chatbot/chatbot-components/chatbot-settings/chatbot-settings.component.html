@@ -140,5 +140,22 @@
         (input)="onPrePromptChange($event)"></textarea>
       }
     </div>
+
+    <div class="mt-16 mb-4">
+      <h3 class="text-center mb-4 font-bold">TEMP: Chroma DB</h3>
+      <div class="w-full h-8 flex justify-between text-white">
+        <div class="flex w-full space-x-8">
+          <button class="w-1/2 rounded-lg bg-blue-600 hover:bg-blue-400 transition-colors duration-300 ease-in-out"
+            (click)="brain.chatbotApiService.tempChromaDbIngestion()">
+            Injest Chroma DB
+          </button>
+  
+          <button class="w-1/2 rounded-lg bg-red-600 hover:bg-red-400 transition-colors duration-300 ease-in-out"
+            (click)="brain.chatbotApiService.tempChromaDbDeletion()">
+            Delete Chroma DB
+          </button>
+        </div>
+      </div>
+    </div>
   </ng-template>
 </app-blank-modal>

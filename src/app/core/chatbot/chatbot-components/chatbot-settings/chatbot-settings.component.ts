@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ChatbotBrainService } from '../../chatbot-services/chatbot-brain/chatbot-brain.service';
 import { ChatbotBaseComponentComponent } from '../chatbot-base-component/chatbot-base-component.component';
-import { ChatbotSettings } from '../../chatbot-models/chatbot-settings';
 import { BlankModalComponent } from "../../../common/components/blank-modal/blank-modal.component";
 import { InputSelectorComponent } from "../../../common/components/input-components/input-selector/input-selector.component";
 import { ChatbotModelSelectorComponent } from "../chatbot-model-selector/chatbot-model-selector.component";
