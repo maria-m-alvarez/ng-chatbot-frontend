@@ -8,10 +8,12 @@ export class ChatbotEventService {
   readonly onSidebarToggled = new EventEmitter<void>();
   readonly onSessionChanged = new EventEmitter<void>();
 
+  readonly onChatbotInputStateChanged = new EventEmitter<string>();
+
   readonly onPromptSent = new EventEmitter<void>();
   readonly onPromptAnswerReceived = new EventEmitter<WebRequestResult>();
 
-  readonly onChatbotInputStateChanged = new EventEmitter<string>();
+  readonly onRequestModelNames = new EventEmitter<void>();
   
   readonly onChatbotSettingsChanged = new EventEmitter<void>();
   readonly onChatbotModelNameChanged = new EventEmitter<string>();

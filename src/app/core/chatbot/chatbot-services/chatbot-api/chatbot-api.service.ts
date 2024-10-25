@@ -66,6 +66,40 @@ export class ChatbotApiService {
       }
     });
   }
+  
+  private readonly tempAddModelURL = "http://127.0.0.1:8000/chatbot/ollama_model/add";
+  private readonly tempRemoveModelURL = "http://127.0.0.1:8000/chatbot/temp/ollama_model/remove";
+
+  tempAddModel(modelName: string): void {
+    const requestBody = { ollama_model_name: modelName };
+    this.http.post(this.tempAddModelURL, requestBody).subscribe({
+      next: (response) => {
+        console.log('Ollama Model Added', response);
+        this.chatbotEventService.onRequestModelNames.emit(); 
+      },
+      error: (error) => {
+        console.error('Error Adding model:', error);
+      },
+      complete: () => {
+        console.log('Ollama Model addition complete');
+      }
+    });
+  }
+  
+  tempRemoveModel(modelName: string): void {
+    const requestBody = { ollama_model_name: modelName };  // Create the request body
+    this.http.post(this.tempRemoveModelURL, requestBody).subscribe({
+      next: (response) => {
+        console.log('Ollama Model Removed', response);
+      },
+      error: (error) => {
+        console.error('Error Removing model:', error);
+      },
+      complete: () => {
+        console.log('Ollama Model removal complete');
+      }
+    });
+  }
 
 
 
@@ -118,9 +152,6 @@ export class ChatbotApiService {
   // -----------------------------------------------------
 
   getAvailableModelNames(): Observable<any> {
-    const url = this.configService.getModelsUrlByConnectionName(this.connectionName);
-    console.log('Getting available model names from:', url);
-
     return this.http.get<any>(this.configService.getModelsUrlByConnectionName(this.connectionName));
   }
 

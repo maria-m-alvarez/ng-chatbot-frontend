@@ -36,6 +36,10 @@ export class ChatbotSessionService {
       this.getModelNames();
     });
 
+    this.chatbotEventService.onRequestModelNames.subscribe(() => {
+      this.getModelNames();
+    });
+
     this.getModelNames();
   }
 

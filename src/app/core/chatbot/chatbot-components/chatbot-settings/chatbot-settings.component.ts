@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ChatbotBrainService } from '../../chatbot-services/chatbot-brain/chatbot-brain.service';
 import { ChatbotBaseComponentComponent } from '../chatbot-base-component/chatbot-base-component.component';
 import { BlankModalComponent } from "../../../common/components/blank-modal/blank-modal.component";
@@ -15,6 +15,8 @@ import { InputBooleanSelectorComponent } from "../../../common/components/input-
   imports: [BlankModalComponent, InputSelectorComponent, ChatbotModelSelectorComponent, InputToggleComponent, InputBooleanSelectorComponent]
 })
 export class ChatbotSettingsComponent extends ChatbotBaseComponentComponent {
+  @ViewChild('ollamaModelNameInput') ollamaModelNameInput: ElementRef<HTMLInputElement> | undefined;
+
   optionStates = {
     options: 'options',
     prePrompt: 'pre-prompt',
@@ -67,6 +69,30 @@ export class ChatbotSettingsComponent extends ChatbotBaseComponentComponent {
   onPrePromptChange(event: Event): void {
     const input = event.target as HTMLTextAreaElement;
     ChatbotBrainService.chatbotSettings.prePrompt = input.value;
+  }
+
+  addModel() {
+    console.log('Adding model');
+    console.log('Model name:', this.ollamaModelNameInput?.nativeElement.value);
+    const name = this.ollamaModelNameInput?.nativeElement.value;
+
+    if (name && name.length > 0) {
+      this.brain.chatbotApiService.tempAddModel(name);
+      if (this.ollamaModelNameInput) {
+        this.ollamaModelNameInput.nativeElement.value = '';
+      }
+    }
+  }
+
+  removeModel() {
+    const name = this.ollamaModelNameInput?.nativeElement.value;
+
+    if (name && name.length > 0) {
+      this.brain.chatbotApiService.tempRemoveModel(name);
+      if (this.ollamaModelNameInput) {
+        this.ollamaModelNameInput.nativeElement.value = '';
+      }
+    }
   }
 
   onInputChanged(inputID: string, value: any): void {
