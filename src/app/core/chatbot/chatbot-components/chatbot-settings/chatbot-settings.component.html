@@ -1,5 +1,5 @@
 <app-blank-modal [modalConfig]="{
-    title: 'Chatbot Settings',
+    title: 'Configurações do Chatbot',
     optionToListenFor: 'chatbot_settings',
     isSubmitEnabled: false
   }">
@@ -23,7 +23,7 @@
 
         <!-- Model Selector -->
         <div class="flex items-center space-x-2">
-          <h5 class="w-[25%]">Model:</h5>
+          <h5 class="w-[25%]">Modelo:</h5>
           <app-chatbot-model-selector #modelSelector
             [inputID]="'chatbot_model'"
             [defaultMessage]="'Select your LLM...'"
@@ -36,7 +36,7 @@
 
         <!-- Use Options Toggle -->
         <div class="flex items-center space-x-2">
-          <h5 class="w-[25%]">Options:</h5>
+          <h5 class="w-[25%]">Opções:</h5>
           <app-input-boolean-selector #useOptionsSelector [inputID]="'chatbot_use_options'" [defaultSelectionID]="2"
             [booleanValue]="brain.chatbotSettings.useOptions"
             (onValueChange)="onInputChanged(useOptionsSelector.inputID, useOptionsSelector.valueAsBoolean)"
@@ -56,19 +56,19 @@
       </div>
 
       <div class="mt-8 flex items-center space-x-2">
-        <h5 class="w-[30%]">Ollama Model Name:</h5>
+        <h5 class="w-[30%]">Modelo Ollama:</h5>
         <input #ollamaModelNameInput type="text" class="w-full p-2 rounded-lg border dark:bg-inherit dark:border-gray-700"
-          placeholder="Enter Ollama Model name (ex: llama3.2:1b)"/>
+          placeholder="Escreve o nome do modelo Ollama (ex: llama3.2:1b)"/>
       
         <div class="w-[35%] flex space-x-1 text-white text-sm text-center">
           <button class="h-full w-1/2 p-2 rounded-lg bg-blue-600 hover:bg-blue-400 transition-colors duration-300 ease-in-out"
             (click)="addModel()">
-            Add
+            Adicionar
           </button>
           
           <button class="h-full w-1/2 p-2 rounded-lg bg-red-600 hover:bg-red-400 transition-colors duration-300 ease-in-out"
             (click)="removeModel()">
-            Remove
+            Remover
           </button>
         </div>
       </div>
@@ -80,13 +80,13 @@
             (click)="toggleOptionsState(optionStates.options)"
             [class.bg-blue-700]="optionsState === optionStates.options"
             [class.text-white]="optionsState === optionStates.options">
-            Options
+            Configuração do Modelo
           </button>
           <button class="w-1/2 rounded-r-lg focus:outline-none transition-colors duration-300 ease-in-out"
             (click)="toggleOptionsState(optionStates.prePrompt)"
             [class.bg-blue-700]="optionsState === optionStates.prePrompt"
             [class.text-white]="optionsState === optionStates.prePrompt">
-            Pre-prompt
+            Prompt de Sistema
           </button>
         </div>
       </div>
@@ -123,7 +123,7 @@
 
       <!-- Temperature Slider -->
       <div class="flex items-center">
-        <h5 class="w-[25%]">Temperature:</h5>
+        <h5 class="w-[25%]">Temperatura:</h5>
         <div class="flex items-center flex-grow">
           <input type="range" min="0" max="2" step="0.01" [value]="brain.chatbotSettings.options.temperature"
             (input)="onTemperatureChange($event)" class="flex-grow" />
@@ -133,7 +133,7 @@
 
       <!-- Repeat Penalty Slider -->
       <div class="flex items-center">
-        <h5 class="w-[25%]">Repeat Penalty:</h5>
+        <h5 class="w-[25%]">Penalidade por Repetição:</h5>
         <div class="flex items-center flex-grow">
           <input type="range" min="0" max="2" step="0.01" [value]="brain.chatbotSettings.options.repeat_penalty"
             (input)="onRepeatPenaltyChange($event)" class="flex-grow" />
@@ -145,14 +145,14 @@
       <div class="flex items-center space-x-2">
         <h5 class="w-[25%]">Stop Tokens:</h5>
         <input type="text" class="w-full p-2 rounded-lg border dark:bg-inherit dark:border-gray-700"
-          placeholder="Enter Stop Tokens (comma-separated)" [value]="brain.chatbotSettings.options.stop.join(', ')"
+          placeholder="Escreve aqui os Stop Tokens (separado por vírgulas)" [value]="brain.chatbotSettings.options.stop.join(', ')"
           (input)="onStopTokensChange($event)" />
       </div>
       }
 
       <!-- Pre-prompt Section -->
       @if (optionsState === optionStates.prePrompt) {
-      <h5>Pre-prompt:</h5>
+      <h5>Prompt de Sistema:</h5>
       <textarea class="w-full h-40 min-h-16 p-2 rounded-lg border dark:bg-inherit dark:border-gray-700"
         placeholder="Enter a pre-prompt" [value]="brain.chatbotSettings.prePrompt"
         (input)="onPrePromptChange($event)"></textarea>
@@ -161,17 +161,17 @@
     
 
     <div class="mt-16 mb-4">
-      <h3 class="text-center mb-4 font-bold">TEMP: Chroma DB</h3>
+      <h3 class="text-center mb-4 font-bold text-white">Opções Chroma DB</h3>
       <div class="w-full h-8 flex justify-between text-white">
         <div class="flex w-full space-x-8">
           <button class="w-1/2 rounded-lg bg-blue-600 hover:bg-blue-400 transition-colors duration-300 ease-in-out"
             (click)="brain.chatbotApiService.tempChromaDbIngestion()">
-            Injest Chroma DB
+            Ingerir documentos na base de dados de conhecimento 
           </button>
   
           <button class="w-1/2 rounded-lg bg-red-600 hover:bg-red-400 transition-colors duration-300 ease-in-out"
             (click)="brain.chatbotApiService.tempChromaDbDeletion()">
-            Delete Chroma DB
+            Apagar base de dados de conhecimento
           </button>
         </div>
       </div>
