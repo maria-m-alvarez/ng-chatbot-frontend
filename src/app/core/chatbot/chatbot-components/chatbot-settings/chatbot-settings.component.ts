@@ -17,6 +17,8 @@ import { InputBooleanSelectorComponent } from "../../../common/components/input-
 export class ChatbotSettingsComponent extends ChatbotBaseComponentComponent {
   @ViewChild('ollamaModelNameInput') ollamaModelNameInput: ElementRef<HTMLInputElement> | undefined;
 
+  collectionCount: number = 0;
+
   optionStates = {
     options: 'options',
     prePrompt: 'pre-prompt',
@@ -28,6 +30,10 @@ export class ChatbotSettingsComponent extends ChatbotBaseComponentComponent {
     brain: ChatbotBrainService
   ) {
     super(brain);
+
+    brain.chatbotEventService.tempEvent_OnChromaDBCount.subscribe((count) => {
+      this.collectionCount = count;
+    });
   }
 
   toggleOptionsState(state: string): void {
@@ -114,5 +120,9 @@ export class ChatbotSettingsComponent extends ChatbotBaseComponentComponent {
 
     console.log('Input changed:', inputID, value);
     console.log('Configs:', ChatbotBrainService.chatbotSettings);
+  }
+
+  onCollectionCountClicked() {
+    this.brain.chatbotApiService.tempChromaDbCount();
   }
 }

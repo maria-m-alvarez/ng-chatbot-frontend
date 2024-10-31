@@ -102,6 +102,25 @@ export class ChatbotApiService {
   }
 
 
+  private readonly tempChromaBbCountURL = "http://127.0.0.1:8000/chatbot/temp/chroma/count";
+
+  tempChromaDbCount(): void {
+    const request = this.http.get<{message:string, count:number}>(this.tempChromaBbCountURL);
+    request.subscribe({
+      next: (response) => {
+        console.log('Chroma BB Injestion Response:', response);
+        this.chatbotEventService.tempEvent_OnChromaDBCount.emit(response?.count);
+      },
+      error: (error) => {
+        console.error('Error from Chroma BB Injestion:', error);
+      },
+      complete: () => {
+        console.log('Chroma BB Injestion Complete');
+      }
+    });
+  }
+
+
 
   // -----------------------------------------------------
   // WebSocket Management

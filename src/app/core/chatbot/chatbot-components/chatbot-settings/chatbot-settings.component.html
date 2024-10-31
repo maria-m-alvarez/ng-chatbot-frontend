@@ -60,13 +60,13 @@
         <input #ollamaModelNameInput type="text" class="w-full p-2 rounded-lg border dark:bg-inherit dark:border-gray-700"
           placeholder="Escreve o nome do modelo Ollama (ex: llama3.2:1b)"/>
       
-        <div class="w-[35%] flex space-x-1 text-white text-sm text-center">
-          <button class="h-full w-1/2 p-2 rounded-lg bg-blue-600 hover:bg-blue-400 transition-colors duration-300 ease-in-out"
+        <div class="w-[35%] flex space-x-1 text-sm text-center">
+          <button class="h-full w-1/2 p-2 rounded-lg text-white bg-blue-600 hover:bg-blue-400 transition-colors duration-300 ease-in-out"
             (click)="addModel()">
             Adicionar
           </button>
           
-          <button class="h-full w-1/2 p-2 rounded-lg bg-red-600 hover:bg-red-400 transition-colors duration-300 ease-in-out"
+          <button class="h-full w-1/2 p-2 rounded-lg text-white bg-red-600 hover:bg-red-400 transition-colors duration-300 ease-in-out"
             (click)="removeModel()">
             Remover
           </button>
@@ -160,19 +160,32 @@
     </div>
     
 
-    <div class="mt-16 mb-4">
-      <h3 class="text-center mb-4 font-bold text-white">Opções Chroma DB</h3>
-      <div class="w-full h-8 flex justify-between text-white">
-        <div class="flex w-full space-x-8">
-          <button class="w-1/2 rounded-lg bg-blue-600 hover:bg-blue-400 transition-colors duration-300 ease-in-out"
-            (click)="brain.chatbotApiService.tempChromaDbIngestion()">
-            Ingerir documentos na base de dados de conhecimento 
-          </button>
+    <div class="mt-16 mb-4 text-black dark:text-white">
+      <h3 class="text-center mb-4 font-bold">Opções Chroma DB</h3>
+      <div class="flex flex-col space-y-8">
+        <div class="w-full h-8 flex justify-between">
+          <div class="flex w-full space-x-8">
+            <button class="w-1/2 rounded-lg text-white bg-blue-600 hover:bg-blue-400 transition-colors duration-300 ease-in-out"
+              (click)="brain.chatbotApiService.tempChromaDbIngestion()">
+              Ingerir Docs na BD
+            </button>
+    
+            <button class="w-1/2 rounded-lg text-white bg-red-600 hover:bg-red-400 transition-colors duration-300 ease-in-out"
+              (click)="brain.chatbotApiService.tempChromaDbDeletion()">
+              Apagar Docs da BD
+            </button>
+          </div>
+        </div>
   
-          <button class="w-1/2 rounded-lg bg-red-600 hover:bg-red-400 transition-colors duration-300 ease-in-out"
-            (click)="brain.chatbotApiService.tempChromaDbDeletion()">
-            Apagar base de dados de conhecimento
+        <div class="w-full h-8 flex justify-between">
+          <button class="px-4 rounded-lg text-white bg-blue-600 hover:bg-blue-400 transition-colors duration-300 ease-in-out"
+          (click)="onCollectionCountClicked()">
+            Dimensão da Coleção
           </button>
+          <!-- <input type="text" placeholder="Inserir nome da coleção de ChromaDB..."> -->
+          <h3>
+            {{ collectionCount }}
+          </h3>
         </div>
       </div>
     </div>
