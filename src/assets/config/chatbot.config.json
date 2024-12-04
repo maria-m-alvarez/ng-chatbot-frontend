@@ -1,8 +1,8 @@
 {
   "organization": {
     "name": "Organization Name",
-    "logo": "assets/images/logominsait_normal.png",
-    "logoDark": "assets/images/logominsait_white.png",
+    "logoPos": "assets/images/AF_MINSAIT_LOG_POS.png",
+    "logoNeg": "assets/images/AF_MINSAIT_LOG_NEG.png",
     "favicon": "assets/images/favicon.png",
     "url": "https://www.minsait.com"
   },
@@ -66,49 +66,164 @@
     }
   },
 
-  "chatbotSettings": {
-    "model": "llama3",
-    "apiProvider": "python",
-    "stream": false,
-    "useOptions": false,
-    "optionsLevel": "simple",
-    "options": {
-      "seed": 0,
-      "top_k": 20,
-      "top_p": 0.9,
-      "temperature": 0.8,
-      "repeat_penalty": 1.2,
-      "stop": [],
+  "chatbot": {
+    "systemPrompt" : "Responde sempre em português europeu. Todas as prompts que receberes noutras linguas, traduz primeiro para portugês europeu para depois responderes em português europeu. És um chatbot de assistência informativa, por isso, tenta responder sempre de forma clara e objetiva. Se não souberes a resposta, podes sempre pedir ajuda a um humano.",
 
-
-      "num_keep": 5,
-      "num_predict": 100,
-      "min_p": 0.0,
-      "tfs_z": 0.5,
-      "typical_p": 0.7,
-      "repeat_last_n": 33,
-      "presence_penalty": 1.5,
-      "frequency_penalty": 1.0,
-      "mirostat": 1,
-      "mirostat_tau": 0.8,
-      "mirostat_eta": 0.6,
-      "penalize_newline": true,
-      "numa": false,
-      "num_ctx": 1024,
-      "num_batch": 2,
-      "num_gpu": 0,
-      "main_gpu": 0,
-      "low_vram": false,
-      "f16_kv": true,
-      "vocab_only": false,
-      "use_mmap": true,
-      "use_mlock": false,
-      "num_thread": 8
+    "chatbotSettings": {
+      "model": "llama3",
+      "provider": "python",
+      "stream": false,
+      "useOptions": false,
+      "optionsLevel": "simple",
+      "options": {
+        "seed": 0,
+        "top_k": 20,
+        "top_p": 0.9,
+        "temperature": 0.8,
+        "repeat_penalty": 1.2,
+        "stop": [],
+  
+  
+        "num_keep": 5,
+        "num_predict": 100,
+        "min_p": 0.0,
+        "tfs_z": 0.5,
+        "typical_p": 0.7,
+        "repeat_last_n": 33,
+        "presence_penalty": 1.5,
+        "frequency_penalty": 1.0,
+        "mirostat": 1,
+        "mirostat_tau": 0.8,
+        "mirostat_eta": 0.6,
+        "penalize_newline": true,
+        "numa": false,
+        "num_ctx": 1024,
+        "num_batch": 2,
+        "num_gpu": 0,
+        "main_gpu": 0,
+        "low_vram": false,
+        "f16_kv": true,
+        "vocab_only": false,
+        "use_mmap": true,
+        "use_mlock": false,
+        "num_thread": 8
+      }
     }
   },
 
-  "prePrompt" : "Responde sempre em português europeu. Todas as prompts que receberes noutras linguas, traduz primeiro para portugês europeu para depois responderes em português europeu. És um chatbot de assistência informativa, por isso, tenta responder sempre de forma clara e objetiva. Se não souberes a resposta, podes sempre pedir ajuda a um humano.",
-  
+  "themes": {
+    "light": {
+      "main-primary": "#480E2A",
+      "main-primary-contrast": "#260717",
+      "main-secondary": "#E3E2DA",
+      "main-secondary-contrast": "#FF0054",
+      "main-terciary": "#FFFFFF",
+      "main-terciary-contrast": "#FF0054",
+      "main-highlight": "#FF0054",
+
+      "background-primary": "#480E2A",
+      "background-secondary": "#E3E2DA",
+      "background-tertiary": "#FFFFFF",
+      "background-highlight": "#260717",
+
+      "text-primary": "#260717",
+      "text-secondary": "#E3E2DA",
+      "text-tertiary": "#FFFFFF",
+      "text-highlight": "#FF0054",
+
+      "border-primary": "#260717",
+      "border-secondary": "#E3E2DA",
+      "border-terciary": "#FFFFFF",
+      "border-highlight": "#FF0054",
+
+      "chatbot-background": "#FFFFFF",
+
+      "chatbot-bubble-user-background": "#480E2A",
+      "chatbot-bubble-user-text": "#E3E2DA",
+
+      "chatbot-bubble-assistant-background": "#260717",
+      "chatbot-bubble-assistant-text": "#E3E2DA",
+
+      "success": "#4ACB90",
+      "success-secondary": "#EAF7F0",
+
+      "error": "#F93F3E",
+      "error-secondary": "#FBE8E8",
+
+      "warning": "#FCA12F",
+      "warning-secondary": "#FAF2E8",
+
+      "info": "#60AFFE",
+      "info-secondary": "#ECF3FB",
+
+      "help": "#9011FE",
+      "help-secondary": "#F0E3FC",
+    
+      "focus": "#0D5BA6",
+      "focus-secondary": "#E4EAF2",
+
+      "scrollbar-track": "#FFFFFF",
+      "scrollbar-thumb": "#E3E2DA",
+      "scrollbar-thumb-hover": "#480E2A"
+    },
+
+    "dark": {
+      "main-primary": "#480E2A",
+      "main-primary-contrast": "#260717",
+      "main-secondary": "#E3E2DA",
+      "main-secondary-contrast": "#FF0054",
+      "main-terciary": "#FFFFFF",
+      "main-terciary-contrast": "#FF0054",
+      "main-highlight": "#FF0054",
+
+      "background-primary": "#480E2A",
+      "background-secondary": "#E3E2DA",
+      "background-tertiary": "#FFFFFF",
+      "background-highlight": "#260717",
+
+      "text-primary": "#260717",
+      "text-secondary": "#E3E2DA",
+      "text-tertiary": "#FFFFFF",
+      "text-highlight": "#FF0054",
+
+      "border-primary": "#260717",
+      "border-secondary": "#E3E2DA",
+      "border-terciary": "#FFFFFF",
+      "border-highlight": "#FF0054",
+
+      "chatbot-background": "#FFFFFF",
+
+      "chatbot-bubble-user-background": "#480E2A",
+      "chatbot-bubble-user-text": "#E3E2DA",
+
+      "chatbot-bubble-assistant-background": "#260717",
+      "chatbot-bubble-assistant-text": "#E3E2DA",
+
+      "success": "#4ACB90",
+      "success-secondary": "#EAF7F0",
+
+      "error": "#F93F3E",
+      "error-secondary": "#FBE8E8",
+
+      "warning": "#FCA12F",
+      "warning-secondary": "#FAF2E8",
+
+      "info": "#60AFFE",
+      "info-secondary": "#ECF3FB",
+
+      "help": "#9011FE",
+      "help-secondary": "#F0E3FC",
+    
+      "focus": "#0D5BA6",
+      "focus-secondary": "#E4EAF2",
+
+      "scrollbar-track": "#FFFFFF",
+      "scrollbar-thumb": "#E3E2DA",
+      "scrollbar-thumb-hover": "#480E2A"
+    }
+  },
+
+
   "layout": {
     "chatbotPrompt": {
       "allowCopy": false

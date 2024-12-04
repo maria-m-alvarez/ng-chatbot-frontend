@@ -1,1 +1,16 @@
-<router-outlet></router-outlet>
+<div class="h-screen w-screen flex flex-col overflow-hidden">
+    <!-- Header -->
+    <div class="h-0 bg-main-primary flex-shrink-0">
+      <p class="text-white text-center py-2">Header Content</p>
+    </div>
+  
+    <!-- Main Content -->
+    <div class="flex-grow overflow-hidden">
+      <router-outlet></router-outlet>
+    </div>
+  
+    <!-- Footer -->
+    <div class="h-0 bg-main-primary flex-shrink-0">
+      <p class="text-white text-center py-2">Footer Content</p>
+    </div>
+</div>

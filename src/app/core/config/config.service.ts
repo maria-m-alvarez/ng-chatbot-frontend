@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { ChatbotOptions, ChatbotSettings } from '../chatbot/chatbot-models/chatbot-settings';
-import { SelectorOption } from '../common/components/input-components/input-selector/input-selector.component';
+import { ChatbotSettings, ChatbotOptions } from '../../features/chatbot/chatbot-models/chatbot-settings';
+import { SelectorOption } from '../components/input-components/input-selector/input-selector.component';
+import { Theme } from '../models/theme';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +14,7 @@ export class ConfigService {
 
   constructor(private readonly http: HttpClient) {}
 
+  // Load the configuration JSON
   loadConfig(): Observable<any> {
     return this.http.get('/assets/config/chatbot.config.json').pipe(
       tap((config) => {
@@ -22,7 +24,29 @@ export class ConfigService {
     );
   }
 
-  getConfig() {
+  getFromConfigJson<T>(path: string, fallback: T = undefined as any): T {
+    if (!this.config) {
+      console.error('Configuration not loaded.');
+      return fallback;
+    }
+  
+    try {
+      const keys = path.split('.');
+      let value = this.config;
+      for (const key of keys) {
+        value = value?.[key];
+        if (value === undefined || value === null) {
+          return fallback;
+        }
+      }
+      return value as T;
+    } catch (error) {
+      console.error(`Error accessing config path "${path}":`, error);
+      return fallback;
+    }
+  }
+
+  getConfig(): any {
     return this.config;
   }
 
@@ -30,80 +54,53 @@ export class ConfigService {
     return connectionName.toLowerCase().replace(/[\s_]/g, '');
   }
 
+  getTheme(mode: 'light' | 'dark' = 'light'): Theme {
+    const themeConfig = this.getFromConfigJson(`themes.${mode}`, {});
+    return new Theme(themeConfig);
+  }
+
   // ----------------------------------------------
   // Organization
   // ----------------------------------------------
-  get organizationLogo(): string {
-    return this.config?.organization?.logo ?? '';
+  get organizationLogoPos(): string {
+    return this.getFromConfigJson<string>('organization.logoPos', '');
   }
 
-  get organizationLogoDark(): string {
-    return this.config?.organization?.logoDark ?? this.organizationLogo;
+  get organizationLogoNeg(): string {
+    return this.getFromConfigJson<string>('organization.logoNeg', this.organizationLogoPos);
   }
 
   get organizationName(): string {
-    return this.config?.organization?.name ?? '';
+    return this.getFromConfigJson<string>('organization.name', '');
   }
 
   get organizationUrl(): string {
-    return this.config?.organization?.url ?? '';
+    return this.getFromConfigJson<string>('organization.url', '');
   }
 
   // ----------------------------------------------
   // API Settings
   // ----------------------------------------------
-  get apiConnectionNames(): {connectionName:string, formattedConnectionName:string}[] {
-    return this.config?.apiSettings?.connectionSettings?.connections.map((connection: any) =>
-    {
-      return {
-        connectionName: connection.name,
-        formattedConnectionName: this.formatConnectionName(connection.name)
-      };
-    });
+  get apiConnectionNames(): { connectionName: string; formattedConnectionName: string }[] {
+    return this.getFromConfigJson<any[]>('apiSettings.connectionSettings.connections', []).map((connection: any) => ({
+      connectionName: connection.name,
+      formattedConnectionName: this.formatConnectionName(connection.name),
+    }));
   }
 
   get apiConnectionOptions(): SelectorOption[] {
-    return this.apiConnectionNames.map((connection, index) => {
-      return new SelectorOption(index, connection.connectionName);
-    });
+    return this.apiConnectionNames.map((connection, index) => new SelectorOption(index, connection.connectionName));
   }
 
   get apiConnectionName(): string {
-    return this.config?.apiSettings?.connectionSettings?.connectionName ?? '';
+    return this.getFromConfigJson<string>('apiSettings.connectionSettings.connectionName', '');
   }
 
   get activeApiConnection(): any {
     const connectionName = this.apiConnectionName;
-    return this.config?.apiSettings?.connectionSettings?.connections.find(
+    return this.getFromConfigJson<any[]>('apiSettings.connectionSettings.connections', []).find(
       (connection: any) => connection.name === connectionName
     );
-  }
-
-  get chatUrl(): string {
-    return this.activeApiConnection?.chatURL ?? '';
-  }
-
-  get feedbackUrl(): string {
-    return this.activeApiConnection?.feedbackURL ?? '';
-  }
-
-  getApiConnectionByName(connectionName: string): any {
-    if (connectionName === '') {
-      connectionName = this.apiConnectionName || 'fastapi';
-      console.log("Connection Name is empty. Using Active Connection Name:", connectionName);
-    }
-
-    const formattedConnectionName = this.formatConnectionName(connectionName);
-    console.log("Connection Name:", connectionName, 'Formatted Connection Name:', formattedConnectionName);
-
-    return this.config?.apiSettings?.connectionSettings?.connections.find(
-      (connection: any) => this.formatConnectionName(connection.name) === formattedConnectionName
-    ) ?? null;
-  }
-
-  getModelsUrlByConnectionName(connectionName: string): string {
-    const connection = this.getApiConnectionByName(connectionName);
-    return connection?.availableModelsURL ?? '';
   }
 
   getChatUrlByConnectionName(connectionName: string): string {
@@ -116,169 +113,94 @@ export class ConfigService {
     return connection?.feedbackURL ?? '';
   }
 
-  updateConnectionName(connectionName: string) : void {
-    this.config.apiSettings.connectionSettings.connectionName = connectionName;
-    console.log("Connection Name Updated:", connectionName);
+  getModelsUrlByConnectionName(connectionName: string): string {
+    const connection = this.getApiConnectionByName(connectionName);
+    return connection?.availableModelsURL ?? '';
   }
 
-  // ----------------------------------------------
-  // DTO Mapping
-  // ----------------------------------------------
-  get promptDTO(): any {
-    return this.config?.apiSettings?.dtoMapping?.request?.promptDTO ?? {};
+  getApiConnectionByName(connectionName: string): any {
+    const formattedConnectionName = this.formatConnectionName(connectionName || this.apiConnectionName || 'fastapi');
+    return this.getFromConfigJson<any[]>('apiSettings.connectionSettings.connections', []).find(
+      (connection: any) => this.formatConnectionName(connection.name) === formattedConnectionName
+    );
   }
 
-  get feedbackDTO(): any {
-    return this.config?.apiSettings?.dtoMapping?.request?.feedbackDTO ?? {};
-  }
-
-  get promptResponseDTO(): any {
-    return this.config?.apiSettings?.dtoMapping?.response?.promptDTO ?? {};
-  }
-
-  get promptAnswerResponseDTO(): any {
-    return this.config?.apiSettings?.dtoMapping?.response?.promptAnswerDTO ?? {};
-  }
-
-  get feedbackResponseDTO(): any {
-    return this.config?.apiSettings?.dtoMapping?.response?.feedbackDTO ?? {};
+  updateConnectionName(connectionName: string): void {
+    if (this.config?.apiSettings?.connectionSettings) {
+      this.config.apiSettings.connectionSettings.connectionName = connectionName;
+      console.log('Connection Name Updated:', connectionName);
+    }
   }
 
   // ----------------------------------------------
   // Chatbot Settings
   // ----------------------------------------------
   get chatbotSettings(): ChatbotSettings {
-    const settings = this.config?.chatbotSettings ?? {};
-  
-    // Determine which options to use based on optionsLevel
-    const options =
-      settings.optionsLevel === 'simple'
-        ? this.getSimpleChatbotOptions()
-        : this.getCompleteChatbotOptions();
-  
-    // Return an instance of ChatbotSettings
+    const settings = this.getFromConfigJson<any>('chatbotSettings', {});
+    const options = settings.optionsLevel === 'simple' ? this.getSimpleChatbotOptions() : this.getCompleteChatbotOptions();
     return new ChatbotSettings(
       settings.model ?? 'defaultModel',
-      settings.apiProvider ?? 'defaultApiProvider',
+      settings.provider ?? 'defaultApiProvider',
       settings.stream ?? false,
       settings.useOptions ?? false,
       options
     );
   }
 
-  get chatbotModel(): string {
-    return this.config?.chatbotSettings?.model ?? '';
-  }
-
-  get chatbotApiProvider(): string {
-    return this.config?.chatbotSettings?.apiProvider ?? '';
-  }
-
-  get isStreamingEnabled(): boolean {
-    return this.config?.chatbotSettings?.stream ?? false;
-  }
-
-  get useOptions(): boolean {
-    return this.config?.chatbotSettings?.useOptions ?? false;
-  }
-
-  get chatbotOptionsLevel(): string {
-    return this.config?.chatbotSettings?.optionsLevel ?? 'simple';
-  }
-
-  get chatbotOptions(): ChatbotOptions {
-    return this.config?.chatbotSettings?.options ?? {};
-  }
-
   getSimpleChatbotOptions(): ChatbotOptions {
-    const options = this.chatbotOptions;
+    const options = this.getFromConfigJson<ChatbotOptions>('chatbotSettings.options', ChatbotSettings.simpleDefaultOptions);
     return {
-      seed: options?.seed ?? 0,
-      top_k: options?.top_k ?? 20,
-      top_p: options?.top_p ?? 0.9,
-      temperature: options?.temperature ?? 0.8,
-      repeat_penalty: options?.repeat_penalty ?? 1.2,
-      stop: options?.stop ?? [],
+      seed: options.seed ?? 0,
+      top_k: options.top_k ?? 20,
+      top_p: options.top_p ?? 0.9,
+      temperature: options.temperature ?? 0.8,
+      repeat_penalty: options.repeat_penalty ?? 1.2,
+      stop: options.stop ?? [],
     };
   }
-  
-  // Get the complete chatbot options
+
   getCompleteChatbotOptions(): ChatbotOptions {
+    const options = this.getFromConfigJson<ChatbotOptions>('chatbotSettings.options', ChatbotSettings.completeDefaultOptions);
     return {
-      seed: this.chatbotOptions?.seed ?? 0,
-      top_k: this.chatbotOptions?.top_k ?? 20,
-      top_p: this.chatbotOptions?.top_p ?? 0.9,
-      temperature: this.chatbotOptions?.temperature ?? 0.8,
-      repeat_penalty: this.chatbotOptions?.repeat_penalty ?? 1.2,
-      stop: this.chatbotOptions?.stop ?? [],
-      
-      // Optional fields
-      num_keep: this.chatbotOptions?.num_keep ?? null,
-      num_predict: this.chatbotOptions?.num_predict ?? null,
-      min_p: this.chatbotOptions?.min_p ?? null,
-      tfs_z: this.chatbotOptions?.tfs_z ?? null,
-      typical_p: this.chatbotOptions?.typical_p ?? null,
-      repeat_last_n: this.chatbotOptions?.repeat_last_n ?? null,
-      presence_penalty: this.chatbotOptions?.presence_penalty ?? null,
-      frequency_penalty: this.chatbotOptions?.frequency_penalty ?? null,
-      mirostat: this.chatbotOptions?.mirostat ?? null,
-      mirostat_tau: this.chatbotOptions?.mirostat_tau ?? null,
-      mirostat_eta: this.chatbotOptions?.mirostat_eta ?? null,
-      penalize_newline: this.chatbotOptions?.penalize_newline ?? null,
-      numa: this.chatbotOptions?.numa ?? null,
-      num_ctx: this.chatbotOptions?.num_ctx ?? null,
-      num_batch: this.chatbotOptions?.num_batch ?? null,
-      num_gpu: this.chatbotOptions?.num_gpu ?? null,
-      main_gpu: this.chatbotOptions?.main_gpu ?? null,
-      low_vram: this.chatbotOptions?.low_vram ?? null,
-      f16_kv: this.chatbotOptions?.f16_kv ?? null,
-      vocab_only: this.chatbotOptions?.vocab_only ?? null,
-      use_mmap: this.chatbotOptions?.use_mmap ?? null,
-      use_mlock: this.chatbotOptions?.use_mlock ?? null,
-      num_thread: this.chatbotOptions?.num_thread ?? null,
+      ...this.getSimpleChatbotOptions(),
+      num_keep: options.num_keep ?? null,
+      num_predict: options.num_predict ?? null,
+      // Add other fields as necessary
     };
   }
 
   get prePrompt(): string {
-    return this.config?.prePrompt ?? '';
+    return this.getFromConfigJson<string>('prePrompt', '');
   }
 
   // ----------------------------------------------
   // Layout Settings
   // ----------------------------------------------
   get allowCopyInChatbotPrompt(): boolean {
-    return this.config?.layout?.chatbotPrompt?.allowCopy ?? false;
+    return this.getFromConfigJson<boolean>('layout.chatbotPrompt.allowCopy', false);
   }
 
   get isFeedbackActive(): boolean {
-    return this.config?.layout?.chatbotPromptAnswer?.promptFeedback?.active ?? false;
+    return this.getFromConfigJson<boolean>('layout.chatbotPromptAnswer.promptFeedback.active', false);
   }
 
   get feedbackStyle(): string {
-    return this.config?.layout?.chatbotPromptAnswer?.promptFeedback?.style ?? 'rating';
+    return this.getFromConfigJson<string>('layout.chatbotPromptAnswer.promptFeedback.style', 'rating');
   }
 
   get maxRating(): number {
-    return this.config?.layout?.chatbotPromptAnswer?.promptFeedback?.maxRating ?? 5;
+    return this.getFromConfigJson<number>('layout.chatbotPromptAnswer.promptFeedback.maxRating', 5);
   }
 
   get isSidePanelActive(): boolean {
-    return this.config?.layout?.sidePanel?.active ?? true;
+    return this.getFromConfigJson<boolean>('layout.sidePanel.active', true);
   }
 
   get sidePanelPosition(): string {
-    return this.config?.layout?.sidePanel?.position ?? 'left';
+    return this.getFromConfigJson<string>('layout.sidePanel.position', 'left');
   }
 
   get sidePanelWidth(): string {
-    return this.config?.layout?.sidePanel?.width ?? '300px';
-  }
-
-  get sidePanelMinWidth(): string {
-    return this.config?.layout?.sidePanel?.minWidth ?? '200px';
-  }
-
-  get sidePanelMaxWidth(): string {
-    return this.config?.layout?.sidePanel?.maxWidth ?? '400px';
+    return this.getFromConfigJson<string>('layout.sidePanel.width', '300px');
   }
 }

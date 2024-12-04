@@ -1,0 +1,194 @@
+<app-modular-modal [modalConfig]="{
+  title: 'Configurações do Chatbot',
+  optionToListenFor: 'chatbot_settings',
+  isSubmitEnabled: false
+}">
+<ng-template>
+  <div class="flex flex-col text-text-primary">
+
+    <div class="grid grid-cols-2 gap-4">
+      <!-- API Selector -->
+      <div class="flex items-center space-x-2">
+        <h5 class="w-[25%]">API:</h5>
+        <app-input-selector #apiSelector
+          [inputID]="'chatbot_connection_name'"
+          [defaultMessage]="'Select API Type...'"
+          [defaultSelectionID]="1"
+          [options]="brain.configService.apiConnectionOptions"
+          [stringValue]="brain.chatbotSettings.connectionName"
+          (onValueChange)="onInputChanged(apiSelector.inputID, apiSelector.valueAsString)"
+          class="w-full border border-border-secondary rounded-lg">
+        </app-input-selector>
+      </div>
+
+      <!-- Model Selector -->
+      <div class="flex items-center space-x-2">
+        <h5 class="w-[25%]">Modelo:</h5>
+        <app-chatbot-model-selector #modelSelector
+          [inputID]="'chatbot_model'"
+          [defaultMessage]="'Select your LLM...'"
+          [options]="brain.chatbotSessionService.llmModels"
+          [stringValue]="brain.chatbotSettings.connectionName"
+          (onValueChange)="onInputChanged(modelSelector.inputID, modelSelector.valueAsString)"
+          class="w-full border border-border-secondary rounded-lg">
+        </app-chatbot-model-selector>
+      </div>
+
+      <!-- Use Options Toggle -->
+      <div class="flex items-center space-x-2">
+        <h5 class="w-[25%]">Opções:</h5>
+        <app-input-boolean-selector #useOptionsSelector [inputID]="'chatbot_use_options'" [defaultSelectionID]="2"
+          [booleanValue]="brain.chatbotSettings.useOptions"
+          (onValueChange)="onInputChanged(useOptionsSelector.inputID, useOptionsSelector.valueAsBoolean)"
+          class="w-full border border-border-secondary rounded-lg">
+        </app-input-boolean-selector>
+      </div>
+
+      <!-- Stream Selector -->
+      <div class="flex items-center space-x-2">
+        <h5 class="w-[25%]">Stream:</h5>
+        <app-input-boolean-selector #streamSelector [inputID]="'chatbot_stream'" [defaultSelectionID]="2"
+          [booleanValue]="brain.chatbotSettings.stream"
+          (onValueChange)="onInputChanged(streamSelector.inputID, streamSelector.valueAsBoolean)"
+          class="w-full border border-border-secondary rounded-lg">
+        </app-input-boolean-selector>
+      </div>
+    </div>
+
+    <div class="mt-8 flex items-center space-x-2">
+      <h5 class="w-[30%]">Modelo Ollama:</h5>
+      <input #ollamaModelNameInput type="text" class="w-full p-2 rounded-lg border border-border-secondary"
+        placeholder="Escreve o nome do modelo Ollama (ex: llama3.2:1b)"/>
+    
+      <div class="w-[35%] flex space-x-1 text-sm text-center">
+        <button class="h-full w-1/2 p-2 rounded-lg text-text-highlight hover:text-text-tertiary border border-border-highlight hover:bg-border-highlight transition-colors duration-300 ease-in-out"
+          (click)="addModel()">
+          Adicionar
+        </button>
+        
+        <button class="h-full w-1/2 p-2 rounded-lg text-text-highlight hover:text-text-tertiary border border-border-highlight hover:bg-border-highlight transition-colors duration-300 ease-in-out"
+          (click)="removeModel()">
+          Remover
+        </button>
+      </div>
+    </div>
+
+    <!-- Toggle Buttons -->
+    <div class="mt-16 mb-4 w-full h-8 flex justify-between rounded-lg
+    border border-border-highlight
+    text-text-highlight shadow-lg">
+      <div class="flex w-full">
+        <button class="w-1/2 rounded-l-lg focus:outline-none transition-colors duration-300 ease-in-out"
+          (click)="toggleOptionsState(optionStates.options)"
+          [class.bg-main-highlight]="optionsState === optionStates.options"
+          [class.text-text-tertiary]="optionsState === optionStates.options">
+          Configuração do Modelo
+        </button>
+        <button class="w-1/2 rounded-r-lg focus:outline-none transition-colors duration-300 ease-in-out"
+          (click)="toggleOptionsState(optionStates.prePrompt)"
+          [class.bg-main-highlight]="optionsState === optionStates.prePrompt"
+          [class.text-text-tertiary]="optionsState === optionStates.prePrompt">
+          Prompt de Sistema
+        </button>
+      </div>
+    </div>
+
+
+    <!-- Options Section -->
+    @if (optionsState === optionStates.options) {
+    <!-- Seed Input -->
+    <div class="flex items-center space-x-2">
+      <h5 class="w-[25%]">Seed:</h5>
+      <input type="number" class="w-full p-2 rounded-lg border border-border-secondary"
+        placeholder="Enter Seed Value" [value]="brain.chatbotSettings.options.seed" (input)="onSeedChange($event)" />
+    </div>
+
+    <!-- Top K Slider -->
+    <div class="flex items-center">
+      <h5 class="w-[25%]">Top K:</h5>
+      <div class="flex items-center flex-grow">
+        <input type="range" min="0" max="100" [value]="brain.chatbotSettings.options.top_k" (input)="onTopKChange($event)"
+          class="flex-grow" />
+        <span class="w-[10%] text-right">{{ brain.chatbotSettings.options.top_k }}</span>
+      </div>
+    </div>
+
+    <!-- Top P Slider -->
+    <div class="flex items-center">
+      <h5 class="w-[25%]">Top P:</h5>
+      <div class="flex items-center flex-grow">
+        <input type="range" min="0" max="1" step="0.01" [value]="brain.chatbotSettings.options.top_p"
+          (input)="onTopPChange($event)" class="flex-grow" />
+        <span class="w-[10%] text-right">{{ brain.chatbotSettings.options.top_p }}</span>
+      </div>
+    </div>
+
+    <!-- Temperature Slider -->
+    <div class="flex items-center">
+      <h5 class="w-[25%]">Temperatura:</h5>
+      <div class="flex items-center flex-grow">
+        <input type="range" min="0" max="2" step="0.01" [value]="brain.chatbotSettings.options.temperature"
+          (input)="onTemperatureChange($event)" class="flex-grow" />
+        <span class="w-[10%] text-right">{{ brain.chatbotSettings.options.temperature }}</span>
+      </div>
+    </div>
+
+    <!-- Repeat Penalty Slider -->
+    <div class="flex items-center">
+      <h5 class="w-[25%]">Penalidade por Repetição:</h5>
+      <div class="flex items-center flex-grow">
+        <input type="range" min="0" max="2" step="0.01" [value]="brain.chatbotSettings.options.repeat_penalty"
+          (input)="onRepeatPenaltyChange($event)" class="flex-grow" />
+        <span class="w-[10%] text-right">{{ brain.chatbotSettings.options.repeat_penalty }}</span>
+      </div>
+    </div>
+
+    <!-- Stop Tokens Input -->
+    <div class="flex items-center space-x-2">
+      <h5 class="w-[25%]">Stop Tokens:</h5>
+      <input type="text" class="w-full p-2 rounded-lg border border-border-secondary"
+        placeholder="Escreve aqui os Stop Tokens (separado por vírgulas)" [value]="brain.chatbotSettings.options.stop.join(', ')"
+        (input)="onStopTokensChange($event)" />
+    </div>
+    }
+
+    <!-- Pre-prompt Section -->
+    @if (optionsState === optionStates.prePrompt) {
+    <h5>Prompt de Sistema:</h5>
+    <textarea class="w-full h-40 min-h-16 p-2 rounded-lg border border-border-secondary"
+      placeholder="Enter a pre-prompt" [value]="brain.chatbotSettings.prePrompt"
+      (input)="onPrePromptChange($event)"></textarea>
+    }
+  </div>
+  
+
+  <div class="mt-16 mb-4 text-text-primary">
+    <h3 class="text-center mb-4 font-bold">Opções Chroma DB</h3>
+    <div class="flex flex-col space-y-8">
+      <div class="w-full h-8 flex justify-between">
+        <div class="flex w-full space-x-8">
+          <button class="w-1/2 rounded-lg text-info-secondary hover:text-info bg-info hover:bg-info-secondary transition-colors duration-300 ease-in-out"
+            (click)="brain.chatbotApiService.tempChromaDbIngestion()">
+            Ingerir Docs na BD
+          </button>
+  
+          <button class="w-1/2 rounded-lg text-error-secondary hover:text-error bg-error hover:bg-error-secondary transition-colors duration-300 ease-in-out"
+            (click)="brain.chatbotApiService.tempChromaDbDeletion()">
+            Apagar Docs da BD
+          </button>
+        </div>
+      </div>
+
+      <div class="w-full h-8 flex justify-between">
+        <button class="px-4 rounded-lg text-text-highlight hover:text-text-tertiary border border-border-highlight hover:bg-border-highlight transition-colors duration-300 ease-in-out"
+        (click)="onCollectionCountClicked()">
+          Dimensão da Coleção
+        </button>
+        <h3>
+          {{ collectionCount }}
+        </h3>
+      </div>
+    </div>
+  </div>
+</ng-template>
+</app-modular-modal>

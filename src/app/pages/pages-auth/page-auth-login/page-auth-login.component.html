@@ -1,0 +1,64 @@
+<div class="flex h-full w-full items-center justify-center">
+  <div class="w-full max-w-md border border-border-highlight rounded-lg shadow-lg p-8">
+    <h2 class="text-2xl font-semibold text-center text-text-tertiary">Login</h2>
+    <form class="mt-6" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- Email Input -->
+      <div class="mb-4">
+        <label for="email" class="block text-sm font-medium">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          formControlName="email"
+          placeholder="Inserir o teu email"
+          class="mt-1 w-full px-4 py-2 border border-border-secondary rounded-lg shadow-sm focus:ring focus:ring-main-highlight focus:outline-none text-text-primary placeholder-text-text-secondary"
+        >
+        <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="text-sm text-error">
+          Por favor, insira um email válido.
+        </div>
+      </div>
+
+      <!-- Password Input -->
+      <div class="mb-4">
+        <label for="password" class="block text-sm font-medium">Password</label>
+        <input 
+          type="password"
+          id="password" 
+          formControlName="password"
+          placeholder="Inserir a tua password"
+          class="mt-1 w-full px-4 py-2 border border-border-secondary rounded-lg shadow-sm focus:ring focus:ring-main-highlight focus:outline-none text-text-primary placeholder-text-text-secondary"
+        >
+        <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-sm text-error">
+          A password deve ter pelo menos 6 caracteres.
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="mb-4 text-sm text-error">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Submit and Simulate Buttons -->
+      <div class="mb-4 flex justify-between">
+        <button 
+          type="submit"
+          [disabled]="loginForm.invalid"
+          class="px-4 py-2 text-text-tertiary bg-main-primary border border-border-highlight rounded-lg shadow transition duration-200 hover:bg-main-highlight focus:outline-none focus:ring focus:ring-highlight-secondary"
+        >
+          Login
+        </button>
+        <button 
+          type="button"
+          (click)="simulateLogin()"
+          class="px-4 py-2 text-text-tertiary bg-highlight-secondary border border-border-highlight rounded-lg shadow transition duration-200 hover:bg-highlight-primary focus:outline-none focus:ring focus:ring-main-primary"
+        >
+          Simulate Login
+        </button>
+      </div>
+
+      <!-- Additional Links -->
+      <div class="text-sm text-center text-text-secondary">
+        <p>Não tens conta? <a [routerLink]="['/auth/register']" class="text-text-highlight hover:underline">Registar</a></p>
+      </div>
+    </form>
+  </div>
+</div>

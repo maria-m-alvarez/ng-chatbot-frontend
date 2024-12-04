@@ -10,54 +10,86 @@ module.exports = {
         '32': '32px',
       },
       colors: {
-        // Light theme
-        'main-bg': '#FFFEFE',
+        // Minsait Main Colors
+        'minsait-pruno': '#480E2A',         // Primary
+        'minsait-pruno-dark': '#260717',    // Highlight
+        'minsait-gris': '#E3E2DA',          // Secondary
+        'minsait-white': '#FFFFFF',         // White
+        'minsait-fucsia': '#FF0054',        // Highlight Secondary
 
-        'main-primary': '#E6E7E6',
-        'main-primary-lighter': '#F3F3F2',
-        'main-primary-darker': '#CBCDCB',
+        // Minsait Complementary Colors
+        'minsait-sucess': '#44B757',
+        'minsait-sucess-secondary': '#A9E8A7',
 
-        'main-secondary': '#1B3A49',
-        'main-secondary-lighter': '#819198',
-        'main-secondary-darker': '#11232D',
+        'minsait-error': '#D2044A',
+        'minsait-error-secondary': '#F4A6C4',
+
+        'minsait-warning': '#E56813',
+        'minsait-warning-secondary': '#FFA96E',
+
+        'minsait-info': '#8661F5',
+        'minsait-info-secondary': '#C0B3F8',
+
+
+        // Main Colors
+        'main-primary': 'var(--color-main-primary)',
+        'main-primary-contrast': 'var(--color-main-primary-contrast)',
+        'main-secondary': 'var(--color-main-secondary)',
+        'main-secondary-contrast': 'var(--color-main-secondary-contrast)',
+        'main-terciary': 'var(--color-main-terciary)',
+        'main-terciary-contrast': 'var(--color-main-terciary-contrast)',
+        'main-highlight': 'var(--color-main-highlight)',
+
+        // Background Colors
+        'background-primary': 'var(--color-background-primary)',
+        'background-secondary': 'var(--color-background-secondary)',
+        'background-tertiary': 'var(--color-background-tertiary)',
+        'background-highlight': 'var(--color-background-highlight)',
+
+        // Text Colors
+        'text-primary': 'var(--color-text-primary)',
+        'text-secondary': 'var(--color-text-secondary)',
+        'text-tertiary': 'var(--color-text-tertiary)',
+        'text-highlight': 'var(--color-text-highlight)',
+
+        // Border Colors
+        'border-primary': 'var(--color-border-primary)',
+        'border-secondary': 'var(--color-border-secondary)',
+        'border-terciary': 'var(--color-border-terciary)',
+        'border-highlight': 'var(--color-border-highlight)',
+
+        // Chatbot Colors
+        'chatbot-background': 'var(--color-chatbot-background)',
+        'chatbot-bubble-user-background': 'var(--color-chatbot-bubble-user-background)',
+        'chatbot-bubble-user-text': 'var(--color-chatbot-bubble-user-text)',
+        'chatbot-bubble-assistant-background': 'var(--color-chatbot-bubble-assistant-background)',
+        'chatbot-bubble-assistant-text': 'var(--color-chatbot-bubble-assistant-text)',
+
+        // Status Colors
+        'success': 'var(--color-success)',
+        'success-secondary': 'var(--color-success-secondary)',
         
-        'main-hl-primary': '#FCE1D3',
-        'main-hl-primary-lighter': '#FEF2EC',
-        'main-hl-primary-darker': '#F6B08D',
+        'error': 'var(--color-error)',
+        'error-secondary': 'var(--color-error-secondary)',
 
-        'main-hl-secondary': '#78C2B4',
-        'main-hl-secondary-lighter': '#ABD9D1',
-        'main-hl-secondary-darker': '#4A7E7F',
-        
-        // Dark theme
-        'dark-bg':'#262730',
-        
-        'dark-primary': '#0e1118',
-        'dark-primary-lighter': '#1A1C24',
-        'dark-primary-darker': '#08090D',
-        
-        'dark-secondary': '#a0a6b7',
-        'dark-secondary-lighter': '#C5C9D3',
-        'dark-secondary-darker': '#575C68',
+        'warning': 'var(--color-warning)',
+        'warning-secondary': 'var(--color-warning-secondary)',
 
-        'dark-hl-primary': '#FCE1D3',
-        'dark-hl-primary-lighter': '#F6B08D',
-        'dark-hl-primary-darker': '#F6B08D',
+        'info': 'var(--color-info)',
+        'info-secondary': 'var(--color-info-secondary)',
 
-        'dark-hl-secondary': '#78C2B4',
-        'dark-hl-secondary-lighter': '#4A7E7F',
-        'dark-hl-secondary-dark': '#4A7E7F',
+        'help': 'var(--color-help)',
+        'help-secondary': 'var(--color-help-secondary)',
 
-        'dark-primary-old': '#0e1118',
-        'dark-secondary-old': '#262730',
-        'dark-dark': '#a0a6b7',
+        'focus': 'var(--color-focus)',
+        'focus-secondary': 'var(--color-focus-secondary)',
 
-        // success
-        // info
-        // warning
-        // danger
+        // Scrollbar Colors
+        'scrollbar-track': 'var(--scrollbar-track)',
+        'scrollbar-thumb': 'var(--scrollbar-thumb)',
+        'scrollbar-thumb-hover': 'var(--scrollbar-thumb-hover)',
       },
     },
   },
   plugins: [],
-}
+};

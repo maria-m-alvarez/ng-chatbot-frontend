@@ -3,6 +3,81 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CSS Variables for Theme */
+:root {
+  --color-main-primary: #480E2A;
+  --color-main-primary-contrast: #260717;
+  --color-main-secondary: #E3E2DA;
+  --color-main-secondary-contrast: #FF0054;
+  --color-main-terciary: #FFFFFF;
+  --color-main-terciary-contrast: #FF0054;
+  --color-main-highlight: #FF0054;
+
+  --color-background-primary: #480E2A;
+  --color-background-secondary: #E3E2DA;
+  --color-background-tertiary: #FFFFFF;
+  --color-background-highlight: #260717;
+
+  --color-text-primary: #260717;
+  --color-text-secondary: #E3E2DA;
+  --color-text-tertiary: #FFFFFF;
+  --color-text-highlight: #FF0054;
+
+  --color-border-primary: #260717;
+  --color-border-secondary: #E3E2DA;
+  --color-border-terciary: #FFFFFF;
+  --color-border-highlight: #FF0054;
+
+  --color-chatbot-background: #FFFFFF;
+  --color-chatbot-bubble-user-background: #480E2A;
+  --color-chatbot-bubble-user-text: #E3E2DA;
+  --color-chatbot-bubble-assistant-background: #260717;
+  --color-chatbot-bubble-assistant-text: #E3E2DA;
+
+  --color-success: #4ACB90;
+  --color-success-secondary: #EAF7F0;
+
+  --color-error: #F93F3E;
+  --color-error-secondary: #FBE8E8;
+
+  --color-warning: #FCA12F;
+  --color-warning-secondary: #FAF2E8;
+
+  --color-info: #60AFFE;
+  --color-info-secondary: #ECF3FB;
+
+  --color-help: #9011FE;
+  --color-help-secondary: #F0E3FC;
+
+  --color-focus: #0D5BA6;
+  --color-focus-secondary: #E4EAF2;
+
+  /* Scrollbar Colors */
+  --scrollbar-track: #FFFFFF;
+  --scrollbar-thumb: #E3E2DA;
+  --scrollbar-thumb-hover: #480E2A;
+}
+
+/* Global Slender Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: 10px;
+  border: 2px solid var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+
 $color-main-bg: #fffefe;
 $color-main-primary: #f1f2f6;
 $color-main-terciary: #818594;

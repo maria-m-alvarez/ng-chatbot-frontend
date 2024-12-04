@@ -1,0 +1,18 @@
+<div class="h-full w-full flex flex-col"><!-- Template for Right Content -->
+
+  <!-- Modular Header -->
+  <app-modular-header
+    [useNegativeLogo]="true"
+    [rightContent]="rightContent">
+  </app-modular-header>
+
+  <ng-template #rightContent>
+    <app-user-options-button></app-user-options-button>
+  </ng-template>
+  
+  <div class="w-full h-fit flex-grow">
+  </div>
+  <app-chatbot-session-history class="flex-grow overflow-y-auto"></app-chatbot-session-history>
+  <app-chatbot-input class="mx-2 flex-shrink-0 bg-transparent"></app-chatbot-input>
+
+</div>

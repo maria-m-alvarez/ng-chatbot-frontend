@@ -1,0 +1,29 @@
+<header class="w-full h-12 flex items-center px-2 space-x-4 bg-main-primary text-text-secondary">
+  <!-- Left Section (before logoPos) -->
+  <div class="h-full aspect-square flex items-center">
+    <ng-container [ngTemplateOutlet]="leftContent"></ng-container>
+  </div>
+
+  <!-- Logo Section -->
+  <div class="flex items-center flex-grow">
+    @if (showLogo) {
+      <a href="https://www.minsait.com/" target="_blank" rel="noopener noreferrer">
+        <img 
+          [src]="getLogo()"
+          alt="Minsait Company Logo" 
+          class="h-4 w-auto object-contain"
+        >
+      </a>
+    }
+  </div>
+
+  <!-- Navigation Section (navigation links) -->
+  <nav class="hidden md:flex items-center justify-center w-2/6 space-x-6">
+    <ng-container [ngTemplateOutlet]="navContent"></ng-container>
+  </nav>
+
+  <!-- Right Section (after navigation) -->
+  <div class="flex flex-grow items-center justify-end">
+    <ng-container [ngTemplateOutlet]="rightContent"></ng-container>
+  </div>
+</header>
