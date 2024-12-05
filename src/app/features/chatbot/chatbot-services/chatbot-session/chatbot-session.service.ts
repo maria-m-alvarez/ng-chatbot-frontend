@@ -24,20 +24,20 @@ export class ChatbotSessionService {
   ) {
     this.initializeSessions();
     this.initializeEventListeners();
-    this.getModelNames();
+    this.getProvidersAndTheirModelNames();
   }
 
   private initializeEventListeners(): void {
     this.chatbotEventService.onChatbotSettingsChanged.subscribe(() => {
-      this.getModelNames();
+      this.getProvidersAndTheirModelNames();
     });
 
     this.chatbotEventService.onRequestModelNames.subscribe(() => {
-      this.getModelNames();
+      this.getProvidersAndTheirModelNames();
     });
   }
 
-  private getModelNames(): void {
+  private getProvidersAndTheirModelNames(): void {
     this.chatbotApiService.getAllProviders().subscribe({
       next: (providers) => {
         this.providers = providers;
@@ -59,6 +59,7 @@ export class ChatbotSessionService {
               this.modelsByProvider[provider] = models;
             });
             console.log('Models by Provider:', this.modelsByProvider);
+            this.selectInitialModel();
           },
           error: (error) => {
             console.error('Error fetching models for providers:', error);
@@ -73,15 +74,19 @@ export class ChatbotSessionService {
 
   private selectInitialModel(): void {
     if (this.providers.length > 0) {
-      this.selectedProvider = this.providers[0];
+      const azureProvider = this.providers.find(provider => provider.toLowerCase().includes('azure'));
+      this.selectedProvider = azureProvider ?? this.providers[0];
+
       const models = this.modelsByProvider[this.selectedProvider] || [];
       if (models.length > 0) {
         this.selectedModel = models[0].value;
       }
     }
+  
     this.chatbotEventService.onChatbotProviderChanged.emit(this.selectedProvider);
     this.chatbotEventService.onChatbotModelNameChanged.emit(this.selectedModel);
   }
+  
 
 
   getProviderSelectorOptions(): SelectorOption[] {
@@ -169,11 +174,12 @@ export class ChatbotSessionService {
     }
   }
 
-  handleAssistantResponse(promptId: string, message: string): void {
+  handleAssistantResponse(promptId: string, message: string, metadata: any[] = []): void {
     console.log('Assistant response:', message);
-    this.currentSession.addPromptAnswer(promptId, message);
+    this.currentSession.addPromptAnswer(promptId, message, metadata);
     this.chatbotEventService.onPromptAnswerReceived.emit();
   }
+  
 
   getSessionMessages(): ChatSessionMessage[] {
     const session = this.currentSession;
@@ -201,9 +207,10 @@ export class ChatbotSessionService {
     this.chatbotApiService.sendChatPrompt(provider, model, promptMessage).subscribe({
       next: (apiResponse) => {
         console.log('API response:', apiResponse);
-        const assistantMessage = apiResponse?.messages.find((msg) => msg.role === 'assistant')?.content ?? "";
+        const assistantMessage = apiResponse?.messages.find((msg) => msg.role === 'assistant')?.content ?? '';
+        const documents = apiResponse.metadata?.documents ?? [];
 
-        this.handleAssistantResponse(prompt.id, assistantMessage);
+        this.handleAssistantResponse(prompt.id, assistantMessage, documents);
         this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Success);
       },
       error: (error) => {
@@ -214,7 +221,7 @@ export class ChatbotSessionService {
         console.log('API Prompt call completed');
         this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Complete);
       },
-    });
+    });    
   }
 
   stopProcessing(): void {

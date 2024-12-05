@@ -22,30 +22,17 @@ export class ChatbotApiService {
   // API Methods
   // ------------------------------
 
-  /**
-   * Fetch all LLM providers.
-   */
   getAllProviders(): Observable<string[]> {
     const url = `${this.baseUrl}/providers`;
     return this.http.get<string[]>(url);
   }
 
-  /**
-   * Fetch available models for a provider.
-   * @param providerName - The name of the LLM provider.
-   */
   getAllModelsByProvider(providerName: string): Observable<ProviderModelsResponse> {
     const url = `${this.baseUrl}/provider/models?provider_name=${providerName}`;
     return this.http.get<ProviderModelsResponse>(url);
   }
 
-  /**
-   * Send a chat prompt and receive a response.
-   * @param provider - The LLM provider.
-   * @param provider_model - The LLM model.
-   * @param prompt - The user input prompt.
-   * @param options - Chat generation options.
-   */
+
   sendChatPrompt(provider: string, provider_model: string, prompt: string, options: ChatRequestOptions = {}): Observable<ChatCompletion> {
     const url = `${this.baseUrl}/chat`;
     const chatRequest: ChatRequest = {
@@ -58,11 +45,7 @@ export class ChatbotApiService {
     return this.http.post<ChatCompletion>(url, chatRequest);
   }
 
-  /**
-   * Send feedback for a specific chat prompt answer.
-   * @param promptAnswerId - ID of the chat prompt answer.
-   * @param voteType - Feedback type ("upvote" or "downvote").
-   */
+
   sendPromptFeedback(promptAnswerId: number, voteType: string): Observable<any> {
     const url = `${this.baseUrl}/feedback`;
     const requestBody = { prompt_answer_id: promptAnswerId, vote_type: voteType };
@@ -93,12 +76,7 @@ export class ChatbotApiService {
     return this.webSocketSubject!;
   }
 
-  /**
-   * Send a chat prompt using WebSocket.
-   * @param webSocketUrl - The WebSocket URL.
-   * @param prompt - The chat prompt.
-   * @param modelName - The LLM model name.
-   */
+
   sendChatPromptViaWebSocket(webSocketUrl: string, prompt: string, modelName: string): Observable<string> {
     const webSocketSubject = this.createWebSocket(webSocketUrl);
 
@@ -110,9 +88,7 @@ export class ChatbotApiService {
     return webSocketSubject.asObservable();
   }
 
-  /**
-   * Close the WebSocket connection.
-   */
+
   closeWebSocket(): void {
     if (this.webSocket) {
       this.webSocket.close();
@@ -121,23 +97,18 @@ export class ChatbotApiService {
     }
   }
 
-  
 
+  
   // ------------------------------
   // Temporary Methods
   // ------------------------------
 
-  /**
-   * Temporary method for Chroma DB ingestion.
-   */
   tempChromaDbIngestion(): Observable<any> {
     const url = `${this.baseUrl}/temp/chroma/ingest`;
     return this.http.get(url).pipe(map((response) => console.log('Chroma DB Ingestion:', response)));
   }
 
-  /**
-   * Temporary method for Chroma DB deletion.
-   */
+
   tempChromaDbDeletion(): Observable<any> {
     const url = `${this.baseUrl}/temp/chroma/delete`;
     return this.http.get(url).pipe(map((response) => console.log('Chroma DB Deletion:', response)));

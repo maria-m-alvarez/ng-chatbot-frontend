@@ -11,7 +11,17 @@
 
     <!-- Message Content -->
     <div class="flex-1 whitespace-pre-wrap">
-      <div class="p-2 rounded-lg text-main-primary dark:text-main-secondary" [innerHTML]="sanitizedMessage"></div>
+      <div class="p-2 rounded-lg text-main-primary dark:text-main-secondary" [innerHTML]="sanitizedMessage">
+        <!-- Sources -->
+        @if (getDocuments().length > 0) {
+          <div class="mt-2 text-sm text-main-secondary">
+            <strong>Sources:</strong>
+            <span *ngFor="let doc of getDocuments(); let i = index">
+              {{ doc.Document }} (Page {{ doc.Page }}){{ i < getDocuments().length - 1 ? ', ' : '' }}
+            </span>
+          </div>
+        }
+      </div>
 
       <!-- Option Buttons -->
       <div class="p-3 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-150 justify-start items-center space-x-4 text-sm text-main-secondary-lighter">

@@ -4,21 +4,23 @@ export abstract class PromptBase {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  metadata: any;
   timestamp: Date;
   processResult: string = '';
 
-  constructor(id: string, role: 'user' | 'assistant', content: string) {
+  constructor(id: string, role: 'user' | 'assistant', content: string, metadata: any = {}) {
     this.id = id;
     this.role = role;
     this.content = content;
     this.timestamp = new Date();
+    this.metadata = metadata;
   }
 }
 
 // User prompt class
 export class Prompt extends PromptBase {
-  constructor(id: string, content: string) {
-    super(id, 'user', content);
+  constructor(id: string, content: string, metadata: any = {}) {
+    super(id, 'user', content, metadata);
   }
 }
 
@@ -26,8 +28,8 @@ export class Prompt extends PromptBase {
 export class PromptAnswer extends PromptBase {
   promptId: string;
 
-  constructor(id: string, promptId: string, content: string) {
-    super(id, 'assistant', content);
+  constructor(id: string, promptId: string, content: string, metadata: any = {}) {
+    super(id, 'assistant', content, metadata);
     this.promptId = promptId;
   }
 }
@@ -91,11 +93,12 @@ export class ChatSession {
   }
 
   // Add an assistant answer and update messages array
-  addPromptAnswer(promptId: string, content: string): void {
+  addPromptAnswer(promptId: string, content: string, metadata: any = {}): ChatSessionMessage {
     const answer = new PromptAnswer(this.generateId(), promptId, content);
     this.promptAnswers.push(answer);
-    this.messages.push(new ChatSessionMessage(answer.id, 'assistant', content)); // Add answer as a message
+    this.messages.push(new ChatSessionMessage(answer.id, 'assistant', content, metadata)); // Add answer as a message
     this.updatedAt = new Date();
+    return new ChatSessionMessage(answer.id, 'assistant', content);
   }
 
   updatePromptAnswer(promptAnswerId: string, updatedPromptAnswer: PromptAnswer): void {
@@ -135,13 +138,16 @@ export class ChatSessionMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  metadata?: { documents: { Document: string; Page: number }[] };
 
-  constructor(id: string, role: 'user' | 'assistant', content: string) {
+  constructor(id: string, role: 'user' | 'assistant', content: string, metadata?: any) {
     this.id = id;
     this.role = role;
     this.content = content;
+    this.metadata = metadata;
   }
 }
+
 
 // chatbot-models.ts
 
