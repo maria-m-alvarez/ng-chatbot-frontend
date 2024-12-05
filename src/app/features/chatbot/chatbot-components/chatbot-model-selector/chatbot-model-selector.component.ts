@@ -16,8 +16,15 @@ export class ChatbotModelSelectorComponent extends InputSelectorComponent {
     readonly brain: ChatbotBrainService
   ) {
     super();
-    this.onValueChange.subscribe((value) => eventService.selectorClickedEvt.emit({ selectorId: this.inputID, selectedOption: value }));
-    eventService.selectorClickedEvt.subscribe((event) => this.filterSelectorEvent(event.selectorId, event.selectedOption));
+    this.onValueChange.subscribe((value) =>
+      eventService.selectorClickedEvt.emit({
+        selectorId: this.inputID,
+        selectedOption: value,
+      })
+    );
+    eventService.selectorClickedEvt.subscribe((event) =>
+      this.filterSelectorEvent(event.selectorId, event.selectedOption)
+    );
   }
 
   override ngOnInit() {
@@ -33,8 +40,15 @@ export class ChatbotModelSelectorComponent extends InputSelectorComponent {
   }
 
   protected refreshOptions(): void {
-    this.currentSelection = this.getSelectionOptionsByValue(this.brain.chatbotSettings.model);
-    this.options = this.brain.chatbotSessionService.llmModels;
+    this.currentSelection = this.getSelectionOptionsByValue(
+      this.brain.chatbotSettings.model
+    );
+
+    // Replace the incorrect property llmModels with modelsByProvider
+    this.options =
+      this.brain.chatbotSessionService.modelsByProvider[
+        this.brain.chatbotSettings.provider
+      ] ?? [];
   }
 
   protected override filterSelectorEvent(selectorId: string, selectedOption: SelectorOption): void {

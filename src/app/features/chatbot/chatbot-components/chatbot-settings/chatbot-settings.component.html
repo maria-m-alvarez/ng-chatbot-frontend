@@ -7,16 +7,17 @@
   <div class="flex flex-col text-text-primary">
 
     <div class="grid grid-cols-2 gap-4">
-      <!-- API Selector -->
+      
+      <!-- Provider Selector -->
       <div class="flex items-center space-x-2">
-        <h5 class="w-[25%]">API:</h5>
-        <app-input-selector #apiSelector
-          [inputID]="'chatbot_connection_name'"
+        <h5 class="w-[25%]">Provider:</h5>
+        <app-input-selector #providerSelector
+          [inputID]="'chatbot_provider'"
           [defaultMessage]="'Select API Type...'"
           [defaultSelectionID]="1"
-          [options]="brain.configService.apiConnectionOptions"
-          [stringValue]="brain.chatbotSettings.connectionName"
-          (onValueChange)="onInputChanged(apiSelector.inputID, apiSelector.valueAsString)"
+          [options]="brain.chatbotSessionService.getProviderSelectorOptions()"
+          [stringValue]="brain.chatbotSettings.provider"
+          (onValueChange)="onInputChanged(providerSelector.inputID, providerSelector.valueAsString)"
           class="w-full border border-border-secondary rounded-lg">
         </app-input-selector>
       </div>
@@ -24,12 +25,12 @@
       <!-- Model Selector -->
       <div class="flex items-center space-x-2">
         <h5 class="w-[25%]">Modelo:</h5>
-        <app-chatbot-model-selector #modelSelector
+        <app-chatbot-model-selector #providerModelSelector
           [inputID]="'chatbot_model'"
           [defaultMessage]="'Select your LLM...'"
-          [options]="brain.chatbotSessionService.llmModels"
+          [options]="brain.chatbotSessionService.getProviderModelSelectorOptions(brain.chatbotSettings.provider)"
           [stringValue]="brain.chatbotSettings.connectionName"
-          (onValueChange)="onInputChanged(modelSelector.inputID, modelSelector.valueAsString)"
+          (onValueChange)="onInputChanged(providerModelSelector.inputID, providerModelSelector.valueAsString)"
           class="w-full border border-border-secondary rounded-lg">
         </app-chatbot-model-selector>
       </div>
@@ -55,24 +56,6 @@
       </div>
     </div>
 
-    <div class="mt-8 flex items-center space-x-2">
-      <h5 class="w-[30%]">Modelo Ollama:</h5>
-      <input #ollamaModelNameInput type="text" class="w-full p-2 rounded-lg border border-border-secondary"
-        placeholder="Escreve o nome do modelo Ollama (ex: llama3.2:1b)"/>
-    
-      <div class="w-[35%] flex space-x-1 text-sm text-center">
-        <button class="h-full w-1/2 p-2 rounded-lg text-text-highlight hover:text-text-tertiary border border-border-highlight hover:bg-border-highlight transition-colors duration-300 ease-in-out"
-          (click)="addModel()">
-          Adicionar
-        </button>
-        
-        <button class="h-full w-1/2 p-2 rounded-lg text-text-highlight hover:text-text-tertiary border border-border-highlight hover:bg-border-highlight transition-colors duration-300 ease-in-out"
-          (click)="removeModel()">
-          Remover
-        </button>
-      </div>
-    </div>
-
     <!-- Toggle Buttons -->
     <div class="mt-16 mb-4 w-full h-8 flex justify-between rounded-lg
     border border-border-highlight
@@ -85,9 +68,9 @@
           Configuração do Modelo
         </button>
         <button class="w-1/2 rounded-r-lg focus:outline-none transition-colors duration-300 ease-in-out"
-          (click)="toggleOptionsState(optionStates.prePrompt)"
-          [class.bg-main-highlight]="optionsState === optionStates.prePrompt"
-          [class.text-text-tertiary]="optionsState === optionStates.prePrompt">
+          (click)="toggleOptionsState(optionStates.systemPrompt)"
+          [class.bg-main-highlight]="optionsState === optionStates.systemPrompt"
+          [class.text-text-tertiary]="optionsState === optionStates.systemPrompt">
           Prompt de Sistema
         </button>
       </div>
@@ -153,10 +136,10 @@
     }
 
     <!-- Pre-prompt Section -->
-    @if (optionsState === optionStates.prePrompt) {
+    @if (optionsState === optionStates.systemPrompt) {
     <h5>Prompt de Sistema:</h5>
     <textarea class="w-full h-40 min-h-16 p-2 rounded-lg border border-border-secondary"
-      placeholder="Enter a pre-prompt" [value]="brain.chatbotSettings.prePrompt"
+      placeholder="Enter a system-prompt" [value]="brain.chatbotSettings.systemPrompt"
       (input)="onPrePromptChange($event)"></textarea>
     }
   </div>

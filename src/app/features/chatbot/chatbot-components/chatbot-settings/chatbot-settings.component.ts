@@ -16,11 +16,16 @@ import { ModularModalComponent } from '../../../../core/components/modular/modul
 export class ChatbotSettingsComponent extends ChatbotBaseComponentComponent {
   @ViewChild('ollamaModelNameInput') ollamaModelNameInput: ElementRef<HTMLInputElement> | undefined;
 
+  providerOptions = this.brain.chatbotSessionService.getProviderSelectorOptions();
+  modelOptions = this.brain.chatbotSessionService.getProviderModelSelectorOptions(
+    this.brain.chatbotSettings.provider
+  );
+
   collectionCount: number = 0;
 
   optionStates = {
     options: 'options',
-    prePrompt: 'pre-prompt',
+    systemPrompt: 'system-prompt',
   }
 
   optionsState: string = this.optionStates.options;
@@ -70,43 +75,19 @@ export class ChatbotSettingsComponent extends ChatbotBaseComponentComponent {
     ChatbotBrainService.chatbotSettings.options.stop = input.value.split(',').map(token => token.trim());
   }
 
-  // Handle the pre-prompt input
+  // Handle the system-prompt input
   onPrePromptChange(event: Event): void {
     const input = event.target as HTMLTextAreaElement;
-    ChatbotBrainService.chatbotSettings.prePrompt = input.value;
-  }
-
-  addModel() {
-    console.log('Adding model');
-    console.log('Model name:', this.ollamaModelNameInput?.nativeElement.value);
-    const name = this.ollamaModelNameInput?.nativeElement.value;
-
-    if (name && name.length > 0) {
-      this.brain.chatbotApiService.tempAddModel(name);
-      if (this.ollamaModelNameInput) {
-        this.ollamaModelNameInput.nativeElement.value = '';
-      }
-    }
-  }
-
-  removeModel() {
-    const name = this.ollamaModelNameInput?.nativeElement.value;
-
-    if (name && name.length > 0) {
-      this.brain.chatbotApiService.tempRemoveModel(name);
-      if (this.ollamaModelNameInput) {
-        this.ollamaModelNameInput.nativeElement.value = '';
-      }
-    }
+    ChatbotBrainService.chatbotSettings.systemPrompt = input.value;
   }
 
   onInputChanged(inputID: string, value: any): void {
-    if (inputID === 'chatbot_connection_name') {
-      this.brain.updateChatbotConnectionName(value as string);
+    if (inputID === 'chatbot_provider') {
+      this.onProviderChanged(value);
     }
 
     if (inputID === 'chatbot_model') {
-      this.brain.updateChatbotModel(value as string);
+      this.onModelChanged(value);
     }
 
     if (inputID === 'chatbot_use_options') {
@@ -123,5 +104,14 @@ export class ChatbotSettingsComponent extends ChatbotBaseComponentComponent {
 
   onCollectionCountClicked() {
     this.brain.chatbotApiService.tempChromaDbCount();
+  }
+
+  onProviderChanged(newProvider: string): void {
+    this.brain.updateChatbotProvider(newProvider);
+    this.modelOptions = this.brain.chatbotSessionService.getProviderModelSelectorOptions(newProvider);
+  }
+
+  onModelChanged(newModel: string): void {
+    this.brain.updateChatbotModel(newModel);
   }
 }

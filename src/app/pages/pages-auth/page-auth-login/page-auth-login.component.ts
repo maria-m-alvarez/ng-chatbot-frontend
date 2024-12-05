@@ -43,7 +43,7 @@ export class PageAuthLoginComponent extends PageAuthMainComponent {
 
     loginMethod.subscribe({
       next: () => {
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/chatbot']);
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Ocorreu um erro no login. Tente novamente.';

@@ -12,7 +12,7 @@ import { ChatbotPromptVoteComponent } from "../chatbot-prompt-vote/chatbot-promp
 export class ChatbotPromptAnswerComponent extends ChatbotPromptContainerComponent {
 
   get allowCopy(): boolean {
-    return this.brain.configService.allowCopyInChatbotPrompt && this.message.length > 0;
+    return false;
   }
 
   vote(vote: string) {

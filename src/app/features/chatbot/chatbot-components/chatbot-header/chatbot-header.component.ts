@@ -46,8 +46,8 @@ export class ChatbotHeaderComponent {
       .onSidebarToggled
       .subscribe(() => this.sidebarToggled());
 
-    this.logoUrl = this.configService.organizationLogoPos;
-    this.logoDarkUrl = this.configService.organizationLogoNeg;
+    this.logoUrl = this.configService.organizationLogoPositive;
+    this.logoDarkUrl = this.configService.organizationLogoNegative;
   }
 
   toggleTheme() {

@@ -23,7 +23,7 @@ export class ModularHeaderComponent {
 
   getLogo(): string {
     return this.useNegativeLogo
-      ? this.brain.configService.organizationLogoNeg
-      : this.brain.configService.organizationLogoPos;
+      ? this.brain.configService.organizationLogoNegative
+      : this.brain.configService.organizationLogoPositive;
   }
 }

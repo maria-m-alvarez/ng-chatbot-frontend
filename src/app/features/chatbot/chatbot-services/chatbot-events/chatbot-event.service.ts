@@ -16,6 +16,7 @@ export class ChatbotEventService {
   readonly onRequestModelNames = new EventEmitter<void>();
   
   readonly onChatbotSettingsChanged = new EventEmitter<void>();
+  readonly onChatbotProviderChanged = new EventEmitter<string>();
   readonly onChatbotModelNameChanged = new EventEmitter<string>();
   readonly onSaveChatbotSettings = new EventEmitter<void>();
 

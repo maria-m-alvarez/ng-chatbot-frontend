@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { ChatbotBaseComponentComponent } from '../../chatbot-base-component/chatbot-base-component.component';
+import { EventService } from '../../../../../core/services/event-service/event.service';
+import { ChatbotBrainService } from '../../../chatbot-services/chatbot-brain/chatbot-brain.service';
 
 @Component({
   selector: 'app-chatbot-input-options',
@@ -10,7 +12,14 @@ import { ChatbotBaseComponentComponent } from '../../chatbot-base-component/chat
 })
 export class ChatbotInputOptionsComponent extends ChatbotBaseComponentComponent {
 
+  constructor(
+    brain: ChatbotBrainService,
+    private readonly eventService: EventService
+  ) {
+    super(brain);
+  }
+
   triggerOptionEvent(eventId: string) {
-    this.brain.eventService.userOptionsClickEvt.emit(eventId);
+    this.eventService.userOptionsClickEvt.emit(eventId);
   }
 }
