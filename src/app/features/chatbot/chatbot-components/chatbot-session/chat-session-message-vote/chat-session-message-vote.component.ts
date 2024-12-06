@@ -6,12 +6,12 @@ export enum VoteStyle {
 }
 
 @Component({
-  selector: 'app-chatbot-prompt-vote',
+  selector: 'app-chat-session-message-vote',
   standalone: true,
-  templateUrl: './chatbot-prompt-vote.component.html',
-  styleUrls: ['./chatbot-prompt-vote.component.scss'],
+  templateUrl: './chat-session-message-vote.component.html',
+  styleUrls: ['./chat-session-message-vote.component.scss'],
 })
-export class ChatbotPromptVoteComponent {
+export class ChatSessionMessageVoteComponent {
   @Input() voteStyle: string = VoteStyle.Thumbs;
   @Input() maxRating: number = 5;
 

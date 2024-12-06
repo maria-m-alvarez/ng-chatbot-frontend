@@ -114,4 +114,14 @@ export class ChatbotSettingsComponent extends ChatbotBaseComponentComponent {
   onModelChanged(newModel: string): void {
     this.brain.updateChatbotModel(newModel);
   }
+
+  click_tempChromaDbIngestion() {
+    console.log('Ingesting Chroma DB');
+    this.brain.chatbotApiService.tempChromaDbIngestion().subscribe();
+  }
+
+  click_tempChromaDbDeletion() {
+    console.log('Deleting Chroma DB');
+    this.brain.chatbotApiService.tempChromaDbDeletion().subscribe();
+  }
 }

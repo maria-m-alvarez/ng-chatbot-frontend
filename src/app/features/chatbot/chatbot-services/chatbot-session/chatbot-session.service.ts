@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ChatbotEventService } from '../chatbot-events/chatbot-event.service';
-import { ChatSession, ChatSessionMessage } from '../../chatbot-models/chatbot-models';
+import { ChatSession } from '../../chatbot-models/chatbot-session';
 import { ChatbotApiService } from '../chatbot-api/chatbot-api.service';
 import { SelectorOption } from '../../../../core/components/input-components/input-selector/input-selector.component';
 import { WebRequestResult } from '../../../../core/models/enums';
@@ -12,7 +12,6 @@ import { forkJoin, map } from 'rxjs';
 export class ChatbotSessionService {
   currentSession!: ChatSession;
   sessions: ChatSession[] = [];
-
   providers: string[] = [];
   modelsByProvider: { [key: string]: SelectorOption[] } = {};
   selectedProvider: string = '';
@@ -44,7 +43,7 @@ export class ChatbotSessionService {
         const modelRequests = providers.map((provider) =>
           this.chatbotApiService.getAllModelsByProvider(provider).pipe(
             map((response) => ({
-              provider: provider,
+              provider,
               models: response.models.map((model: { name: string }, index: number) => ({
                 id: index + 1,
                 value: model.name,
@@ -58,7 +57,6 @@ export class ChatbotSessionService {
             responses.forEach(({ provider, models }) => {
               this.modelsByProvider[provider] = models;
             });
-            console.log('Models by Provider:', this.modelsByProvider);
             this.selectInitialModel();
           },
           error: (error) => {
@@ -74,20 +72,17 @@ export class ChatbotSessionService {
 
   private selectInitialModel(): void {
     if (this.providers.length > 0) {
-      const azureProvider = this.providers.find(provider => provider.toLowerCase().includes('azure'));
+      const azureProvider = this.providers.find((provider) => provider.toLowerCase().includes('azure'));
       this.selectedProvider = azureProvider ?? this.providers[0];
-
       const models = this.modelsByProvider[this.selectedProvider] || [];
       if (models.length > 0) {
         this.selectedModel = models[0].value;
       }
     }
-  
+
     this.chatbotEventService.onChatbotProviderChanged.emit(this.selectedProvider);
     this.chatbotEventService.onChatbotModelNameChanged.emit(this.selectedModel);
   }
-  
-
 
   getProviderSelectorOptions(): SelectorOption[] {
     return this.providers.map((provider, index) => new SelectorOption(index + 1, provider));
@@ -96,51 +91,33 @@ export class ChatbotSessionService {
   getProviderModelSelectorOptions(provider: string): SelectorOption[] {
     return this.modelsByProvider[provider] || [];
   }
-  
-  private getCurrentProviderAndModel(): { provider: string; model: string } {
-    return {
-      provider: this.selectedProvider,
-      model: this.selectedModel,
-    };
-  }
 
   private initializeSessions(): void {
-    this.createSession(
-      '-1',
-      'Example Session',
-      'user123',
-      [
-        { prompt: 'Hello, chatbot!', answer: 'Hello! How can I assist you today?' },
-        { prompt: 'What’s the weather like?', answer: 'It’s sunny and 75°F right now.' },
-        {
-          prompt: 'Is it possible for a strawberry to be a banana?',
-          answer:
-            'While it may seem like an odd concept, if we delve into the world of possibilities and imagination, there are interesting ways to think about how a strawberry could be a banana.',
-        },
-      ],
-      true
-    );
+    this.createSession('-1', 'Example Session', 'user123', [
+      { prompt: 'Hello, chatbot!', answer: 'Hello! How can I assist you today?' },
+      { prompt: 'What’s the weather like?', answer: 'It’s sunny and 75°F right now.' },
+      {
+        prompt: 'Is it possible for a strawberry to be a banana?',
+        answer: 'While it may seem odd, we can explore imaginative possibilities.',
+      },
+    ]);
   }
 
   private createSession(
     sessionId: string,
     title: string,
     userId: string,
-    promptsAndAnswers: { prompt: string; answer: string }[],
-    switchToSession: boolean = false
+    interactions: { prompt: string; answer: string }[]
   ): void {
     const session = new ChatSession(sessionId, title, userId);
 
-    promptsAndAnswers.forEach(({ prompt, answer }) => {
-      const promptItem = session.addPrompt(prompt);
-      session.addPromptAnswer(promptItem.id, answer);
+    interactions.forEach(({ prompt, answer }) => {
+      const userMessage = session.addUserMessage(prompt);
+      session.addAssistantMessage(userMessage.id, answer);
     });
 
     this.sessions.push(session);
-
-    if (switchToSession) {
-      this.switchSession(session.sessionId);
-    }
+    this.currentSession = session;
   }
 
   createEmptySession(sessionTitle: string = 'New Chat Session'): void {
@@ -155,84 +132,50 @@ export class ChatbotSessionService {
   }
 
   switchSession(sessionId: string): void {
-    if (!this.currentSession) {
-      this.currentSession = this.sessions[0];
-      this.currentSession.isCurrent = true;
-    }
-
-    if (this.currentSession.sessionId === sessionId) {
-      return;
-    }
-
     const session = this.sessions.find((s) => s.sessionId === sessionId);
     if (session) {
-      this.currentSession.isCurrent = false;
       this.currentSession = session;
-      this.currentSession.isCurrent = true;
-
       this.chatbotEventService.onSessionChanged.emit();
     }
   }
 
-  handleAssistantResponse(promptId: string, message: string, metadata: any[] = []): void {
-    console.log('Assistant response:', message);
-    this.currentSession.addPromptAnswer(promptId, message, metadata);
+  handleAssistantResponse(promptId: string, message: string, metadata: any = {}): void {
+    const msg = this.currentSession.addAssistantMessage(promptId, message, metadata);
     this.chatbotEventService.onPromptAnswerReceived.emit();
-  }
-  
 
-  getSessionMessages(): ChatSessionMessage[] {
-    const session = this.currentSession;
-    const allMessages: ChatSessionMessage[] = [];
-
-    session.prompts.forEach((prompt, index) => {
-      allMessages.push(new ChatSessionMessage(prompt.id, 'user', prompt.content));
-
-      if (session.promptAnswers[index]) {
-        const answer = session.promptAnswers[index];
-        allMessages.push(new ChatSessionMessage(answer.id, 'assistant', answer.content));
-      }
-    });
-
-    return allMessages;
+    console.log('Assistant Response:', msg);
   }
 
   sendMessage(promptMessage: string): void {
-    console.log('Sending prompt:', promptMessage);
-    const { provider, model } = this.getCurrentProviderAndModel();
+    const { provider, model } = { provider: this.selectedProvider, model: this.selectedModel };
+    const userMessage = this.currentSession.addUserMessage(promptMessage);
 
-    const prompt = this.currentSession.addPrompt(promptMessage);
     this.chatbotEventService.onPromptSent.emit();
 
-    this.chatbotApiService.sendChatPrompt(provider, model, promptMessage).subscribe({
+    this.chatbotApiService.requestUserChatCompletion(provider, model, promptMessage).subscribe({
       next: (apiResponse) => {
-        console.log('API response:', apiResponse);
-        const assistantMessage = apiResponse?.messages.find((msg) => msg.role === 'assistant')?.content ?? '';
-        const documents = apiResponse.metadata?.documents ?? [];
-
-        this.handleAssistantResponse(prompt.id, assistantMessage, documents);
+        const assistantMessageContent = apiResponse?.messages.find((msg) => msg.role === 'assistant')?.content ?? '';
+        const metadata = apiResponse?.metadata ?? {};
+        this.handleAssistantResponse(userMessage.id, assistantMessageContent, metadata);
         this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Success);
       },
       error: (error) => {
         console.error('Error from chatbot API:', error);
         this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Error);
       },
-      complete: () => {
-        console.log('API Prompt call completed');
-        this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Complete);
-      },
-    });    
-  }
+    });
+}
 
-  stopProcessing(): void {
-    console.warn('stopProcessing is not implemented yet.');
-  }
-
-  handleFiles(files: File[]): void {
-    console.log('Handling files:', files);
-  }
 
   private generateSessionId(): string {
     return Math.random().toString(36).slice(2, 11);
+  }
+
+  handleFiles(files: File[]): void {
+    console.log('[WIP] Implement: Handling Files:', files);
+  }
+
+  stopProcessing() {
+    console.log('[WIP] Implement: Stop Processing');
   }
 }

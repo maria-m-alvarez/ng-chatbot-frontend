@@ -135,7 +135,7 @@
     </div>
     }
 
-    <!-- Pre-prompt Section -->
+    <!-- System-Prompt Section -->
     @if (optionsState === optionStates.systemPrompt) {
     <h5>Prompt de Sistema:</h5>
     <textarea class="w-full h-40 min-h-16 p-2 rounded-lg border border-border-secondary"
@@ -151,12 +151,12 @@
       <div class="w-full h-8 flex justify-between">
         <div class="flex w-full space-x-8">
           <button class="w-1/2 rounded-lg text-info-secondary hover:text-info bg-info hover:bg-info-secondary transition-colors duration-300 ease-in-out"
-            (click)="brain.chatbotApiService.tempChromaDbIngestion()">
+            (click)="click_tempChromaDbIngestion()">
             Ingerir Docs na BD
           </button>
   
           <button class="w-1/2 rounded-lg text-error-secondary hover:text-error bg-error hover:bg-error-secondary transition-colors duration-300 ease-in-out"
-            (click)="brain.chatbotApiService.tempChromaDbDeletion()">
+            (click)="click_tempChromaDbDeletion()">
             Apagar Docs da BD
           </button>
         </div>

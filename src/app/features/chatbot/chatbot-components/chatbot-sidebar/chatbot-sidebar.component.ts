@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ChatbotEventService } from '../../chatbot-services/chatbot-events/chatbot-event.service';
 import { ChatbotSessionService } from '../../chatbot-services/chatbot-session/chatbot-session.service';
 import { SidebarComponent } from '../../../common/components/sidebar/sidebar.component';
-import { ChatSession } from '../../chatbot-models/chatbot-models';
+import { ChatSession } from '../../chatbot-models/chatbot-api-models';
 
 @Component({
   selector: 'app-chatbot-sidebar',

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ChatbotEventService } from '../chatbot-events/chatbot-event.service';
-import { ProviderModelsResponse, ChatRequestOptions, ChatCompletion, ChatRequest } from '../../chatbot-models/chatbot-models';
+import { ProviderModelsResponse, ChatRequestOptions, ChatCompletion, ChatRequest } from '../../chatbot-models/chatbot-api-models';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +18,8 @@ export class ChatbotApiService {
     private readonly chatbotEventService: ChatbotEventService
   ) {}
 
+
+  
   // ------------------------------
   // API Methods
   // ------------------------------
@@ -33,7 +35,7 @@ export class ChatbotApiService {
   }
 
 
-  sendChatPrompt(provider: string, provider_model: string, prompt: string, options: ChatRequestOptions = {}): Observable<ChatCompletion> {
+  requestUserChatCompletion(provider: string, provider_model: string, prompt: string, options: ChatRequestOptions = {}): Observable<ChatCompletion> {
     const url = `${this.baseUrl}/chat`;
     const chatRequest: ChatRequest = {
       provider,
@@ -51,6 +53,8 @@ export class ChatbotApiService {
     const requestBody = { prompt_answer_id: promptAnswerId, vote_type: voteType };
     return this.http.post<any>(url, requestBody);
   }
+
+
 
   // ------------------------------
   // WebSocket Management
@@ -73,7 +77,7 @@ export class ChatbotApiService {
     };
     this.webSocket.onerror = (error) => console.error('WebSocket error:', error);
 
-    return this.webSocketSubject!;
+    return this.webSocketSubject;
   }
 
 
@@ -98,25 +102,24 @@ export class ChatbotApiService {
   }
 
 
-  
+
   // ------------------------------
   // Temporary Methods
   // ------------------------------
 
   tempChromaDbIngestion(): Observable<any> {
-    const url = `${this.baseUrl}/temp/chroma/ingest`;
+    const url = `http://127.0.0.1:8000/temp/chroma/ingest`;
     return this.http.get(url).pipe(map((response) => console.log('Chroma DB Ingestion:', response)));
   }
-
-
+  
   tempChromaDbDeletion(): Observable<any> {
-    const url = `${this.baseUrl}/temp/chroma/delete`;
+    const url = `http://127.0.0.1:8000/temp/chroma/delete`;
     return this.http.get(url).pipe(map((response) => console.log('Chroma DB Deletion:', response)));
   }
-
+  
   tempChromaDbCount(): void {
-    const tempChromaBbCountURL = "http://127.0.0.1:8000/chatbot/temp/chroma/count";
-    const request = this.http.get<{message:string, count:number}>(tempChromaBbCountURL);
+    const tempChromaBbCountURL = `http://127.0.0.1:8000/temp/chroma/count`;
+    const request = this.http.get<{ message: string; count: number }>(tempChromaBbCountURL);
     request.subscribe({
       next: (response) => {
         console.log('Chroma BB Injestion Response:', response);
@@ -127,7 +130,7 @@ export class ChatbotApiService {
       },
       complete: () => {
         console.log('Chroma BB Injestion Complete');
-      }
+      },
     });
   }
 }
