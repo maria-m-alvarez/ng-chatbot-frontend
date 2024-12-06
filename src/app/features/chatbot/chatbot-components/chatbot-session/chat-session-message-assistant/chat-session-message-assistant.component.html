@@ -19,7 +19,7 @@
         <p class="rounded-lg text-main-primary dark:text-main-secondary" [innerHTML]="sanitizedMessage">
         </p>
       
-        <!-- Sources Display -->
+        <!-- References Display -->
         <div *ngIf="hasDocuments()" class="text-sm text-main-primary mt-2">
           <button
             class="underline"
@@ -28,7 +28,7 @@
           <div
             [class.max-h-0]="!showSources"
             [class.max-h-[500px]]="showSources"
-            class="overflow-hidden transition-all duration-200 ease-in-out"
+            class="overflow-y-auto transition-all duration-200 ease-in-out"
           >
             <ul class="list-disc list-inside mt-2">
               <li *ngFor="let doc of groupedSources">
