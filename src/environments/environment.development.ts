@@ -1,5 +1,9 @@
 export const environment = {
     production: false,
+    
+    allowUserRegistration: false,
+    allowSimulatedLogin: false,
+
     simulateLogins: {
       'admin@minsait.com': { password: 'admin@minsait.com', role: 'admin' },
       'moderator@minsait.com': { password: 'moderator@minsait.com', role: 'moderator' },

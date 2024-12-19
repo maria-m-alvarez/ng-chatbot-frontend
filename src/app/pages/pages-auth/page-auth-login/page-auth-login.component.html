@@ -51,6 +51,7 @@
           type="button"
           (click)="simulateLogin()"
           class="px-4 py-2 text-text-tertiary bg-highlight-secondary border border-border-highlight rounded-lg shadow transition duration-200 hover:bg-highlight-primary focus:outline-none focus:ring focus:ring-main-primary"
+          *ngIf="allowSimulatedLogin"
         >
           Simulate Login
         </button>
@@ -58,7 +59,9 @@
 
       <!-- Additional Links -->
       <div class="text-sm text-center text-text-secondary">
-        <p>Não tens conta? <a [routerLink]="['/auth/register']" class="text-text-highlight hover:underline">Registar</a></p>
+        <p *ngIf="allowUserRegistration">
+          Não tens conta? <a [routerLink]="['/auth/register']" class="text-text-highlight hover:underline">Registar</a>
+        </p>
       </div>
     </form>
   </div>

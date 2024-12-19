@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { AuthService } from '../../../features/authentication/auth-service/auth.service';
 import { CommonModule } from '@angular/common';
 import { PageAuthMainComponent } from '../page-auth-main/page-auth-main.component';
+import { environment } from '../../../../environments/environment'; // Import environment
 
 @Component({
   selector: 'app-page-auth-login',
@@ -15,6 +16,8 @@ import { PageAuthMainComponent } from '../page-auth-main/page-auth-main.componen
 export class PageAuthLoginComponent extends PageAuthMainComponent {
   @Input() loginForm: FormGroup;
   errorMessage: string | null = null;
+  allowUserRegistration: boolean = environment.allowUserRegistration; // Expose environment variable
+  allowSimulatedLogin: boolean = environment.allowSimulatedLogin; // Expose environment variable
 
   constructor(
     private readonly fb: FormBuilder,
@@ -27,7 +30,6 @@ export class PageAuthLoginComponent extends PageAuthMainComponent {
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
-
 
   onSubmit(): void {
     if (this.loginForm.invalid) {
@@ -50,7 +52,6 @@ export class PageAuthLoginComponent extends PageAuthMainComponent {
       }
     });
   }
-
 
   simulateLogin(): void {
     if (this.loginForm.invalid) {
