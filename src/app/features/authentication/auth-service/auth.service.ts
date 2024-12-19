@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, delay, catchError } from 'rxjs/operators';
 import { LoginRequest, LoginResponse, TokenValidationRequest, PasswordChangeRequest } from '../models/auth_models';
+import { environment } from '../../../../environments/environment'; // Update the path as needed
 
 @Injectable({
   providedIn: 'root',
@@ -13,9 +14,6 @@ export class AuthService {
 
   constructor(private readonly http: HttpClient) {}
 
-  /**
-   * Register a new user
-   */
   register(email: string, password: string): Observable<string> {
     const url = `${this.apiUrl}/register`;
     const body: LoginRequest = { email, password };
@@ -31,14 +29,11 @@ export class AuthService {
     );
   }
 
-  /**
-   * Simulated user registration
-   */
   simulateRegister(email: string, password: string): Observable<string> {
     const simulatedToken = 'simulated-access-token';
     console.log(`Simulating registration for: ${email}`);
     return of(simulatedToken).pipe(
-      delay(1000), // Simulate network latency
+      delay(1000), 
       map((token) => {
         this.saveToken(token);
         return token;
@@ -46,9 +41,6 @@ export class AuthService {
     );
   }
 
-  /**
-   * Login user with email and password
-   */
   login(email: string, password: string): Observable<string> {
     const url = `${this.apiUrl}/login`;
     const body: LoginRequest = { email, password };
@@ -64,42 +56,23 @@ export class AuthService {
     );
   }
 
-  /**
-   * Simulated user login
-   */
+
   simulateLogin(email: string, password: string): Observable<string> {
     console.log(`Simulating login for: ${email}`);
+    const userData = environment.simulateLogins[email]; // ignore this error. the compiler doesn't know about the environment.simulateLogins object
 
-    const adminCredentials = {
-      email: 'admin@admin.com',
-      password: 'admin123',
-      role: 'admin',
-    };
-
-    const userCredentials = {
-      email: 'user@user.com',
-      password: 'user123',
-      role: 'user',
-    };
-
-    let simulatedRole: string | null = null;
-
-    if (email === adminCredentials.email && password === adminCredentials.password) {
-      simulatedRole = adminCredentials.role;
-    } else if (email === userCredentials.email && password === userCredentials.password) {
-      simulatedRole = userCredentials.role;
-    }
-
-    if (simulatedRole) {
+    if (userData && userData.password === password) {
+      const simulatedRole = userData.role;
       const simulatedToken = `simulated-${simulatedRole}-token`;
       return of(simulatedToken).pipe(
         delay(1000), // Simulate network latency
         map((token) => {
           this.saveToken(token);
-          return simulatedRole; // Return role for redirection
+          return simulatedRole; // Return the role to help with any conditional redirects
         })
       );
     } else {
+      // If credentials don't match the predefined simulated ones
       return of('').pipe(
         delay(1000),
         map(() => {
@@ -109,9 +82,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Validate if the current token is valid
-   */
   validateToken(): Observable<boolean> {
     const url = `${this.apiUrl}/validate_token`;
     const token = this.getToken();
@@ -132,9 +102,6 @@ export class AuthService {
     );
   }
 
-  /**
-   * Change user password
-   */
   changePassword(email: string, currentPassword: string, newPassword: string): Observable<void> {
     const url = `${this.apiUrl}/change_password`;
     const body: PasswordChangeRequest = { email, current_password: currentPassword, new_password: newPassword };
@@ -146,23 +113,14 @@ export class AuthService {
     );
   }
 
-  /**
-   * Logout user by clearing token
-   */
   logout(): void {
     this.clearToken();
   }
 
-  /**
-   * Check if user is authenticated
-   */
   isAuthenticated(): boolean {
     return !!this.getToken();
   }
 
-  /**
-   * Get HTTP headers with Authorization token
-   */
   getAuthHeaders(): HttpHeaders {
     const token = this.getToken();
     return token
@@ -170,7 +128,6 @@ export class AuthService {
       : new HttpHeaders();
   }
 
-  // Private helper methods
   private saveToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
   }

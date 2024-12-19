@@ -2,13 +2,14 @@ import { Component, Input, TemplateRef } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { ChatbotBrainService } from '../../../../features/chatbot/chatbot-services/chatbot-brain/chatbot-brain.service';
 import { Constants } from '../../../constants';
+import { LogoMinsaitMagiaComponent } from "../../logo-minsait-magia/logo-minsait-magia.component";
 
 @Component({
   selector: 'app-modular-header',
   templateUrl: './modular-header.component.html',
   styleUrls: ['./modular-header.component.scss'],
   standalone: true,
-  imports: [NgTemplateOutlet],
+  imports: [NgTemplateOutlet, LogoMinsaitMagiaComponent],
 })
 export class ModularHeaderComponent {
   @Input() showLogo: boolean = true;

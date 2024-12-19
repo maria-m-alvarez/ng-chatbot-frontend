@@ -5,7 +5,7 @@
   </div>
 
   <!-- Logo Section -->
-  <div class="flex items-center flex-grow">
+  <div class="flex flex-row items-center flex-grow">
     @if (showLogo) {
       <a href="https://www.minsait.com/" target="_blank" rel="noopener noreferrer">
         <img 
@@ -14,6 +14,9 @@
           class="h-4 w-auto object-contain"
         >
       </a>
+    }
+    @else {
+      <app-logo-minsait-magia></app-logo-minsait-magia>
     }
   </div>
 

@@ -1,0 +1,112 @@
+[
+  {
+    "name": "light",
+    "main-primary": "#480E2A",
+    "main-primary-contrast": "#260717",
+    "main-secondary": "#E3E2DA",
+    "main-secondary-contrast": "#FF0054",
+    "main-terciary": "#FFFFFF",
+    "main-terciary-contrast": "#FF0054",
+    "main-highlight": "#FF0054",
+
+    "background-primary": "#480E2A",
+    "background-secondary": "#E3E2DA",
+    "background-tertiary": "#FFFFFF",
+    "background-highlight": "#260717",
+
+    "text-primary": "#260717",
+    "text-secondary": "#E3E2DA",
+    "text-tertiary": "#FFFFFF",
+    "text-highlight": "#FF0054",
+
+    "border-primary": "#260717",
+    "border-secondary": "#E3E2DA",
+    "border-terciary": "#FFFFFF",
+    "border-highlight": "#FF0054",
+
+    "chatbot-background": "#FFFFFF",
+
+    "chatbot-bubble-user-background": "#480E2A",
+    "chatbot-bubble-user-text": "#E3E2DA",
+
+    "chatbot-bubble-assistant-background": "#260717",
+    "chatbot-bubble-assistant-text": "#E3E2DA",
+
+    "success": "#4ACB90",
+    "success-secondary": "#EAF7F0",
+
+    "error": "#F93F3E",
+    "error-secondary": "#FBE8E8",
+
+    "warning": "#FCA12F",
+    "warning-secondary": "#FAF2E8",
+
+    "info": "#60AFFE",
+    "info-secondary": "#ECF3FB",
+
+    "help": "#9011FE",
+    "help-secondary": "#F0E3FC",
+
+    "focus": "#0D5BA6",
+    "focus-secondary": "#E4EAF2",
+
+    "scrollbar-track": "#FFFFFF",
+    "scrollbar-thumb": "#E3E2DA",
+    "scrollbar-thumb-hover": "#480E2A"
+  },
+  {
+    "name": "dark",
+    "main-primary": "#480E2A",
+    "main-primary-contrast": "#260717",
+    "main-secondary": "#E3E2DA",
+    "main-secondary-contrast": "#FF0054",
+    "main-terciary": "#FFFFFF",
+    "main-terciary-contrast": "#FF0054",
+    "main-highlight": "#FF0054",
+
+    "background-primary": "#480E2A",
+    "background-secondary": "#E3E2DA",
+    "background-tertiary": "#FFFFFF",
+    "background-highlight": "#260717",
+
+    "text-primary": "#260717",
+    "text-secondary": "#E3E2DA",
+    "text-tertiary": "#FFFFFF",
+    "text-highlight": "#FF0054",
+
+    "border-primary": "#260717",
+    "border-secondary": "#E3E2DA",
+    "border-terciary": "#FFFFFF",
+    "border-highlight": "#FF0054",
+
+    "chatbot-background": "#480E2A",
+
+    "chatbot-bubble-user-background": "#480E2A",
+    "chatbot-bubble-user-text": "#E3E2DA",
+
+    "chatbot-bubble-assistant-background": "#260717",
+    "chatbot-bubble-assistant-text": "#E3E2DA",
+
+    "success": "#4ACB90",
+    "success-secondary": "#EAF7F0",
+
+    "error": "#F93F3E",
+    "error-secondary": "#FBE8E8",
+
+    "warning": "#FCA12F",
+    "warning-secondary": "#FAF2E8",
+
+    "info": "#60AFFE",
+    "info-secondary": "#ECF3FB",
+
+    "help": "#9011FE",
+    "help-secondary": "#F0E3FC",
+
+    "focus": "#0D5BA6",
+    "focus-secondary": "#E4EAF2",
+
+    "scrollbar-track": "#FFFFFF",
+    "scrollbar-thumb": "#E3E2DA",
+    "scrollbar-thumb-hover": "#480E2A"
+  }
+]

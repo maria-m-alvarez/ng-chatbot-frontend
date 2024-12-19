@@ -1,11 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: 'class',
+  darkMode: ['class', '[data-mode="dark"]'],
   content: [
     "./src/**/*.{html,ts}",
   ],
   theme: {
     extend: {
+      fontFamily: {
+        forFuture: ['"ForFutureSans"', 'sans-serif'],
+      },
       borderRadius: {
         '32': '32px',
       },
@@ -30,64 +33,49 @@ module.exports = {
         'minsait-info': '#8661F5',
         'minsait-info-secondary': '#C0B3F8',
 
+        // to create theme colors, run: node theme-sync update
 
-        // Main Colors
-        'main-primary': 'var(--color-main-primary)',
-        'main-primary-contrast': 'var(--color-main-primary-contrast)',
-        'main-secondary': 'var(--color-main-secondary)',
-        'main-secondary-contrast': 'var(--color-main-secondary-contrast)',
-        'main-terciary': 'var(--color-main-terciary)',
-        'main-terciary-contrast': 'var(--color-main-terciary-contrast)',
-        'main-highlight': 'var(--color-main-highlight)',
-
-        // Background Colors
-        'background-primary': 'var(--color-background-primary)',
-        'background-secondary': 'var(--color-background-secondary)',
-        'background-tertiary': 'var(--color-background-tertiary)',
-        'background-highlight': 'var(--color-background-highlight)',
-
-        // Text Colors
-        'text-primary': 'var(--color-text-primary)',
-        'text-secondary': 'var(--color-text-secondary)',
-        'text-tertiary': 'var(--color-text-tertiary)',
-        'text-highlight': 'var(--color-text-highlight)',
-
-        // Border Colors
-        'border-primary': 'var(--color-border-primary)',
-        'border-secondary': 'var(--color-border-secondary)',
-        'border-terciary': 'var(--color-border-terciary)',
-        'border-highlight': 'var(--color-border-highlight)',
-
-        // Chatbot Colors
-        'chatbot-background': 'var(--color-chatbot-background)',
-        'chatbot-bubble-user-background': 'var(--color-chatbot-bubble-user-background)',
-        'chatbot-bubble-user-text': 'var(--color-chatbot-bubble-user-text)',
-        'chatbot-bubble-assistant-background': 'var(--color-chatbot-bubble-assistant-background)',
-        'chatbot-bubble-assistant-text': 'var(--color-chatbot-bubble-assistant-text)',
-
-        // Status Colors
-        'success': 'var(--color-success)',
-        'success-secondary': 'var(--color-success-secondary)',
-        
-        'error': 'var(--color-error)',
-        'error-secondary': 'var(--color-error-secondary)',
-
-        'warning': 'var(--color-warning)',
-        'warning-secondary': 'var(--color-warning-secondary)',
-
-        'info': 'var(--color-info)',
-        'info-secondary': 'var(--color-info-secondary)',
-
-        'help': 'var(--color-help)',
-        'help-secondary': 'var(--color-help-secondary)',
-
-        'focus': 'var(--color-focus)',
-        'focus-secondary': 'var(--color-focus-secondary)',
-
-        // Scrollbar Colors
-        'scrollbar-track': 'var(--scrollbar-track)',
-        'scrollbar-thumb': 'var(--scrollbar-thumb)',
-        'scrollbar-thumb-hover': 'var(--scrollbar-thumb-hover)',
+        // Theme START
+          'main-primary': 'var(--main-primary)',
+          'main-primary-contrast': 'var(--main-primary-contrast)',
+          'main-secondary': 'var(--main-secondary)',
+          'main-secondary-contrast': 'var(--main-secondary-contrast)',
+          'main-terciary': 'var(--main-terciary)',
+          'main-terciary-contrast': 'var(--main-terciary-contrast)',
+          'main-highlight': 'var(--main-highlight)',
+          'background-primary': 'var(--background-primary)',
+          'background-secondary': 'var(--background-secondary)',
+          'background-tertiary': 'var(--background-tertiary)',
+          'background-highlight': 'var(--background-highlight)',
+          'text-primary': 'var(--text-primary)',
+          'text-secondary': 'var(--text-secondary)',
+          'text-tertiary': 'var(--text-tertiary)',
+          'text-highlight': 'var(--text-highlight)',
+          'border-primary': 'var(--border-primary)',
+          'border-secondary': 'var(--border-secondary)',
+          'border-terciary': 'var(--border-terciary)',
+          'border-highlight': 'var(--border-highlight)',
+          'chatbot-background': 'var(--chatbot-background)',
+          'chatbot-bubble-user-background': 'var(--chatbot-bubble-user-background)',
+          'chatbot-bubble-user-text': 'var(--chatbot-bubble-user-text)',
+          'chatbot-bubble-assistant-background': 'var(--chatbot-bubble-assistant-background)',
+          'chatbot-bubble-assistant-text': 'var(--chatbot-bubble-assistant-text)',
+          'success': 'var(--success)',
+          'success-secondary': 'var(--success-secondary)',
+          'error': 'var(--error)',
+          'error-secondary': 'var(--error-secondary)',
+          'warning': 'var(--warning)',
+          'warning-secondary': 'var(--warning-secondary)',
+          'info': 'var(--info)',
+          'info-secondary': 'var(--info-secondary)',
+          'help': 'var(--help)',
+          'help-secondary': 'var(--help-secondary)',
+          'focus': 'var(--focus)',
+          'focus-secondary': 'var(--focus-secondary)',
+          'scrollbar-track': 'var(--scrollbar-track)',
+          'scrollbar-thumb': 'var(--scrollbar-thumb)',
+          'scrollbar-thumb-hover': 'var(--scrollbar-thumb-hover)',
+        // Theme END
       },
     },
   },

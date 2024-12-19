@@ -3,59 +3,69 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'ForFutureSans';
+  src: url('/Fonts/future_sans/WOFF2/ForFutureSans-Regular.woff2') format('woff2'),
+       url('/Fonts/future_sans/WOFF/ForFutureSans-Regular.woff') format('woff');
+  font-weight: 400; /* Regular */
+  font-style: normal;
+}
+
 /* CSS Variables for Theme */
 :root {
-  --color-main-primary: #480E2A;
-  --color-main-primary-contrast: #260717;
-  --color-main-secondary: #E3E2DA;
-  --color-main-secondary-contrast: #FF0054;
-  --color-main-terciary: #FFFFFF;
-  --color-main-terciary-contrast: #FF0054;
-  --color-main-highlight: #FF0054;
+  /* node theme-sync update */
+  /* Theme START */
+  --main-primary: #480E2A;
+  --main-primary-contrast: #260717;
+  --main-secondary: #E3E2DA;
+  --main-secondary-contrast: #FF0054;
+  --main-terciary: #FFFFFF;
+  --main-terciary-contrast: #FF0054;
+  --main-highlight: #FF0054;
 
-  --color-background-primary: #480E2A;
-  --color-background-secondary: #E3E2DA;
-  --color-background-tertiary: #FFFFFF;
-  --color-background-highlight: #260717;
+  --background-primary: #480E2A;
+  --background-secondary: #E3E2DA;
+  --background-tertiary: #FFFFFF;
+  --background-highlight: #260717;
 
-  --color-text-primary: #260717;
-  --color-text-secondary: #E3E2DA;
-  --color-text-tertiary: #FFFFFF;
-  --color-text-highlight: #FF0054;
+  --text-primary: #260717;
+  --text-secondary: #E3E2DA;
+  --text-tertiary: #FFFFFF;
+  --text-highlight: #FF0054;
 
-  --color-border-primary: #260717;
-  --color-border-secondary: #E3E2DA;
-  --color-border-terciary: #FFFFFF;
-  --color-border-highlight: #FF0054;
+  --border-primary: #260717;
+  --border-secondary: #E3E2DA;
+  --border-terciary: #FFFFFF;
+  --border-highlight: #FF0054;
 
-  --color-chatbot-background: #FFFFFF;
-  --color-chatbot-bubble-user-background: #480E2A;
-  --color-chatbot-bubble-user-text: #E3E2DA;
-  --color-chatbot-bubble-assistant-background: #260717;
-  --color-chatbot-bubble-assistant-text: #E3E2DA;
+  --chatbot-background: #FFFFFF;
+  --chatbot-bubble-user-background: #480E2A;
+  --chatbot-bubble-user-text: #E3E2DA;
+  --chatbot-bubble-assistant-background: #260717;
+  --chatbot-bubble-assistant-text: #E3E2DA;
 
-  --color-success: #4ACB90;
-  --color-success-secondary: #EAF7F0;
+  --success: #4ACB90;
+  --success-secondary: #EAF7F0;
 
-  --color-error: #F93F3E;
-  --color-error-secondary: #FBE8E8;
+  --error: #F93F3E;
+  --error-secondary: #FBE8E8;
 
-  --color-warning: #FCA12F;
-  --color-warning-secondary: #FAF2E8;
+  --warning: #FCA12F;
+  --warning-secondary: #FAF2E8;
 
-  --color-info: #60AFFE;
-  --color-info-secondary: #ECF3FB;
+  --info: #60AFFE;
+  --info-secondary: #ECF3FB;
 
-  --color-help: #9011FE;
-  --color-help-secondary: #F0E3FC;
+  --help: #9011FE;
+  --help-secondary: #F0E3FC;
 
-  --color-focus: #0D5BA6;
-  --color-focus-secondary: #E4EAF2;
+  --focus: #0D5BA6;
+  --focus-secondary: #E4EAF2;
 
-  /* Scrollbar Colors */
   --scrollbar-track: #FFFFFF;
   --scrollbar-thumb: #E3E2DA;
   --scrollbar-thumb-hover: #480E2A;
+  /* Theme END */
 }
 
 /* Global Slender Scrollbar */
