@@ -152,7 +152,7 @@ export class ChatbotSessionService {
 
     this.chatbotEventService.onPromptSent.emit();
 
-    this.chatbotApiService.requestUserChatCompletion(provider, model, promptMessage).subscribe({
+    this.chatbotApiService.requestUserChatCompletion(promptMessage, provider, model).subscribe({
       next: (apiResponse) => {
         const assistantMessageContent = apiResponse?.messages.find((msg) => msg.role === 'assistant')?.content ?? '';
         const metadata = apiResponse?.metadata ?? {};

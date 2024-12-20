@@ -11,8 +11,26 @@ import { environment } from '../../../../environments/environment'; // Update th
 export class AuthService {
   private readonly apiUrl = 'http://localhost:8000/auth';
   private readonly tokenKey = 'auth_token';
+  private authHeaders: HttpHeaders = new HttpHeaders();
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {
+    // Initialize headers if a token is already present
+    const token = this.getToken();
+    if (token) {
+      this.updateAuthHeaders(token);
+    }
+  }
+
+  get headers(): HttpHeaders {
+    const token = this.getToken(); // Retrieve the token from localStorage
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }), // Add Authorization only if token exists
+    });
+    return headers;
+  }
+  
+  
 
   register(email: string, password: string): Observable<string> {
     const url = `${this.apiUrl}/register`;
@@ -48,6 +66,7 @@ export class AuthService {
     return this.http.post<LoginResponse>(url, body).pipe(
       map((response) => {
         this.saveToken(response.access_token);
+        console.log(`Logged response: ${response.access_token} ${response.token_type}`);
         return response.access_token;
       }),
       catchError((error) => {
@@ -56,23 +75,21 @@ export class AuthService {
     );
   }
 
-
   simulateLogin(email: string, password: string): Observable<string> {
     console.log(`Simulating login for: ${email}`);
-    const userData = environment.simulateLogins[email]; // ignore this error. the compiler doesn't know about the environment.simulateLogins object
+    const userData = environment.simulateLogins[email];
 
     if (userData && userData.password === password) {
       const simulatedRole = userData.role;
       const simulatedToken = `simulated-${simulatedRole}-token`;
       return of(simulatedToken).pipe(
-        delay(1000), // Simulate network latency
+        delay(1000),
         map((token) => {
           this.saveToken(token);
-          return simulatedRole; // Return the role to help with any conditional redirects
+          return simulatedRole;
         })
       );
     } else {
-      // If credentials don't match the predefined simulated ones
       return of('').pipe(
         delay(1000),
         map(() => {
@@ -106,7 +123,7 @@ export class AuthService {
     const url = `${this.apiUrl}/change_password`;
     const body: PasswordChangeRequest = { email, current_password: currentPassword, new_password: newPassword };
 
-    return this.http.post<void>(url, body).pipe(
+    return this.http.post<void>(url, body, { headers: this.headers }).pipe(
       catchError((error) => {
         throw new Error(`Password change failed: ${error.error.detail || error.message}`);
       })
@@ -121,22 +138,22 @@ export class AuthService {
     return !!this.getToken();
   }
 
-  getAuthHeaders(): HttpHeaders {
-    const token = this.getToken();
-    return token
-      ? new HttpHeaders({ Authorization: `Bearer ${token}` })
-      : new HttpHeaders();
-  }
-
   private saveToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
+    this.updateAuthHeaders(token);
   }
 
   private getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    const token = localStorage.getItem(this.tokenKey);
+    return token;
   }
 
   private clearToken(): void {
     localStorage.removeItem(this.tokenKey);
+    this.authHeaders = new HttpHeaders(); // reset headers
+  }
+
+  private updateAuthHeaders(token: string): void {
+    this.authHeaders = new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 }

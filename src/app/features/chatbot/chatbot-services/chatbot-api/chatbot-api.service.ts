@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ChatbotEventService } from '../chatbot-events/chatbot-event.service';
 import { ProviderModelsResponse, ChatRequestOptions, ChatCompletion, ChatRequest } from '../../chatbot-models/chatbot-api-models';
+import { AuthService } from '../../../authentication/auth-service/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,8 @@ export class ChatbotApiService {
 
   constructor(
     private readonly http: HttpClient,
-    private readonly chatbotEventService: ChatbotEventService
+    private readonly chatbotEventService: ChatbotEventService,
+    private readonly authService: AuthService
   ) {}
 
 
@@ -26,25 +28,27 @@ export class ChatbotApiService {
 
   getAllProviders(): Observable<string[]> {
     const url = `${this.baseUrl}/providers`;
-    return this.http.get<string[]>(url);
+    return this.http.get<string[]>(url, { headers: this.authService.headers });
   }
 
   getAllModelsByProvider(providerName: string): Observable<ProviderModelsResponse> {
     const url = `${this.baseUrl}/provider/models?provider_name=${providerName}`;
-    return this.http.get<ProviderModelsResponse>(url);
+    return this.http.get<ProviderModelsResponse>(url, { headers: this.authService.headers });
   }
 
 
-  requestUserChatCompletion(provider: string, provider_model: string, prompt: string, options: ChatRequestOptions = {}): Observable<ChatCompletion> {
+  requestUserChatCompletion(prompt: string, provider: string = "azure_openai", provider_model: string = "Azure GPT-3.5"): Observable<ChatCompletion> {
     const url = `${this.baseUrl}/chat`;
     const chatRequest: ChatRequest = {
-      provider,
-      provider_model,
-      messages: [{ role: 'user', content: prompt }],
-      options,
+      session_uuid: null,
+      provider: "azure_openai",
+      provider_model: "Azure GPT-3.5",
+      options: null,
+      messages: [{ role: 'user', content: prompt, message_uuid: null }],
     };
 
-    return this.http.post<ChatCompletion>(url, chatRequest);
+    console.log('Chat Request:', chatRequest);
+    return this.http.post<ChatCompletion>(url, chatRequest, { headers: this.authService.headers });
   }
 
 

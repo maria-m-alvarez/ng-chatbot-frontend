@@ -2,6 +2,7 @@
 export interface ChatMessage {
   role: string;  // 'user' or 'assistant'
   content: string;
+  message_uuid?: string | null;
 }
 
 export interface ChatRequestOptions {
@@ -13,9 +14,10 @@ export interface ChatRequestOptions {
 }
 
 export interface ChatRequest {
+  session_uuid?: string | null;
   provider: string;
   provider_model: string;
-  options?: ChatRequestOptions;
+  options?: ChatRequestOptions | null;
   messages: ChatMessage[];
 }
 
