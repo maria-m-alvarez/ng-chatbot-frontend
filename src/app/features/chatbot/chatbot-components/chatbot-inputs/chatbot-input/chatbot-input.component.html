@@ -11,11 +11,17 @@
   </div>
 }
 
+<!-- Outer Div -->
+<div>
+  <!-- Files -->
+  <!-- Error Messages -->
+  <!-- Input Box (wrapper div) -->
+</div>
+
 <!-- Wrapper div -->
 <div
   #chatInput
   class="bg-background-primary flex items-center w-full rounded-xl p-2 shadow-xl relative min-h-16
-  {{ currentInputState === chatbotInputStates.Dragging ? 'border-dashed border-2 border-border-highlight' : '' }}
   {{ currentInputState === chatbotInputStates.Waiting ? 'cursor-not-allowed' : '' }}"
   >
 
