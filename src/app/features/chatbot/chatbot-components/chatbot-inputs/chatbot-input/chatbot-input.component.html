@@ -34,12 +34,10 @@
     </div>
   }
 
-  <!-- Error Message -->
+  <!-- Error Message Section -->
   @if (errorMessage) {
-    <div class="absolute w-full bottom-32 left-0
-      rounded-lg shadow-lg flex flex-col overflow-hidden
-      bg-error-secondary text-error">
-      <div class="p-2 flex justify-between items-center">
+    <div class="w-full mb-2 rounded-lg shadow-lg bg-error-secondary text-error flex justify-between flex-col overflow-hidden">
+      <div class="w-full flex justify-between p-2">
         <span>{{ errorMessage }}</span>
         <button (click)="clearErrorMessage()" class="ml-2 text-error hover:text-text-primary">
           <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -35,7 +35,7 @@ export class ChatbotInputComponent {
       this.changeInputState(this.chatbotInputStates.Idle);
 
       if (result == WebRequestResult.Error) {
-        this.displayErrorMessage('Error occurred while processing the chat request');
+        this.displayErrorMessage('Houve um erro a processar a sua resposta. Por favor, tente novamente.');
       }
     });
   }

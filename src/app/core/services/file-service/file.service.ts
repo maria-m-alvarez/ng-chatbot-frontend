@@ -51,8 +51,7 @@ export class FileService {
   }
 
   getFileType(file: File): FileType {
-    const mime = file.type; // MIME type detection
-    console.log('Detected MIME type:', mime); // Debugging log
+    const mime = file.type; // mime = Multipurpose Internet Mail Extensions
 
     if (mime.startsWith('image/')) return FileType.Image;
     if (mime.startsWith('audio/')) return FileType.Audio;
@@ -65,7 +64,7 @@ export class FileService {
     if (mime.startsWith('text/')) return FileType.Text;
     if (this.isCompressedType(mime)) return FileType.Compressed;
 
-    console.warn('Unrecognized MIME type:', mime); // Log unrecognized MIME types
+    console.warn('Unrecognized MIME type:', mime);
     return FileType.Default;
   }
 
