@@ -32,7 +32,8 @@ export interface ChatCompletion {
   provider_model: string;
   usage: ChatCompletionUsage;
   messages: ChatMessage[];
-  metadata?: any;
+  references?: Record<string, any>[];
+  metadata?: Record<string, any>;
 }
 
 export interface ProviderModelsResponse {

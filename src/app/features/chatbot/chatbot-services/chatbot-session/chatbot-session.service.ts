@@ -139,11 +139,11 @@ export class ChatbotSessionService {
     }
   }
 
-  handleAssistantResponse(promptId: string, message: string, metadata: any = {}): void {
+  handleAssistantResponse(promptId: string, message: string, metadata: { documents?: { Document: string; Page: number }[] } = {}): void {
     const msg = this.currentSession.addAssistantMessage(promptId, message, metadata);
     this.chatbotEventService.onPromptAnswerReceived.emit();
 
-    console.log('Assistant Response:', msg);
+    console.log('Assistant Response with Metadata:', msg);
   }
 
   sendMessage(promptMessage: string): void {
@@ -153,19 +153,26 @@ export class ChatbotSessionService {
     this.chatbotEventService.onPromptSent.emit();
 
     this.chatbotApiService.requestUserChatCompletion(promptMessage, provider, model).subscribe({
-      next: (apiResponse) => {
-        const assistantMessageContent = apiResponse?.messages.find((msg) => msg.role === 'assistant')?.content ?? '';
-        const metadata = apiResponse?.metadata ?? {};
-        this.handleAssistantResponse(userMessage.id, assistantMessageContent, metadata);
-        this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Success);
-      },
-      error: (error) => {
-        console.error('Error from chatbot API:', error);
-        this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Error);
-      },
+        next: (apiResponse) => {
+            const assistantMessageContent = apiResponse?.messages.find((msg) => msg.role === 'assistant')?.content ?? '';
+            // Safely map references to the expected type
+            const metadata = apiResponse?.references
+                ? {
+                    documents: apiResponse.references.map((ref: any) => ({
+                        Document: ref.Document || '',
+                        Page: ref.Page || 0,
+                    })).filter((doc: { Document: string; Page: number }) => doc.Document && doc.Page), // Ensure valid entries
+                }
+                : {};
+            this.handleAssistantResponse(userMessage.id, assistantMessageContent, metadata);
+            this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Success);
+        },
+        error: (error) => {
+            console.error('Error from chatbot API:', error);
+            this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Error);
+        },
     });
-}
-
+  }
 
   private generateSessionId(): string {
     return Math.random().toString(36).slice(2, 11);

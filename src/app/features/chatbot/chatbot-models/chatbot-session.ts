@@ -4,7 +4,9 @@ export class ChatMessage {
     id: string;
     role: 'user' | 'assistant';
     content: string;
-    metadata?: { documents?: { Document: string; Page: number }[] };
+    metadata?: {
+        documents?: { Document: string; Page: number }[];
+    };
     timestamp: Date;
     processResult?: string;
     relatedPromptId?: string;
@@ -13,7 +15,7 @@ export class ChatMessage {
         id: string,
         role: 'user' | 'assistant',
         content: string,
-        metadata: any = {}
+        metadata: { documents?: { Document: string; Page: number }[] } = {}
     ) {
         this.id = id;
         this.role = role;
@@ -47,7 +49,7 @@ export class ChatSession {
         return prompt;
     }
 
-    addAssistantMessage(promptId: string, content: string, metadata: any = {}): ChatMessage {
+    addAssistantMessage(promptId: string, content: string, metadata: { documents?: { Document: string; Page: number }[] } = {}): ChatMessage {
         const response = new ChatMessage(this.generateId(), 'assistant', content, metadata);
         response.relatedPromptId = promptId;
         this.messages.push(response);

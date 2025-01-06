@@ -37,19 +37,32 @@ export class ChatbotApiService {
   }
 
 
-  requestUserChatCompletion(prompt: string, provider: string = "azure_openai", provider_model: string = "Azure GPT-3.5"): Observable<ChatCompletion> {
+  requestUserChatCompletion(
+    prompt: string,
+    provider: string = 'azure_openai',
+    provider_model: string = 'Azure GPT-3.5',
+    options: ChatRequestOptions | null = null
+  ): Observable<ChatCompletion> {
     const url = `${this.baseUrl}/chat`;
     const chatRequest: ChatRequest = {
       session_uuid: null,
-      provider: "azure_openai",
-      provider_model: "Azure GPT-3.5",
-      options: null,
+      provider,
+      provider_model,
+      options,
       messages: [{ role: 'user', content: prompt, message_uuid: null }],
     };
-
+  
     console.log('Chat Request:', chatRequest);
-    return this.http.post<ChatCompletion>(url, chatRequest, { headers: this.authService.headers });
+  
+    return this.http.post<ChatCompletion>(url, chatRequest, { headers: this.authService.headers }).pipe(
+      map((response) => {
+        // Log and process the response if needed
+        console.log('Chat Completion Response:', response);
+        return response;
+      })
+    );
   }
+  
 
 
   sendPromptFeedback(promptAnswerId: number, voteType: string): Observable<any> {
