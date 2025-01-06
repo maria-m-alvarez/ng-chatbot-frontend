@@ -1,8 +1,8 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { ChatbotInputAttachmentComponent } from "../chatbot-input-attachment/chatbot-input-attachment.component";
+import { ChatbotBrainService } from '../../../chatbot-services/chatbot-brain/chatbot-brain.service';
 import { ChatbotInputOptionsComponent } from "../chatbot-input-options/chatbot-input-options.component";
 import { ChatbotSettingsComponent } from "../../chatbot-settings/chatbot-settings.component";
-import { ChatbotBrainService } from '../../../chatbot-services/chatbot-brain/chatbot-brain.service';
 import { NgStyle } from '@angular/common';
 import { WebRequestResult } from '../../../../../core/models/enums';
 
@@ -106,7 +106,7 @@ export class ChatbotInputComponent {
   }
 
   @HostListener('document:dragleave', ['$event'])
-  onDragLeave(event: DragEvent): void {
+  onDragLeave(): void {
     this.dragCounter--;
     if (this.dragCounter === 0) {
       this.changeInputState(this.chatbotInputStates.Idle);
@@ -121,21 +121,20 @@ export class ChatbotInputComponent {
   @HostListener('document:drop', ['$event'])
   onDrop(event: DragEvent): void {
     event.preventDefault();
-    this.changeInputState(this.chatbotInputStates.Idle);
     this.dragCounter = 0;
-
-    if (!this.isDroppedOnInput(event)) {
-      return;
-    }
+    this.changeInputState(this.chatbotInputStates.Idle);
+    console.log('Drop detected.');
 
     const files = event.dataTransfer?.files;
     if (files && files.length > 0) {
+      console.log(`Files detected: ${files.length}`);
+      Array.from(files).forEach(file =>
+        console.log(`File: ${file.name}, Type: ${file.type}, Size: ${file.size} bytes`)
+      );
       this.handleDroppedFiles(files);
+    } else {
+      console.warn('No files detected on drop.');
     }
-
-    setTimeout(() => {
-      this.refreshInputText();
-    }, 50);
   }
 
   private isDroppedOnInput(event: DragEvent): boolean {
@@ -144,15 +143,17 @@ export class ChatbotInputComponent {
   }
 
   handleDroppedFiles(files: FileList): void {
+    console.log('Handling dropped files...');
     Array.from(files).forEach(file => {
-      const isDuplicate = this.files.some(existingFile =>
-        existingFile.name === file.name && existingFile.type === file.type
-      );
-  
+      const isDuplicate = this.files.some(existingFile => existingFile.name === file.name);
       if (!isDuplicate) {
+        console.log(`Adding file: ${file.name}`);
         this.files.push(file);
+      } else {
+        console.warn(`Duplicate file ignored: ${file.name}`);
       }
     });
+    console.log('Current files:', this.files);
   }
 
   removeFile(index: number): void {
