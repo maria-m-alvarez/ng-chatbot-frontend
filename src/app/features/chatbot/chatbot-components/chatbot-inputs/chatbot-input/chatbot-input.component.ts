@@ -29,6 +29,7 @@ export class ChatbotInputComponent {
   countdownWidth: number = 100;
   countdownDuration: number = 5000;
   countdownInterval: any = null;
+  isRunningCountdown: boolean = false;
 
   constructor(readonly brain: ChatbotBrainService) {
     brain.chatbotEventService.onPromptAnswerReceived.subscribe((result) => {
@@ -177,37 +178,45 @@ export class ChatbotInputComponent {
   
   // Display the error message and start the countdown
   displayErrorMessage(message: string): void {
+    if (!this.isRunningCountdown) {
+      this.clearErrorMessage(); // Reset any ongoing error countdowns
+    }
+
     this.errorMessage = message;
     this.startCountdown();
   }
 
   // Start the countdown for the error message
   startCountdown(): void {
-    const totalDuration = 5000;  // Total duration (5 seconds)
-    const steps = 100;           // Number of steps (width percentage)
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
+    
+    this.countdownWidth = 100;
+    this.countdownDuration = 5000; // Total duration (5 seconds)
 
-    this.countdownWidth = 100;   // Full width at the start
-    this.countdownDuration = totalDuration;  // Set countdown duration for CSS transition
+    const steps = 100; // Number of steps (width percentage)
+    const intervalStep = this.countdownDuration / steps; // Interval in milliseconds for each step
 
-    const intervalStep = totalDuration / steps;  // Interval in milliseconds for each percentage step
-
-    // Update the countdown width progressively until 0%
     this.countdownInterval = setInterval(() => {
+      this.isRunningCountdown = true;
       this.countdownWidth -= 1;
-      if (this.countdownWidth < -this.countdownMinWidth) {
-        this.clearErrorMessage();  // Clear the message when countdown finishes
+
+      if (this.countdownWidth <= 0) {
+        this.clearErrorMessage(); // Clear the message when countdown finishes
       }
     }, intervalStep);
   }
 
   // Clear the error message and stop the countdown
   clearErrorMessage(): void {
-    this.errorMessage = null;
     if (this.countdownInterval) {
-      clearInterval(this.countdownInterval);  // Stop the interval
+      clearInterval(this.countdownInterval); // Stop any ongoing interval
       this.countdownInterval = null;
     }
-    this.countdownWidth = 100;  // Reset the countdown width for the next time
+    this.errorMessage = null; // Reset the error message
+    this.countdownWidth = 100; // Immediately reset the width to full
+    this.isRunningCountdown = false;
   }
 
   stopProcessing() {
