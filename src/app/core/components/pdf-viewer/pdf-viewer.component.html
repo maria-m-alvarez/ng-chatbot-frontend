@@ -1,0 +1,12 @@
+<app-modal-fullscreen
+  [modalConfig]="{
+    componentId: 'pdf-viewer-modal',
+    title: 'PDF Viewer',
+    optionToListenFor: 'pdf_viewer',
+    isSubmitEnabled: false
+  }"
+>
+  <ng-template>
+    <app-pdf-viewer [pdfUrl]="pdfUrl" [page]="page"></app-pdf-viewer>
+  </ng-template>
+</app-modal-fullscreen>

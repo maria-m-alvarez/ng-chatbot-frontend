@@ -6,7 +6,7 @@
         </p>
     
         <div class="flex items-center space-x-1 hover:text-highlight-secondary hover:underline hover:cursor-pointer"
-             (click)="triggerOptionEvent('chatbot_settings')">
+             (click)="openChatbotSettingsModal()">
             <p>
                 {{ brain.chatbotSettings.model ? brain.chatbotSettings.model : 'select model' }}
             </p>

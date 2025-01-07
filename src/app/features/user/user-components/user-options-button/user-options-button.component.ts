@@ -5,6 +5,7 @@ import { ThemeToggleComponent } from '../../../../core/components/theme-toggle/t
 import { EventService } from '../../../../core/services/event-service/event.service';
 import { ThemeService } from '../../../../core/services/theme-service/theme.service';
 import { AuthService } from '../../../authentication/auth-service/auth.service';
+import { ToggleService } from '../../../../lib/toggleable/toggleable.service';
 
 @Component({
   selector: 'app-user-options-button',
@@ -17,6 +18,7 @@ export class UserOptionsButtonComponent {
   isDropdownOpen = false;
 
   constructor(
+    readonly toggleService: ToggleService,
     readonly themeService: ThemeService,
     readonly eventService: EventService,
     private readonly authService: AuthService,
@@ -37,6 +39,10 @@ export class UserOptionsButtonComponent {
       this.logout();
     }
     this.isDropdownOpen = false;
+  }
+
+  openUserSettings() {
+    this.toggleService.open('user-settings-modal');
   }
 
   logout() {

@@ -1,14 +1,15 @@
 import { Component } from '@angular/core';
 import { InputSelectorComponent } from '../../../../core/components/input-components/input-selector/input-selector.component';
-import { ModularModalComponent } from '../../../../core/components/modular/modular-modal/modular-modal.component';
+import { ModalFullscreenComponent } from '../../../../lib/components/modal/modal-fullscreen/modal-fullscreen.component';
 
 @Component({
   selector: 'app-user-settings-modal',
   standalone: true,
-  imports: [ModularModalComponent, InputSelectorComponent],
+  imports: [ModalFullscreenComponent, InputSelectorComponent],
   templateUrl: './user-settings-modal.component.html',
-  styleUrl: './user-settings-modal.component.scss'
+  styleUrls: ['./user-settings-modal.component.scss'],
 })
 export class UserSettingsModalComponent {
 
+  constructor() {}
 }

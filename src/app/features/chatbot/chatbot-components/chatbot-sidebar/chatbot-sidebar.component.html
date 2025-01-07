@@ -2,7 +2,7 @@
   overflow-hidden whitespace-nowrap text-ellipsis
 ">
   <div class="h-12 px-2 flex items-center">
-    <button (click)="toggleSidebar()" class="focus:outline-none">
+    <button (click)="toggle()" class="focus:outline-none">
       <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" viewBox="0 -960 960 960" fill="currentColor">
         <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm280-80h280v-560H480v560Z"/>
       </svg>
@@ -16,7 +16,7 @@
       @for (session of chatSessions; track session.sessionId) {
         <div 
           class="cursor-pointer p-2 rounded 
-          {{ session.isCurrent ? 'bg-main-secondary-lighter bg-opacity-20 dark:bg-dark-bg dark:bg-opacity-100' : 'hover:bg-main-secondary-lighter hover:bg-opacity-10 dark:hover:bg-dark-bg dark:hover:bg-opacity-50' }} "
+          {{ session ? 'bg-main-secondary-lighter bg-opacity-20 dark:bg-dark-bg dark:bg-opacity-100' : 'hover:bg-main-secondary-lighter hover:bg-opacity-10 dark:hover:bg-dark-bg dark:hover:bg-opacity-50' }} "
           (click)="selectSession(session.sessionId)"
         >
           <span class="text-sm">{{ session.title }}</span>

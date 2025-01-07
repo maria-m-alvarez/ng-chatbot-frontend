@@ -1,9 +1,14 @@
-<app-modular-modal [modalConfig]="{
-  title: 'Configurações do Chatbot',
-  optionToListenFor: 'chatbot_settings',
-  isSubmitEnabled: false
-}">
-<ng-template>
+<app-modal-fullscreen
+  [modalConfig]="{
+    componentId: 'chatbot-settings-modal',
+    title: 'Configurações do Chatbot',
+    optionToListenFor: 'chatbot_settings',
+    isSubmitEnabled: false
+  }"
+  [modalTemplate]="chatbotSettingsTemplate">
+</app-modal-fullscreen>
+
+<ng-template #chatbotSettingsTemplate>
   <div class="flex flex-col text-text-primary">
 
     <div class="grid grid-cols-2 gap-4">
@@ -174,4 +179,3 @@
     </div>
   </div>
 </ng-template>
-</app-modular-modal>

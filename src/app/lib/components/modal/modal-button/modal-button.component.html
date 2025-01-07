@@ -1,0 +1,13 @@
+<!-- Button -->
+<div class="w-full h-full aspect-square flex items-center justify-center cursor-pointer text-primary"
+(click)="modal.open()">
+    <ng-container [ngTemplateOutlet]="btnTemplate"></ng-container>
+</div>
+
+<!-- Modal -->
+<app-modal-fullscreen
+  #modal
+  [modalConfig]="config.modalConfig"
+  [modalTemplate]="modalTemplate"
+>
+</app-modal-fullscreen>

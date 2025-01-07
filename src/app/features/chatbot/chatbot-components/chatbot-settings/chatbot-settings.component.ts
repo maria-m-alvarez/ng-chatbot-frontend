@@ -4,14 +4,15 @@ import { ChatbotBaseComponentComponent } from '../chatbot-base-component/chatbot
 import { ChatbotModelSelectorComponent } from "../chatbot-model-selector/chatbot-model-selector.component";
 import { InputBooleanSelectorComponent } from '../../../../core/components/input-components/input-boolean-selector/input-boolean-selector.component';
 import { InputSelectorComponent } from '../../../../core/components/input-components/input-selector/input-selector.component';
-import { ModularModalComponent } from '../../../../core/components/modular/modular-modal/modular-modal.component';
+import { ModalFullscreenComponent } from '../../../../lib/components/modal/modal-fullscreen/modal-fullscreen.component';
+import { ToggleService } from '../../../../lib/toggleable/toggleable.service';
 
 @Component({
   selector: 'app-chatbot-settings',
   standalone: true,
   templateUrl: './chatbot-settings.component.html',
   styleUrls: ['./chatbot-settings.component.scss'],
-  imports: [ModularModalComponent, InputSelectorComponent, ChatbotModelSelectorComponent, InputBooleanSelectorComponent]
+  imports: [ModalFullscreenComponent, InputSelectorComponent, ChatbotModelSelectorComponent, InputBooleanSelectorComponent]
 })
 export class ChatbotSettingsComponent extends ChatbotBaseComponentComponent {
   @ViewChild('ollamaModelNameInput') ollamaModelNameInput: ElementRef<HTMLInputElement> | undefined;
@@ -31,7 +32,8 @@ export class ChatbotSettingsComponent extends ChatbotBaseComponentComponent {
   optionsState: string = this.optionStates.options;
 
   constructor(
-    brain: ChatbotBrainService
+    brain: ChatbotBrainService,
+    toggleService: ToggleService
   ) {
     super(brain);
 

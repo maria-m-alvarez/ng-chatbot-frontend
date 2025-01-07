@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { ChatbotInputAttachmentComponent } from "../chatbot-input-attachment/chatbot-input-attachment.component";
 import { ChatbotBrainService } from '../../../chatbot-services/chatbot-brain/chatbot-brain.service';
-import { ChatbotInputOptionsComponent } from "../chatbot-input-options/chatbot-input-options.component";
+import { ChatbotSettingsButtonComponent } from "../chatbot-settings-button/chatbot-settings-button.component";
 import { ChatbotSettingsComponent } from "../../chatbot-settings/chatbot-settings.component";
 import { NgStyle } from '@angular/common';
 import { WebRequestResult } from '../../../../../core/models/enums';
@@ -11,7 +11,7 @@ import { WebRequestResult } from '../../../../../core/models/enums';
   standalone: true,
   templateUrl: './chatbot-input.component.html',
   styleUrls: ['./chatbot-input.component.scss'],
-  imports: [NgStyle, ChatbotInputAttachmentComponent, ChatbotInputOptionsComponent, ChatbotSettingsComponent]
+  imports: [NgStyle, ChatbotInputAttachmentComponent, ChatbotSettingsButtonComponent, ChatbotSettingsComponent]
 })
 export class ChatbotInputComponent {
   @ViewChild('chatInput') chatInput!: ElementRef<HTMLDivElement>;

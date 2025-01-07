@@ -1,12 +1,20 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Icons } from '../icon-service/icons';
 import { FileType } from './file-types';
+import { Observable } from 'rxjs/internal/Observable';
+import { catchError, map } from 'rxjs/operators';
+import { saveAs } from 'file-saver';
+import { of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FileService {
+  private readonly apiBaseUrl = 'http://127.0.0.1:8000/files';
+  private readonly downloadedFiles: Set<string> = new Set();
+
   private readonly codeFileTypes = [
     'application/javascript', 'application/x-javascript', 'text/javascript', // JavaScript
     'application/json', 'text/json',                                         // JSON
@@ -42,7 +50,10 @@ export class FileService {
     'application/x-bzip2',
   ];
 
-  constructor(private readonly sanitizer: DomSanitizer) {}
+  constructor(
+    private readonly sanitizer: DomSanitizer,
+    private readonly http: HttpClient
+  ) {}
 
   getFileIcon(file: File): SafeHtml {
     const fileType = this.getFileType(file);
@@ -127,5 +138,63 @@ export class FileService {
 
   private isCompressedType(mime: string): boolean {
     return this.compressedFileTypes.includes(mime);
+  }
+
+
+  // ------------------------------
+  // File Download with Cache
+  // ------------------------------
+
+  referenceFileDownload(fileName: string): Observable<string> {
+    if (this.downloadedFiles.has(fileName)) {
+      // File already exists
+      console.log(`File "${fileName}" already downloaded.`);
+      return of(`File "${fileName}" already exists locally.`);
+    }
+
+    // File does not exist, proceed to download
+    return this.downloadFile(fileName).pipe(
+      map((fileBlob) => {
+        this.saveFile(fileBlob, fileName); // Save file locally
+        this.downloadedFiles.add(fileName); // Add to in-memory cache
+        return `File "${fileName}" downloaded successfully.`;
+      }),
+      catchError((error) => {
+        console.error(`Error downloading file "${fileName}":`, error);
+        throw new Error(`Failed to download file "${fileName}".`);
+      })
+    );
+  }
+
+  private saveFile(fileBlob: Blob, fileName: string): void {
+    saveAs(fileBlob, fileName); // Use FileSaver to trigger download
+  }
+  
+  // ------------------------------
+  // Backend Interaction Methods
+  // ------------------------------
+
+  listFiles(): Observable<{ name: string }[]> {
+    return this.http.get<{ name: string }[]>(`${this.apiBaseUrl}/`);
+  }
+
+  downloadFile(docId: string): Observable<Blob> {
+    const url = `${this.apiBaseUrl}/${encodeURIComponent(docId)}`;
+    return this.http.get(url, { responseType: 'blob' });
+  }
+
+  getFileMetadata(docId: string): Observable<{
+    name: string;
+    size: number;
+    created_at: number;
+    updated_at: number;
+  }> {
+    const url = `${this.apiBaseUrl}/${encodeURIComponent(docId)}/metadata`;
+    return this.http.get<{
+      name: string;
+      size: number;
+      created_at: number;
+      updated_at: number;
+    }>(url);
   }
 }

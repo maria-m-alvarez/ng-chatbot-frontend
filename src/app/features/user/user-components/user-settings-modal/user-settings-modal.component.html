@@ -1,26 +1,30 @@
-<app-modular-modal
+<app-modal-fullscreen
+  #userSettingsModal
   [modalConfig]="{
+    componentId: 'user-settings-modal',
     title: 'User Settings',
     optionToListenFor: 'user_settings',
     isSubmitEnabled: false
   }"
+  [modalTemplate]="userSettingsTemplate"
 >
-  <ng-template>
-    <div class="flex flex-col space-y-2 text-text-primary">
-        <div class="flex items-center space-x-2">
-            <h5 class="w-[10%]">Option:</h5>
-            <app-input-selector
-            #apiSelector
-                [id]="'exampleUserSelector'"
-                [defaultMessage]="'Select Option...'"
-                [defaultSelectionID]="1"
-                [options]="[
-                  { id: 1, value: 'Option 1' },
-                  { id: 2, value: 'Option 2' }
-                ]"
-                class="w-full">
-            </app-input-selector>
-        </div>
+</app-modal-fullscreen>
+
+<ng-template #userSettingsTemplate>
+  <div class="flex flex-col space-y-2 text-text-primary">
+    <div class="flex items-center space-x-2">
+      <h5 class="w-[10%]">Option:</h5>
+      <app-input-selector
+        #apiSelector
+        [id]="'exampleUserSelector'"
+        [defaultMessage]="'Select Option...'"
+        [defaultSelectionID]="1"
+        [options]="[
+          { id: 1, value: 'Option 1' },
+          { id: 2, value: 'Option 2' }
+        ]"
+        class="w-full"
+      ></app-input-selector>
     </div>
-  </ng-template>
-</app-modular-modal>
+  </div>
+</ng-template>
