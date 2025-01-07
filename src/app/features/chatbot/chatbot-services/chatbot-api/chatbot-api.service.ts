@@ -10,7 +10,7 @@ import { AuthService } from '../../../authentication/auth-service/auth.service';
   providedIn: 'root',
 })
 export class ChatbotApiService {
-  private readonly baseUrl = 'http://127.0.0.1:8000/chatbot';
+  private readonly baseUrl: string;
   private webSocket: WebSocket | null = null;
   private webSocketSubject: Subject<string> | null = null;
 
@@ -18,7 +18,13 @@ export class ChatbotApiService {
     private readonly http: HttpClient,
     private readonly chatbotEventService: ChatbotEventService,
     private readonly authService: AuthService
-  ) {}
+  ) {
+    // Dynamically set the API URL based on the current host
+    const host = window.location.host;
+    const protocol = window.location.protocol;
+    this.baseUrl = `${protocol}//${host}/api/chatbot`;  // Route API calls through Nginx
+  }
+
 
 
   
@@ -125,17 +131,26 @@ export class ChatbotApiService {
   // ------------------------------
 
   tempChromaDbIngestion(): Observable<any> {
-    const url = `http://127.0.0.1:8000/temp/chroma/ingest`;
+    const host = window.location.host;
+    const protocol = window.location.protocol;
+    const url = `${protocol}//${host}/api/temp/chroma/ingest`;
+    
     return this.http.get(url).pipe(map((response) => console.log('Chroma DB Ingestion:', response)));
   }
   
   tempChromaDbDeletion(): Observable<any> {
-    const url = `http://127.0.0.1:8000/temp/chroma/delete`;
+    const host = window.location.host;
+    const protocol = window.location.protocol;
+    const url = `${protocol}//${host}/api/temp/chroma/ingest`;
+
     return this.http.get(url).pipe(map((response) => console.log('Chroma DB Deletion:', response)));
   }
   
   tempChromaDbCount(): void {
-    const tempChromaBbCountURL = `http://127.0.0.1:8000/temp/chroma/count`;
+    const host = window.location.host;
+    const protocol = window.location.protocol;
+    const tempChromaBbCountURL = `${protocol}//${host}/api/temp/chroma/count`;
+
     const request = this.http.get<{ message: string; count: number }>(tempChromaBbCountURL);
     request.subscribe({
       next: (response) => {

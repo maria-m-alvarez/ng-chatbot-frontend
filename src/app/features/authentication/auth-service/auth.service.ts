@@ -9,11 +9,16 @@ import { environment } from '../../../../environments/environment'; // Update th
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly apiUrl = 'http://localhost:8000/auth';
+  private readonly apiUrl: string;
   private readonly tokenKey = 'auth_token';
   private authHeaders: HttpHeaders = new HttpHeaders();
 
   constructor(private readonly http: HttpClient) {
+    // Dynamically set the API URL based on the current host
+    const host = window.location.host;
+    const protocol = window.location.protocol;
+    this.apiUrl = `${protocol}//${host}/api/auth`;
+
     // Initialize headers if a token is already present
     const token = this.getToken();
     if (token) {

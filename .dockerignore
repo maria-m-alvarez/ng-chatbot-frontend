@@ -1,0 +1,28 @@
+# Node modules and dependencies
+node_modules
+npm-debug.log
+yarn.lock
+
+# Build output (already handled during the build stage)
+dist
+tmp
+out
+
+# Environment files
+.env
+.env.local
+
+# Editor and system files
+*.swp
+*.log
+.DS_Store
+.git
+.gitignore
+.idea
+.angular
+.vscode
+*.bak
+
+# Docker files
+Dockerfile
+docker-compose.yml
