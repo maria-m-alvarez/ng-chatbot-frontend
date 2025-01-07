@@ -20,8 +20,8 @@ export const routes: Routes = [
     path: 'chatbot',
     component: PageChatbotComponent,
     children: [
-      { path: '', redirectTo: 'main', pathMatch: 'full' },
-      { path: 'main', component: PageChatbotComponent },
+      { path: '', redirectTo: 'chat', pathMatch: 'full' },
+      { path: 'chat', component: PageChatbotComponent },
     ]
   },
   { path: Constants.ROUTES.CHATOBOT, component: PageChatbotComponent },
