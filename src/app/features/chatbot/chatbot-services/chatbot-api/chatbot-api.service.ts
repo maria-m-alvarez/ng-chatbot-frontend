@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { ChatbotEventService } from '../chatbot-events/chatbot-event.service';
 import { ProviderModelsResponse, ChatRequestOptions, ChatCompletion, ChatRequest } from '../../chatbot-models/chatbot-api-models';
 import { AuthService } from '../../../authentication/auth-service/auth.service';
+import { HostService } from '../../../../core/services/host-service/host.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,17 +17,14 @@ export class ChatbotApiService {
 
   constructor(
     private readonly http: HttpClient,
+    private readonly hostService: HostService,
     private readonly chatbotEventService: ChatbotEventService,
     private readonly authService: AuthService
   ) {
-    // Dynamically set the API URL based on the current host
-    const host = window.location.host;
-    const protocol = window.location.protocol;
-    this.baseUrl = `${protocol}//${host}/api/chatbot`;  // Route API calls through Nginx
+    this.baseUrl = `${this.hostService.getHostBaseURL()}/chatbot`;
   }
 
-
-
+  
   
   // ------------------------------
   // API Methods

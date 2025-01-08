@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { map, delay, catchError } from 'rxjs/operators';
 import { LoginRequest, LoginResponse, TokenValidationRequest, PasswordChangeRequest } from '../models/auth_models';
 import { environment } from '../../../../environments/environment'; // Update the path as needed
+import { HostService } from '../../../core/services/host-service/host.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,18 +14,18 @@ export class AuthService {
   private readonly tokenKey = 'auth_token';
   private authHeaders: HttpHeaders = new HttpHeaders();
 
-  constructor(private readonly http: HttpClient) {
-    // Dynamically set the API URL based on the current host
-    const host = window.location.host;
-    const protocol = window.location.protocol;
-    this.apiUrl = `${protocol}//${host}/api/auth`;
-
-    // Initialize headers if a token is already present
+  constructor(
+    private readonly http: HttpClient,
+    private readonly hostService: HostService
+  ) {
+    this.apiUrl = `${this.hostService.getHostBaseURL()}/auth`;
+  
     const token = this.getToken();
     if (token) {
       this.updateAuthHeaders(token);
     }
   }
+  
 
   get headers(): HttpHeaders {
     const token = this.getToken(); // Retrieve the token from localStorage
