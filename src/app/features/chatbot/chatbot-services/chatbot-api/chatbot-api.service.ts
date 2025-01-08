@@ -1,4 +1,4 @@
-import { HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -12,6 +12,7 @@ import { HostService } from '../../../../core/services/host-service/host.service
 })
 export class ChatbotApiService {
   private readonly baseUrl: string;
+  private readonly baseChatbotUrl: string;
   private webSocket: WebSocket | null = null;
   private webSocketSubject: Subject<string> | null = null;
 
@@ -21,25 +22,30 @@ export class ChatbotApiService {
     private readonly chatbotEventService: ChatbotEventService,
     private readonly authService: AuthService
   ) {
-    this.baseUrl = `${this.hostService.getHostBaseURL()}/chatbot`;
+    this.baseUrl = this.hostService.getHostBaseURL();
+    this.baseChatbotUrl = `${this.hostService.getHostBaseURL()}/chatbot`;
   }
 
-  
-  
+  // ------------------------------
+  // Helper Method for HTTP Headers
+  // ------------------------------
+  private getAuthHeaders() {
+    return { headers: this.authService.headers };
+  }
+
   // ------------------------------
   // API Methods
   // ------------------------------
 
   getAllProviders(): Observable<string[]> {
-    const url = `${this.baseUrl}/providers`;
-    return this.http.get<string[]>(url, { headers: this.authService.headers });
+    const url = `${this.baseChatbotUrl}/providers`;
+    return this.http.get<string[]>(url, this.getAuthHeaders());
   }
 
   getAllModelsByProvider(providerName: string): Observable<ProviderModelsResponse> {
-    const url = `${this.baseUrl}/provider/models?provider_name=${providerName}`;
-    return this.http.get<ProviderModelsResponse>(url, { headers: this.authService.headers });
+    const url = `${this.baseChatbotUrl}/provider/models?provider_name=${providerName}`;
+    return this.http.get<ProviderModelsResponse>(url, this.getAuthHeaders());
   }
-
 
   requestUserChatCompletion(
     prompt: string,
@@ -47,7 +53,7 @@ export class ChatbotApiService {
     provider_model: string = 'Azure GPT-3.5',
     options: ChatRequestOptions | null = null
   ): Observable<ChatCompletion> {
-    const url = `${this.baseUrl}/chat`;
+    const url = `${this.baseChatbotUrl}/chat`;
     const chatRequest: ChatRequest = {
       session_uuid: null,
       provider,
@@ -55,27 +61,22 @@ export class ChatbotApiService {
       options,
       messages: [{ role: 'user', content: prompt, message_uuid: null }],
     };
-  
+
     console.log('Chat Request:', chatRequest);
-  
-    return this.http.post<ChatCompletion>(url, chatRequest, { headers: this.authService.headers }).pipe(
+
+    return this.http.post<ChatCompletion>(url, chatRequest, this.getAuthHeaders()).pipe(
       map((response) => {
-        // Log and process the response if needed
         console.log('Chat Completion Response:', response);
         return response;
       })
     );
   }
-  
-
 
   sendPromptFeedback(promptAnswerId: number, voteType: string): Observable<any> {
-    const url = `${this.baseUrl}/feedback`;
+    const url = `${this.baseChatbotUrl}/feedback`;
     const requestBody = { prompt_answer_id: promptAnswerId, vote_type: voteType };
-    return this.http.post<any>(url, requestBody);
+    return this.http.post<any>(url, requestBody, this.getAuthHeaders());
   }
-
-
 
   // ------------------------------
   // WebSocket Management
@@ -101,7 +102,6 @@ export class ChatbotApiService {
     return this.webSocketSubject;
   }
 
-
   sendChatPromptViaWebSocket(webSocketUrl: string, prompt: string, modelName: string): Observable<string> {
     const webSocketSubject = this.createWebSocket(webSocketUrl);
 
@@ -113,7 +113,6 @@ export class ChatbotApiService {
     return webSocketSubject.asObservable();
   }
 
-
   closeWebSocket(): void {
     if (this.webSocket) {
       this.webSocket.close();
@@ -122,44 +121,51 @@ export class ChatbotApiService {
     }
   }
 
-
-
   // ------------------------------
-  // Temporary Methods
+  // VectorDB Methods
   // ------------------------------
 
-  tempChromaDbIngestion(): Observable<any> {
-    const host = window.location.host;
-    const protocol = window.location.protocol;
-    const url = `${protocol}//${host}/api/temp/chroma/ingest`;
-    
-    return this.http.get(url).pipe(map((response) => console.log('Chroma DB Ingestion:', response)));
+  vectorDbIngestion(): Observable<any> {
+    const url = `${this.baseUrl}/vectordb/deprecated_ingest`;
+    const requestBody = {
+      access_group_names: ["string"],
+      project_name: "default_project",
+    };
+  
+    return this.http.post<any>(url, requestBody, this.getAuthHeaders()).pipe(
+      map((response) => {
+        console.log('Chroma DB Ingestion Response:', response);
+        this.vectorDbCount();
+        return response;
+      })
+    );
   }
   
-  tempChromaDbDeletion(): Observable<any> {
-    const host = window.location.host;
-    const protocol = window.location.protocol;
-    const url = `${protocol}//${host}/api/temp/chroma/ingest`;
 
-    return this.http.get(url).pipe(map((response) => console.log('Chroma DB Deletion:', response)));
+  vectorDbDeletion(): Observable<any> {
+    const url = `${this.baseUrl}/vectordb/delete`;
+    return this.http.get(url, this.getAuthHeaders()).pipe(
+      map((response) => {
+        console.log('Chroma DB Deletion:', response);
+        return response;
+      })
+    );
   }
-  
-  tempChromaDbCount(): void {
-    const host = window.location.host;
-    const protocol = window.location.protocol;
-    const tempChromaBbCountURL = `${protocol}//${host}/api/temp/chroma/count`;
 
-    const request = this.http.get<{ message: string; count: number }>(tempChromaBbCountURL);
+  vectorDbCount(): void {
+    const url = `${this.baseUrl}/vectordb/count`;
+
+    const request = this.http.get<{ message: string; count: number }>(url, this.getAuthHeaders());
     request.subscribe({
       next: (response) => {
-        console.log('Chroma BB Injestion Response:', response);
-        this.chatbotEventService.tempEvent_OnChromaDBCount.emit(response?.count);
+        console.log('Chroma BB Count Response:', response);
+        this.chatbotEventService.tempEvent_OnChromaDBCount.emit(response?.message);
       },
       error: (error) => {
-        console.error('Error from Chroma BB Injestion:', error);
+        console.error('Error from Chroma BB Count:', error);
       },
       complete: () => {
-        console.log('Chroma BB Injestion Complete');
+        console.log('Chroma BB Count Complete');
       },
     });
   }

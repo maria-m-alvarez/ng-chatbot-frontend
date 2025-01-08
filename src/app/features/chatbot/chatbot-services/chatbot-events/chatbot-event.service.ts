@@ -20,7 +20,7 @@ export class ChatbotEventService {
   readonly onChatbotModelNameChanged = new EventEmitter<string>();
   readonly onSaveChatbotSettings = new EventEmitter<void>();
 
-  readonly tempEvent_OnChromaDBCount = new EventEmitter<number>();
+  readonly tempEvent_OnChromaDBCount = new EventEmitter<string>();
 
   isSidebarOpen = true;
 

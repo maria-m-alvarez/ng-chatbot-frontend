@@ -22,7 +22,7 @@ export class ChatbotSettingsComponent extends ChatbotBaseComponentComponent {
     this.brain.chatbotSettings.provider
   );
 
-  collectionCount: number = 0;
+  collectionCount: string = '0';
 
   optionStates = {
     options: 'options',
@@ -105,7 +105,7 @@ export class ChatbotSettingsComponent extends ChatbotBaseComponentComponent {
   }
 
   onCollectionCountClicked() {
-    this.brain.chatbotApiService.tempChromaDbCount();
+    this.brain.chatbotApiService.vectorDbCount();
   }
 
   onProviderChanged(newProvider: string): void {
@@ -119,11 +119,11 @@ export class ChatbotSettingsComponent extends ChatbotBaseComponentComponent {
 
   click_tempChromaDbIngestion() {
     console.log('Ingesting Chroma DB');
-    this.brain.chatbotApiService.tempChromaDbIngestion().subscribe();
+    this.brain.chatbotApiService.vectorDbIngestion().subscribe();
   }
 
   click_tempChromaDbDeletion() {
     console.log('Deleting Chroma DB');
-    this.brain.chatbotApiService.tempChromaDbDeletion().subscribe();
+    this.brain.chatbotApiService.vectorDbDeletion().subscribe();
   }
 }
