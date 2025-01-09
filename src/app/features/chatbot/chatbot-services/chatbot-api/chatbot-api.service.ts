@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ChatbotEventService } from '../chatbot-events/chatbot-event.service';
-import { ProviderModelsResponse, ChatRequestOptions, ChatCompletion, ChatRequest } from '../../chatbot-models/chatbot-api-models';
+import { ChatRequestOptions, ChatCompletion, ChatRequest } from '../../chatbot-models/chatbot-api-models';
 import { AuthService } from '../../../authentication/auth-service/auth.service';
 import { HostService } from '../../../../core/services/host-service/host.service';
 
@@ -42,28 +42,40 @@ export class ChatbotApiService {
     return this.http.get<string[]>(url, this.getAuthHeaders());
   }
 
-  getAllModelsByProvider(providerName: string): Observable<ProviderModelsResponse> {
+  getAllModelsByProvider(providerName: string): Observable<any[]> {
     const url = `${this.baseChatbotUrl}/provider/models?provider_name=${providerName}`;
-    return this.http.get<ProviderModelsResponse>(url, this.getAuthHeaders());
+    return this.http.get<any[]>(url, this.getAuthHeaders()).pipe(
+        map((models) => {
+            console.log('Models by Provider:', models);
+            return models.map((model) => ({
+                name: model.name,
+                id: model.id,
+                providerId: model.provider_id,
+            }));
+        })
+    );
   }
 
   requestUserChatCompletion(
     prompt: string,
     provider: string = 'azure_openai',
     provider_model: string = 'Azure GPT-3.5',
-    options: ChatRequestOptions | null = null
+    options: ChatRequestOptions | null = null,
+    sessionId: number = -1 // Default session ID to align with Python API
   ): Observable<ChatCompletion> {
     const url = `${this.baseChatbotUrl}/chat`;
+  
+    // Create the ChatRequest object with the expected structure
     const chatRequest: ChatRequest = {
-      session_uuid: null,
+      session_id: sessionId, // Align with Python API field
       provider,
       provider_model,
       options,
       messages: [{ role: 'user', content: prompt, message_uuid: null }],
     };
-
+  
     console.log('Chat Request:', chatRequest);
-
+  
     return this.http.post<ChatCompletion>(url, chatRequest, this.getAuthHeaders()).pipe(
       map((response) => {
         console.log('Chat Completion Response:', response);
@@ -71,6 +83,7 @@ export class ChatbotApiService {
       })
     );
   }
+  
 
   sendPromptFeedback(promptAnswerId: number, voteType: string): Observable<any> {
     const url = `${this.baseChatbotUrl}/feedback`;

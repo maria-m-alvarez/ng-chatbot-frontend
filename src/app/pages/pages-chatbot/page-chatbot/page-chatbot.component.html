@@ -1,19 +1,22 @@
-<div class="h-full w-full flex flex-col"><!-- Template for Right Content -->
-
+<div class="h-full w-full flex flex-col">
   <!-- Modular Header -->
   <app-modular-header
-    [showLogo]="false"
-    [useNegativeLogo]="true"
-    [rightContent]="rightContent">
+  [showLogo]="false"
+  [useNegativeLogo]="true"
+  [rightContent]="rightContent">
   </app-modular-header>
 
-  <ng-template #rightContent>
-    <app-user-options-button></app-user-options-button>
-  </ng-template>
-  
-  <div class="w-full h-fit flex-grow">
-  </div>
-  <app-chat-session-history class="flex-grow overflow-y-auto"></app-chat-session-history>
-  <app-chatbot-input class="mx-2 flex-shrink-0 bg-transparent"></app-chatbot-input>
+  <section class="h-full w-full flex flex-col">
+    <div class="flex-1 overflow-y-auto">
+      <app-chat-session-history></app-chat-session-history>
+    </div>
 
+    <div>
+      <app-chatbot-input class="mx-2 flex-shrink-0 bg-transparent"></app-chatbot-input>
+    </div>
+  </section>
 </div>
+
+<ng-template #rightContent>
+  <app-user-options-button></app-user-options-button>
+</ng-template>

@@ -15,7 +15,7 @@ import { ChatSession } from '../../../chatbot-models/chatbot-session';
 export class ChatSessionHistoryComponent implements OnInit {
   @ViewChild('chatHistoryContainer') readonly chatHistoryContainer!: ElementRef<HTMLDivElement>;
 
-  session!: ChatSession; // Use ChatSession directly
+  session!: ChatSession;
   isAtBottom: boolean = true;
 
   constructor(

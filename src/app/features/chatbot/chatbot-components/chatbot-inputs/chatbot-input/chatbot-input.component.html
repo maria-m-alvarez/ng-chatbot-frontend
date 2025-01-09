@@ -12,7 +12,7 @@
 }
 
 <!-- Outer Div -->
-<div class="relative w-full flex flex-col items-stretch">
+<div class="relative w-full h-full flex flex-col">
 
   <!-- Files Section -->
   @if (files.length > 0) {
@@ -51,71 +51,74 @@
     </div>
   }
 
-  <!-- Input Box -->
-  <div
-    #chatInput
-    class="bg-background-primary flex items-center w-full rounded-xl p-2 shadow-xl relative min-h-16
-      {{ currentInputState === chatbotInputStates.Waiting ? 'cursor-not-allowed' : '' }}">
+  <div class="w-full flex flex-col">
+    <!-- Chat Input -->
+    <div
+        #chatInput
+        class="w-full flex items-center bg-background-primary rounded-xl p-2 shadow-xl relative min-h-16
+          {{ currentInputState === chatbotInputStates.Waiting ? 'cursor-not-allowed' : '' }}">
+  
+        @if (currentInputState === chatbotInputStates.Waiting) {
+          <div class="flex-grow mx-2 flex items-center justify-center">
+            <div class="flex-grow flex items-center justify-center text-text-secondary">
+              <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Processing...
+            </div>
+            <button (click)="stopProcessing()" class="p-2 rounded-lg ml-4 bg-border-highlight hover:bg-highlight-secondary text-text-tertiary hover:text-text-highlight">
+              <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M7 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H7Z" />
+              </svg>
+            </button>
+          </div>
+        }
+        @else {
+          <div class="w-full flex items-center justify-between">
+            <!-- Attachment Button -->
+            <button
+              (click)="openFileSelector()"
+              class="text-text-secondary hover:text-text-highlight flex items-center justify-center h-12 w-12 rounded-md self-end"
+              aria-label="Attach File">
+              <svg class="w-2/4 h-2/4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M7 8v8a5 5 0 1 0 10 0V6.5a3.5 3.5 0 1 0-7 0V15a2 2 0 0 0 4 0V8" />
+              </svg>
+            </button>
     
-    @if (currentInputState === chatbotInputStates.Waiting) {
-      <div class="flex-grow mx-2 flex items-center justify-center">
-        <div class="flex-grow flex items-center justify-center text-text-secondary">
-          <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          Processing...
-        </div>
-        <button (click)="stopProcessing()" class="p-2 rounded-lg ml-4 bg-border-highlight hover:bg-highlight-secondary text-text-tertiary hover:text-text-highlight">
-          <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M7 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H7Z" />
-          </svg>
-        </button>
-      </div>
-    }
-    @else {
-      <div class="w-full flex items-center justify-between">
-        <!-- Attachment Button -->
-        <button
-          (click)="openFileSelector()"
-          class="text-text-secondary hover:text-text-highlight flex items-center justify-center h-12 w-12 rounded-md self-end"
-          aria-label="Attach File">
-          <svg class="w-2/4 h-2/4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M7 8v8a5 5 0 1 0 10 0V6.5a3.5 3.5 0 1 0-7 0V15a2 2 0 0 0 4 0V8" />
-          </svg>
-        </button>
-
-        <!-- Hidden file input -->
-        <input
-          type="file"
-          multiple
-          #fileInput
-          class="hidden"
-          (change)="onFilesSelected($event)"
-        />
-
-        <!-- Input Field -->
-        <div class="flex-grow mx-2">
-          <textarea #chatTextInput
-            class="slender-scrollbar text-text-secondary w-full max-h-32 resize-none bg-transparent px-3 py-2 placeholder-text-secondary outline-none"
-            placeholder="Escreve a tua pergunta..." rows="1" id="chat-input"
-            (input)="adjustTextareaHeight($event)" (keydown)="handleKeyDown($event)"></textarea>
-        </div>
-      
-        <!-- Submit Button -->
-        <button
-          class="text-text-secondary hover:text-text-highlight flex items-center justify-center h-12 w-12 rounded-full transition-colors self-end"
-          (click)="submitMessage()" aria-label="Send Message">
-          <svg class="w-3/4 h-3/4" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-            <rect width="24" height="24" fill="none"></rect>
-            <path d="M3 5.51v3.71c0 .46.31.86.76.97L11 12l-7.24 1.81c-.45.11-.76.51-.76.97v3.71c0 .72.73 1.2 1.39.92l15.42-6.49c.82-.34.82-1.5 0-1.84L4.39 4.58C3.73 4.31 3 4.79 3 5.51z" />
-          </svg>
-        </button>
-      </div>
-    }
+            <!-- Hidden file input -->
+            <input
+              type="file"
+              multiple
+              #fileInput
+              class="hidden"
+              (change)="onFilesSelected($event)"
+            />
+    
+            <!-- Input Field -->
+            <div class="flex-grow mx-2">
+              <textarea #chatTextInput
+                class="slender-scrollbar text-text-secondary w-full max-h-32 resize-none bg-transparent px-3 py-2 placeholder-text-secondary outline-none"
+                placeholder="Escreve a tua pergunta..." rows="1" id="chat-input"
+                (input)="adjustTextareaHeight($event)" (keydown)="handleKeyDown($event)"></textarea>
+            </div>
+          
+            <!-- Submit Button -->
+            <button
+              class="text-text-secondary hover:text-text-highlight flex items-center justify-center h-12 w-12 rounded-full transition-colors self-end"
+              (click)="submitMessage()" aria-label="Send Message">
+              <svg class="w-3/4 h-3/4" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                <rect width="24" height="24" fill="none"></rect>
+                <path d="M3 5.51v3.71c0 .46.31.86.76.97L11 12l-7.24 1.81c-.45.11-.76.51-.76.97v3.71c0 .72.73 1.2 1.39.92l15.42-6.49c.82-.34.82-1.5 0-1.84L4.39 4.58C3.73 4.31 3 4.79 3 5.51z" />
+              </svg>
+            </button>
+          </div>
+        }
+    </div>
+  
+    <app-chatbot-settings-button></app-chatbot-settings-button>
   </div>
 </div>
 
-<app-chatbot-settings-button></app-chatbot-settings-button>
 <app-chatbot-settings></app-chatbot-settings>

@@ -4,7 +4,6 @@ import { ChatSession } from '../../chatbot-models/chatbot-session';
 import { ChatbotApiService } from '../chatbot-api/chatbot-api.service';
 import { SelectorOption } from '../../../../core/components/input-components/input-selector/input-selector.component';
 import { WebRequestResult } from '../../../../core/models/enums';
-import { forkJoin, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -12,10 +11,10 @@ import { forkJoin, map } from 'rxjs';
 export class ChatbotSessionService {
   currentSession!: ChatSession;
   sessions: ChatSession[] = [];
-  providers: string[] = [];
+  providers: SelectorOption[] = [];
   modelsByProvider: { [key: string]: SelectorOption[] } = {};
-  selectedProvider: string = '';
-  selectedModel: string = '';
+  selectedProvider: SelectorOption | null = null;
+  selectedModel: SelectorOption | null = null;
 
   constructor(
     private readonly chatbotEventService: ChatbotEventService,
@@ -37,55 +36,27 @@ export class ChatbotSessionService {
   }
 
   private getProvidersAndTheirModelNames(): void {
-    this.chatbotApiService.getAllProviders().subscribe({
-      next: (providers) => {
-        this.providers = providers;
-        const modelRequests = providers.map((provider) =>
-          this.chatbotApiService.getAllModelsByProvider(provider).pipe(
-            map((response) => ({
-              provider,
-              models: response.models.map((model: { name: string }, index: number) => ({
-                id: index + 1,
-                value: model.name,
-              })),
-            }))
-          )
-        );
-
-        forkJoin(modelRequests).subscribe({
-          next: (responses) => {
-            responses.forEach(({ provider, models }) => {
-              this.modelsByProvider[provider] = models;
-            });
-            this.selectInitialModel();
-          },
-          error: (error) => {
-            console.error('Error fetching models for providers:', error);
-          },
-        });
-      },
-      error: (error) => {
-        console.error('Error fetching providers:', error);
-      },
-    });
+    this.providers = [new SelectorOption(1, 'azure_openai')];
+    this.modelsByProvider = {
+      azure_openai: [new SelectorOption(1, 'Azure GPT-3.5')],
+    };
+    this.selectInitialModel();
   }
 
   private selectInitialModel(): void {
-    if (this.providers.length > 0) {
-      const azureProvider = this.providers.find((provider) => provider.toLowerCase().includes('azure'));
-      this.selectedProvider = azureProvider ?? this.providers[0];
-      const models = this.modelsByProvider[this.selectedProvider] || [];
-      if (models.length > 0) {
-        this.selectedModel = models[0].value;
-      }
-    }
+    this.selectedProvider = this.providers.find((provider) => provider.value === 'azure_openai') ?? null;
+    this.selectedModel =
+      this.modelsByProvider['azure_openai']?.find((model) => model.value === 'Azure GPT-3.5') ?? null;
 
-    this.chatbotEventService.onChatbotProviderChanged.emit(this.selectedProvider);
-    this.chatbotEventService.onChatbotModelNameChanged.emit(this.selectedModel);
+    this.chatbotEventService.onChatbotProviderChanged.emit(this.selectedProvider?.value ?? '');
+    this.chatbotEventService.onChatbotModelNameChanged.emit(this.selectedModel?.value ?? '');
+
+    console.log('Selected Provider:', this.selectedProvider);
+    console.log('Selected Model:', this.selectedModel);
   }
 
   getProviderSelectorOptions(): SelectorOption[] {
-    return this.providers.map((provider, index) => new SelectorOption(index + 1, provider));
+    return this.providers;
   }
 
   getProviderModelSelectorOptions(provider: string): SelectorOption[] {
@@ -139,7 +110,11 @@ export class ChatbotSessionService {
     }
   }
 
-  handleAssistantResponse(promptId: string, message: string, metadata: { documents?: { Document: string; Page: number }[] } = {}): void {
+  handleAssistantResponse(
+    promptId: string,
+    message: string,
+    metadata: { documents?: { doc_id: number; doc_name: string; doc_page: number; doc_content: string }[] } = {}
+  ): void {
     const msg = this.currentSession.addAssistantMessage(promptId, message, metadata);
     this.chatbotEventService.onPromptAnswerReceived.emit();
 
@@ -147,30 +122,38 @@ export class ChatbotSessionService {
   }
 
   sendMessage(promptMessage: string): void {
-    const { provider, model } = { provider: this.selectedProvider, model: this.selectedModel };
-    const userMessage = this.currentSession.addUserMessage(promptMessage);
+    const { value: provider } = this.selectedProvider ?? {};
+    const { value: model } = this.selectedModel ?? {};
 
+    if (!provider || !model) {
+      console.error('Provider or model is not selected.');
+      return;
+    }
+
+    const userMessage = this.currentSession.addUserMessage(promptMessage);
     this.chatbotEventService.onPromptSent.emit();
 
     this.chatbotApiService.requestUserChatCompletion(promptMessage, provider, model).subscribe({
-        next: (apiResponse) => {
-            const assistantMessageContent = apiResponse?.messages.find((msg) => msg.role === 'assistant')?.content ?? '';
-            // Safely map references to the expected type
-            const metadata = apiResponse?.references
-                ? {
-                    documents: apiResponse.references.map((ref: any) => ({
-                        Document: ref.Document || '',
-                        Page: ref.Page || 0,
-                    })).filter((doc: { Document: string; Page: number }) => doc.Document && doc.Page), // Ensure valid entries
-                }
-                : {};
-            this.handleAssistantResponse(userMessage.id, assistantMessageContent, metadata);
-            this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Success);
-        },
-        error: (error) => {
-            console.error('Error from chatbot API:', error);
-            this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Error);
-        },
+      next: (apiResponse) => {
+        const assistantMessageContent =
+          apiResponse?.messages.find((msg) => msg.role === 'assistant')?.content ?? '';
+        const metadata = apiResponse?.references
+          ? {
+              documents: apiResponse.references.map((ref: any) => ({
+                doc_id: ref.Document.doc_id || 0,
+                doc_name: ref.Document.doc_name || '',
+                doc_page: ref.Document.doc_page || 0,
+                doc_content: ref.Document.doc_content || '',
+              })),
+            }
+          : {};
+        this.handleAssistantResponse(userMessage.id, assistantMessageContent, metadata);
+        this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Success);
+      },
+      error: (error) => {
+        console.error('Error from chatbot API:', error);
+        this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Error);
+      },
     });
   }
 

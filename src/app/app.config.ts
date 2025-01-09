@@ -1,6 +1,7 @@
 import { ApplicationConfig, APP_INITIALIZER, provideZoneChangeDetection } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { routes } from './app.routes';
 import { ConfigService } from './core/config/config.service';
 import { APP_CONFIG } from './core/config/config.token';
@@ -15,12 +16,13 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(),
+    provideAnimations(),
     {
       provide: APP_CONFIG,            
       useFactory: (configService: ConfigService) => configService.getConfig(),  
       deps: [ConfigService]
     },
-    {                                 
+    {
       provide: APP_INITIALIZER,
       useFactory: loadAppConfig,
       deps: [ConfigService],

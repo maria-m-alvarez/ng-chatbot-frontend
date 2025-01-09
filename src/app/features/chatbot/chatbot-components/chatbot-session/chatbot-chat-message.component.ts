@@ -14,7 +14,7 @@ export class ChatbotChatMessageComponent extends ChatbotBaseComponentComponent {
   @Input() chatMessage: ChatMessage | null = null;
   sanitizedMessage: SafeHtml = '';
   showSources: boolean = false;
-  groupedSources: { Document: string; Pages: number[] }[] = [];
+  groupedSources: { doc_name: string; pages: number[] }[] = [];
 
   constructor(
     brain: ChatbotBrainService,
@@ -38,21 +38,21 @@ export class ChatbotChatMessageComponent extends ChatbotBaseComponentComponent {
     return this.getDocuments().length > 0;
   }
 
-  private groupDocumentSources(): { Document: string; Pages: number[] }[] {
+  private groupDocumentSources(): { doc_name: string; pages: number[] }[] {
     const documents = this.getDocuments();
     const grouped = documents.reduce((acc, doc) => {
-      const existing = acc.find((item) => item.Document === doc.Document);
+      const existing = acc.find((item) => item.doc_name === doc.doc_name);
       if (existing) {
-        existing.Pages.push(doc.Page);
+        existing.pages.push(doc.doc_page);
       } else {
-        acc.push({ Document: doc.Document, Pages: [doc.Page] });
+        acc.push({ doc_name: doc.doc_name, pages: [doc.doc_page] });
       }
       return acc;
-    }, [] as { Document: string; Pages: number[] }[]);
+    }, [] as { doc_name: string; pages: number[] }[]);
 
     return grouped.map((doc) => ({
       ...doc,
-      Pages: [...new Set(doc.Pages)].sort((a, b) => a - b),
+      pages: [...new Set(doc.pages)].sort((a, b) => a - b),
     }));
   }
 
@@ -60,7 +60,12 @@ export class ChatbotChatMessageComponent extends ChatbotBaseComponentComponent {
     return this.sanitizer.bypassSecurityTrustHtml(message);
   }
 
-  private getDocuments(): { Document: string; Page: number }[] {
+  private getDocuments(): {
+    doc_id: number;
+    doc_name: string;
+    doc_page: number;
+    doc_content: string;
+  }[] {
     return this.chatMessage?.metadata?.documents || [];
   }
 }

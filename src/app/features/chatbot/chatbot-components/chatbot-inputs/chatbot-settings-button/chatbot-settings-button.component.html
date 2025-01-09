@@ -1,11 +1,11 @@
-<div class="text-sm p-2 flex flex-row items-center text-primary text-center relative">
+<div class="h-full w-full text-sm p-2 flex flex-row items-center text-primary text-center relative">
     <!-- Left Section -->
     <div class="flex flex-row items-start space-x-2">
         <p>
             Modelo:
         </p>
     
-        <div class="flex items-center space-x-1 hover:text-highlight-secondary hover:underline hover:cursor-pointer"
+        <div class="flex items-center space-x- hover:text-highlight-secondary hover:underline hover:cursor-pointer"
              (click)="openChatbotSettingsModal()">
             <p>
                 {{ brain.chatbotSettings.model ? brain.chatbotSettings.model : 'select model' }}
@@ -16,16 +16,6 @@
             </svg>
         </div>
     </div>
-
-    <!-- Middle Section for md+ -->
-    <!-- <div class="hidden md:absolute md:left-1/2 md:-translate-x-1/2 md:flex">
-        Respostas geradas por IA podem conter incorreções. Por favor, valide informações importantes.
-    </div>
-
-    Middle Section for mobile -->
-    <!-- <div class="flex md:hidden flex-grow justify-end text-right">
-        Respostas geradas por IA podem conter incorreções. Por favor, valide informações importantes.
-    </div> -->
 
     <div class="flex flex-grow justify-end text-right">
         Respostas geradas por IA podem conter incorreções. Por favor, valide informações importantes.

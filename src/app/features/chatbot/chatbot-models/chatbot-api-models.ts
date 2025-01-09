@@ -14,7 +14,7 @@ export interface ChatRequestOptions {
 }
 
 export interface ChatRequest {
-  session_uuid?: string | null;
+  session_id?: number; // Updated to session_id
   provider: string;
   provider_model: string;
   options?: ChatRequestOptions | null;
