@@ -11,7 +11,6 @@ import {
 } from '@angular/core';
 import { trigger, state, style, transition, animate, AnimationEvent } from '@angular/animations';
 import { NgClass, NgStyle, NgTemplateOutlet } from '@angular/common';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ToggleableComponent } from '../../toggleable/toggleable-component';
 import { ToggleService } from '../../toggleable/toggleable.service';
 
@@ -58,16 +57,6 @@ export class SidebarComponent implements ToggleableComponent, AfterViewInit, OnD
   @ViewChild('sidebar', { static: false }) sidebarRef!: ElementRef;
   @ViewChild('resizer', { static: false }) resizerRef!: ElementRef;
 
-  iconArrowRight: string = `
-  <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-  </svg>`;
-
-  iconArrowLeft: string = `
-    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-    </svg>`;
-
   isOpen = false;
   isResizing = false;
   isAnimating = false;
@@ -75,7 +64,6 @@ export class SidebarComponent implements ToggleableComponent, AfterViewInit, OnD
   private startMouseX: number = 0; // Starting X position of the mouse
 
   constructor(
-    protected readonly sanitizer: DomSanitizer,
     protected readonly toggleService: ToggleService
   ) {}
 
@@ -115,17 +103,6 @@ export class SidebarComponent implements ToggleableComponent, AfterViewInit, OnD
     } else if (event.phaseName === 'done') {
       this.isAnimating = false;
     }
-  }
-
-  get toggleIcon(): SafeHtml {
-    const icon = this.isOpen
-      ? this.position === 'left'
-        ? this.iconArrowLeft
-        : this.iconArrowRight
-      : this.position === 'left'
-      ? this.iconArrowRight
-      : this.iconArrowLeft;
-    return this.sanitizer.bypassSecurityTrustHtml(icon);
   }
 
   @HostListener('mousedown', ['$event'])

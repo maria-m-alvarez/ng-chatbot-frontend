@@ -23,7 +23,7 @@
           [options]="brain.chatbotSessionService.getProviderSelectorOptions()"
           [stringValue]="brain.chatbotSettings.provider"
           (onValueChange)="onInputChanged(providerSelector.inputID, providerSelector.valueAsString)"
-          class="w-full border border-border-secondary rounded-lg">
+          class="w-full border border-secondary rounded-lg">
         </app-input-selector>
       </div>
 
@@ -36,7 +36,7 @@
           [options]="brain.chatbotSessionService.getProviderModelSelectorOptions(brain.chatbotSettings.provider)"
           [stringValue]="brain.chatbotSettings.connectionName"
           (onValueChange)="onInputChanged(providerModelSelector.inputID, providerModelSelector.valueAsString)"
-          class="w-full border border-border-secondary rounded-lg">
+          class="w-full border border-secondary rounded-lg">
         </app-chatbot-model-selector>
       </div>
 
@@ -46,7 +46,7 @@
         <app-input-boolean-selector #useOptionsSelector [inputID]="'chatbot_use_options'" [defaultSelectionID]="2"
           [booleanValue]="brain.chatbotSettings.useOptions"
           (onValueChange)="onInputChanged(useOptionsSelector.inputID, useOptionsSelector.valueAsBoolean)"
-          class="w-full border border-border-secondary rounded-lg">
+          class="w-full border border-secondary rounded-lg">
         </app-input-boolean-selector>
       </div>
 
@@ -56,26 +56,26 @@
         <app-input-boolean-selector #streamSelector [inputID]="'chatbot_stream'" [defaultSelectionID]="2"
           [booleanValue]="brain.chatbotSettings.stream"
           (onValueChange)="onInputChanged(streamSelector.inputID, streamSelector.valueAsBoolean)"
-          class="w-full border border-border-secondary rounded-lg">
+          class="w-full border border-secondary rounded-lg">
         </app-input-boolean-selector>
       </div>
     </div>
 
     <!-- Toggle Buttons -->
     <div class="mt-16 mb-4 w-full h-8 flex justify-between rounded-lg
-    border border-border-highlight
-    text-text-highlight shadow-lg">
+    border border-accent
+    text-accent shadow-lg">
       <div class="flex w-full">
         <button class="w-1/2 rounded-l-lg focus:outline-none transition-colors duration-300 ease-in-out"
           (click)="toggleOptionsState(optionStates.options)"
-          [class.bg-main-highlight]="optionsState === optionStates.options"
-          [class.text-text-tertiary]="optionsState === optionStates.options">
+          [class.bg-accent]="optionsState === optionStates.options"
+          [class.text-secondary]="optionsState === optionStates.options">
           Configuração do Modelo
         </button>
         <button class="w-1/2 rounded-r-lg focus:outline-none transition-colors duration-300 ease-in-out"
           (click)="toggleOptionsState(optionStates.systemPrompt)"
-          [class.bg-main-highlight]="optionsState === optionStates.systemPrompt"
-          [class.text-text-tertiary]="optionsState === optionStates.systemPrompt">
+          [class.bg-accent]="optionsState === optionStates.systemPrompt"
+          [class.text-secondary]="optionsState === optionStates.systemPrompt">
           Prompt de Sistema
         </button>
       </div>
@@ -87,7 +87,7 @@
     <!-- Seed Input -->
     <div class="flex items-center space-x-2">
       <h5 class="w-[25%]">Seed:</h5>
-      <input type="number" class="w-full p-2 rounded-lg border border-border-secondary"
+      <input type="number" class="w-full p-2 rounded-lg border border-secondary"
         placeholder="Enter Seed Value" [value]="brain.chatbotSettings.options.seed" (input)="onSeedChange($event)" />
     </div>
 
@@ -134,7 +134,7 @@
     <!-- Stop Tokens Input -->
     <div class="flex items-center space-x-2">
       <h5 class="w-[25%]">Stop Tokens:</h5>
-      <input type="text" class="w-full p-2 rounded-lg border border-border-secondary"
+      <input type="text" class="w-full p-2 rounded-lg border border-secondary"
         placeholder="Escreve aqui os Stop Tokens (separado por vírgulas)" [value]="brain.chatbotSettings.options.stop.join(', ')"
         (input)="onStopTokensChange($event)" />
     </div>
@@ -143,7 +143,7 @@
     <!-- System-Prompt Section -->
     @if (optionsState === optionStates.systemPrompt) {
     <h5>Prompt de Sistema:</h5>
-    <textarea class="w-full h-40 min-h-16 p-2 rounded-lg border border-border-secondary"
+    <textarea class="w-full h-40 min-h-16 p-2 rounded-lg border border-secondary"
       placeholder="Enter a system-prompt" [value]="brain.chatbotSettings.systemPrompt"
       (input)="onPrePromptChange($event)"></textarea>
     }
@@ -168,7 +168,7 @@
       </div>
 
       <div class="w-full h-8 flex justify-between">
-        <button class="px-4 rounded-lg text-text-highlight hover:text-text-tertiary border border-border-highlight hover:bg-border-highlight transition-colors duration-300 ease-in-out"
+        <button class="px-4 rounded-lg text-accent hover:text-secondary border border-accent hover:bg-accent transition-colors duration-300 ease-in-out"
         (click)="onCollectionCountClicked()">
           Dimensão da Coleção
         </button>

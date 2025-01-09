@@ -1,17 +1,13 @@
-<div class="h-full w-full flex flex-col bg-background-primary text-text-tertiary">
-    <!-- Template for Right Content -->
-    <ng-template #navContent>
-      <!-- <a [routerLink]="['/chatbot']" class="text-text-highlight hover:underline">Chatbot</a> -->
-    </ng-template>
+<div class="h-full w-full flex flex-col bg-primary text-primary-contrast">
   
     <!-- Modular Header -->
     <app-modular-header
       [showLogo]="false"
       [useNegativeLogo]="true"
-      [navContent]="navContent">
+      >
     </app-modular-header>
   
-    <div class="flex-grow overflow-y-auto bg-secondary text-text-secondary">
+    <div class="flex-grow overflow-y-auto">
       <router-outlet></router-outlet>
     </div>
   </div>

@@ -12,11 +12,11 @@
   <!-- Dropdown Menu -->
   @if (isDropdownOpen) {
     <div
-      class="absolute right-0 w-48 bg-main-secondary border border-border-secondary rounded-md shadow-lg z-10 mt-2 text-text">
-      <ul class="text-sm text-text-primary">
+      class="absolute right-0 w-48 bg-secondary border border-secondary rounded-md shadow-lg z-10 mt-2 text-text">
+      <ul class="text-sm text-primary">
 
         <!-- Profile -->
-        <li class="h-full px-4 py-2 flex items-center hover:text-text-secondary hover:bg-main-primary hover:rounded-t-md cursor-pointer"
+        <li class="h-full px-4 py-2 flex items-center hover:text-secondary hover:bg-primary hover:rounded-t-md cursor-pointer"
           (click)="triggerOptionEvent('profile')">
           <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
             width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
@@ -28,7 +28,7 @@
         </li>
 
         <!-- Settings -->
-        <li class="h-full px-4 py-2 flex items-center hover:text-text-secondary hover:bg-main-primary cursor-pointer"
+        <li class="h-full px-4 py-2 flex items-center hover:text-secondary hover:bg-primary cursor-pointer"
           (click)="openUserSettings()">
           <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
             width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
@@ -40,13 +40,13 @@
         </li>
 
         <!-- Theme -->
-        <li class="h-12 cursor-pointer hover:text-text-secondary hover:bg-main-primary flex items-center px-4"
+        <li class="h-12 cursor-pointer hover:text-secondary hover:bg-primary flex items-center px-4"
           (click)="themeToggle.toggleTheme()">
           <app-theme-toggle [isIconOnly]="false" #themeToggle class="w-full"></app-theme-toggle>
         </li>
 
         <!-- Logout -->
-        <li class="h-full px-4 py-2 flex items-center hover:text-error-secondary hover:bg-error hover:rounded-b-md cursor-pointer"
+        <li class="h-full px-4 py-2 flex items-center hover:text-secondary hover:bg-accent hover:rounded-b-md cursor-pointer"
           (click)="triggerOptionEvent('logout')">
           <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
             width="24" height="24" fill="none" viewBox="0 0 24 24">

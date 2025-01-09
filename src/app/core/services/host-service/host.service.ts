@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../../environments/environment'; // Adjust path as necessary
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -15,5 +15,17 @@ export class HostService {
     } else {
       return 'http://localhost:8000';
     }
+  }
+
+  allowUserRegistration(): boolean {
+    return environment.allowUserRegistration;
+  }
+
+  allowSimulatedLogin(): boolean {
+    return environment.allowSimulatedLogin;
+  }
+
+  allowSidebar(): boolean {
+    return environment.allowSidebar;
   }
 }

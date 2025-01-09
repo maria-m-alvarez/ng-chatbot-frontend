@@ -6,6 +6,7 @@ import {
   ChatbotSettings,
 } from '../../chatbot-models/chatbot-settings';
 import { ConfigService } from '../../../../core/config/config.service';
+import { IconService } from '../../../../core/services/icon-service/icon.service';
 
 @Injectable({
   providedIn: 'root',
@@ -25,6 +26,7 @@ export class ChatbotBrainService {
 
   constructor(
     readonly configService: ConfigService,
+    readonly iconService: IconService,
     readonly chatbotApiService: ChatbotApiService,
     readonly chatbotEventService: ChatbotEventService,
     readonly chatbotSessionService: ChatbotSessionService

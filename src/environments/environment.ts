@@ -4,6 +4,7 @@ export const environment = {
     
     allowUserRegistration: false,
     allowSimulatedLogin: false,
+    allowSidebar: false,
 
     simulateLogins: {
       'admin@minsait.com': { password: 'admin@minsait.com', role: 'admin' },

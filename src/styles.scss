@@ -15,34 +15,27 @@
 :root {
   /* node theme-sync update */
   /* Theme START */
-  --main-primary: #480E2A;
-  --main-primary-contrast: #260717;
-  --main-secondary: #E3E2DA;
-  --main-secondary-contrast: #FF0054;
-  --main-terciary: #FFFFFF;
-  --main-terciary-contrast: #FF0054;
-  --main-highlight: #FF0054;
+  --header: #480E2A;
+  --header-contrast: #E3E2DA;
 
-  --background-primary: #480E2A;
-  --background-secondary: #E3E2DA;
-  --background-tertiary: #FFFFFF;
-  --background-highlight: #260717;
+  --background: #FFFFFF;
+  --background-contrast: #260717;
 
-  --text-primary: #260717;
-  --text-secondary: #E3E2DA;
-  --text-tertiary: #FFFFFF;
-  --text-highlight: #FF0054;
+  --primary: #480E2A;
+  --primary-hover: #480e2a80;
+  --primary-contrast: #E3E2DA;
 
-  --border-primary: #260717;
-  --border-secondary: #E3E2DA;
-  --border-terciary: #FFFFFF;
-  --border-highlight: #FF0054;
+  --secondary: #E3E2DA;
+  --secondary-hover: #e3e2da7e;
+  --secondary-contrast: #480E2A;
 
-  --chatbot-background: #FFFFFF;
-  --chatbot-bubble-user-background: #480E2A;
-  --chatbot-bubble-user-text: #E3E2DA;
-  --chatbot-bubble-assistant-background: #260717;
-  --chatbot-bubble-assistant-text: #E3E2DA;
+  --tertiary: #260717;
+  --tertiary-hover: #2607177c;
+  --tertiary-contrast: #E3E2DA;
+
+  --accent: #FF0054;
+  --accent-hover: #FF0054;
+  --accent-contrast: #E3E2DA;
 
   --success: #4ACB90;
   --success-secondary: #EAF7F0;
@@ -62,9 +55,9 @@
   --focus: #0D5BA6;
   --focus-secondary: #E4EAF2;
 
-  --scrollbar-track: #FFFFFF;
+  --scrollbar-track: rgb(38, 7, 23, 0.5);
   --scrollbar-thumb: #E3E2DA;
-  --scrollbar-thumb-hover: #480E2A;
+  --scrollbar-thumb-hover: #FF0054;
   /* Theme END */
 }
 
@@ -80,8 +73,7 @@
 
 ::-webkit-scrollbar-thumb {
   background-color: var(--scrollbar-thumb);
-  border-radius: 10px;
-  border: 2px solid var(--scrollbar-track);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {

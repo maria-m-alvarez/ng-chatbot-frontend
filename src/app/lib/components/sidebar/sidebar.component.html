@@ -7,19 +7,7 @@
     width: isOpen ? openWidth : '0px'
   }">
 
-  <!-- Toggle Button -->
-  <div class="absolute top-0 overflow-visible"
-  [ngClass]="{
-  '-right-8': position === 'left',
-  '-left-8': position === 'right'
-  }">
-    <button class="h-8 w-8 p-2 flex items-center justify-center rounded shadow-md bg-primary text-black">
-      <div (click)="toggle()" class="absolute w-full h-full"></div>
-      <div [innerHTML]="toggleIcon"></div>
-    </button>
-  </div>
-
-  <div class="w-full h-full border-border"
+  <div class="w-full h-full border-border bg-inherit"
   [ngClass]="{
   'border-r': position === 'left',
   'border-l': position === 'right',
@@ -32,7 +20,7 @@
       'left-0': position === 'right'
     }">
       <div #resizer
-        class="absolute top-0 right-0 h-full w-full bg-accent cursor-col-resize opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+        class="absolute top-0 right-0 h-full w-full bg-minsait-fucsia cursor-col-resize opacity-0 group-hover:opacity-100 transition-opacity duration-200"
         [ngClass]="{
           'opacity-100': isResizing && !isAnimating
         }">

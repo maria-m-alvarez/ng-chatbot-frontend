@@ -1,16 +1,34 @@
-<div class="h-full w-full flex flex-col"><!-- Template for Right Content -->
-
+<div class="h-full w-full flex flex-col">
   <!-- Modular Header -->
   <app-modular-header
+    #header
     [showLogo]="false"
     [useNegativeLogo]="true"
+    [leftContent]="leftContent"
     [rightContent]="rightContent">
   </app-modular-header>
 
-  <ng-template #rightContent>
-    <app-user-options-button></app-user-options-button>
-  </ng-template>
-
-  <app-chat-session-history class="flex-grow overflow-y-auto"></app-chat-session-history>
-  <app-chatbot-input class="mx-2 flex-shrink-0"></app-chatbot-input>
+  <!-- Side Bar & Chat -->
+  <div class="flex-grow w-full flex flex-row overflow-y-auto">
+    <!-- Sidebar -->
+    <app-chatbot-sidebar #chatbotSidebar />
+    <!-- Chat -->
+    <app-chatbot-input-with-session class="flex-grow" />
+  </div>
 </div>
+
+
+<!-- Header Content -->
+<ng-template #leftContent>
+  @if (allowSidebar) {
+    <app-button-for-toggleables
+      #btnToggle
+      [icon]="!chatbotSidebar.getSidebar()?.isOpen ? btnToggle.iconService.icons.sidebarLeft : btnToggle.iconService.icons.sidebarLeftCollapse"
+      [toggleableId]="chatbotSidebar.getSidebar()?.componentId || ''"
+    />
+  }
+</ng-template>
+
+<ng-template #rightContent>
+  <app-user-options-button />
+</ng-template>

@@ -12,12 +12,12 @@
 }
 
 <!-- Outer Div -->
-<div class="relative w-full h-full flex flex-col">
+<div class="relative w-full h-full flex flex-col flex-shrink-0">
 
   <!-- Files Section -->
   @if (files.length > 0) {
     <div class="w-full flex items-center justify-between p-2">
-      <div class="slender-scrollbar h-full overflow-x-auto whitespace-nowrap flex space-x-2 items-center px-2">
+      <div class="slender-scrollbar h-full overflow-x-auto whitespace-nowrap flex space-x-2 items-center">
         @for (file of files; track file.name; let i = $index) {
           <app-chatbot-input-attachment
             [file]="file"
@@ -51,11 +51,12 @@
     </div>
   }
 
-  <div class="w-full flex flex-col">
+  <div class="w-full flex flex-col flex-shrink-0">
+
     <!-- Chat Input -->
     <div
         #chatInput
-        class="w-full flex items-center bg-background-primary rounded-xl p-2 shadow-xl relative min-h-16
+        class="w-full flex items-center bg-primary text-secondary rounded-xl p-2 shadow-xl relative min-h-16 flex-shrink-0
           {{ currentInputState === chatbotInputStates.Waiting ? 'cursor-not-allowed' : '' }}">
   
         @if (currentInputState === chatbotInputStates.Waiting) {
@@ -79,7 +80,7 @@
             <!-- Attachment Button -->
             <button
               (click)="openFileSelector()"
-              class="text-text-secondary hover:text-text-highlight flex items-center justify-center h-12 w-12 rounded-md self-end"
+              class="hover:text-accent flex items-center justify-center h-12 w-12 rounded-md self-end transition-colors"
               aria-label="Attach File">
               <svg class="w-2/4 h-2/4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -99,14 +100,14 @@
             <!-- Input Field -->
             <div class="flex-grow mx-2">
               <textarea #chatTextInput
-                class="slender-scrollbar text-text-secondary w-full max-h-32 resize-none bg-transparent px-3 py-2 placeholder-text-secondary outline-none"
+                class="w-full max-h-32 resize-none bg-transparent px-3 py-2 outline-none"
                 placeholder="Escreve a tua pergunta..." rows="1" id="chat-input"
                 (input)="adjustTextareaHeight($event)" (keydown)="handleKeyDown($event)"></textarea>
             </div>
           
             <!-- Submit Button -->
             <button
-              class="text-text-secondary hover:text-text-highlight flex items-center justify-center h-12 w-12 rounded-full transition-colors self-end"
+              class="hover:text-accent flex items-center justify-center h-12 w-12 rounded-full transition-colors self-end"
               (click)="submitMessage()" aria-label="Send Message">
               <svg class="w-3/4 h-3/4" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                 <rect width="24" height="24" fill="none"></rect>
@@ -116,8 +117,11 @@
           </div>
         }
     </div>
-  
-    <app-chatbot-settings-button></app-chatbot-settings-button>
+    
+    <!-- Settings Button becomes invisible -->
+    <div class="w-full min-h-8">
+      <app-chatbot-settings-button></app-chatbot-settings-button>
+    </div>
   </div>
 </div>
 
