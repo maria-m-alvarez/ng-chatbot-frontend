@@ -6,7 +6,6 @@ import { ChatSession } from '../../chatbot-models/chatbot-session';
 import { ToggleService } from '../../../../lib/toggleable/toggleable.service';
 import { NgClass } from '@angular/common';
 import { ButtonIconComponent } from "../../../../core/components/button-icon/button-icon.component";
-import { environment } from '../../../../../environments/environment.development';
 
 @Component({
   selector: 'app-chatbot-sidebar',
@@ -18,7 +17,6 @@ import { environment } from '../../../../../environments/environment.development
 export class ChatbotSidebarComponent implements OnInit, AfterViewInit {
   @ViewChild('sidebar') sidebar!: SidebarComponent;
   chatSessions: ChatSession[] = [];
-  allowSidebar = environment.allowSidebar;
 
   constructor(
     private readonly toggleService: ToggleService,

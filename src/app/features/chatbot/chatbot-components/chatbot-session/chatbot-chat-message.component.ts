@@ -18,7 +18,7 @@ export class ChatbotChatMessageComponent extends ChatbotBaseComponentComponent {
 
   constructor(
     brain: ChatbotBrainService,
-    private readonly sanitizer: DomSanitizer
+    protected readonly sanitizer: DomSanitizer
   ) {
     super(brain);
   }

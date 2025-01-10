@@ -4,6 +4,7 @@ import { ChatSession } from '../../chatbot-models/chatbot-session';
 import { ChatbotApiService } from '../chatbot-api/chatbot-api.service';
 import { SelectorOption } from '../../../../core/components/input-components/input-selector/input-selector.component';
 import { WebRequestResult } from '../../../../core/models/enums';
+import { environment } from '../../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -72,6 +73,10 @@ export class ChatbotSessionService {
         answer: 'While it may seem odd, we can explore imaginative possibilities.',
       },
     ]);
+
+    if (!environment.allowSidebar) {
+      this.createEmptySession();
+    }
   }
 
   private createSession(

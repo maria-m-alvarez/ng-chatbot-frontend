@@ -7,6 +7,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { catchError, map } from 'rxjs/operators';
 import { saveAs } from 'file-saver';
 import { of } from 'rxjs';
+import { AuthService } from '../../../features/authentication/auth-service/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -52,7 +53,8 @@ export class FileService {
 
   constructor(
     private readonly sanitizer: DomSanitizer,
-    private readonly http: HttpClient
+    private readonly http: HttpClient,
+    private readonly authService: AuthService
   ) {}
 
   getFileIcon(file: File): SafeHtml {
@@ -175,12 +177,12 @@ export class FileService {
   // ------------------------------
 
   listFiles(): Observable<{ name: string }[]> {
-    return this.http.get<{ name: string }[]>(`${this.apiBaseUrl}/`);
+    return this.http.get<{ name: string }[]>(`${this.apiBaseUrl}/`, { headers: this.authService.headers });
   }
 
   downloadFile(docId: string): Observable<Blob> {
     const url = `${this.apiBaseUrl}/${encodeURIComponent(docId)}`;
-    return this.http.get(url, { responseType: 'blob' });
+    return this.http.get(url, { headers: this.authService.headers, responseType: 'blob' });
   }
 
   getFileMetadata(docId: string): Observable<{

@@ -5,7 +5,7 @@ import { UserOptionsButtonComponent } from "../../../features/user/user-componen
 import { ButtonForToggleablesComponent } from "../../../core/components/button-for-toggleables/button-for-toggleables.component";
 import { ChatbotInputWithSessionComponent } from "../../../features/chatbot/chatbot-components/chatbot-input-with-session/chatbot-input-with-session.component";
 import { ChatbotSidebarComponent } from "../../../features/chatbot/chatbot-components/chatbot-sidebar/chatbot-sidebar.component";
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-page-chatbot',

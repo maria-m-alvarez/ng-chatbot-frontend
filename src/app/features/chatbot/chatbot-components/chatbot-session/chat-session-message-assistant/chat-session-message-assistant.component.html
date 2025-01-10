@@ -35,12 +35,17 @@
             class="overflow-y-auto transition-all duration-200 ease-in-out"
           >
             <ul class="list-disc list-inside text-primary mt-2">
-              <li *ngFor="let doc of groupedSources">
-                <strong>{{ doc.doc_name }}</strong>: pag. {{ doc.pages.join(', ') }}
+              <li
+                *ngFor="let doc of groupedSources; let last = last"
+                [class.mb-2]="!last"
+              >
+                <button class="underline" (click)="downloadDocument(doc.doc_name)">
+                  <strong>{{ doc.doc_name }}</strong>: pag. {{ doc.pages.join(', ') }}
+                </button>
               </li>
             </ul>
           </div>
-        </div>
+        </div>        
       </div>
 
       <!-- Option Buttons -->

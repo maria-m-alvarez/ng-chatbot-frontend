@@ -1,6 +1,15 @@
-<button class="min-w-8 aspect-square text-minsait-pruno hover:text-minsait-fucsia">
-    <div
-        class="pointer-events-none"
-        [innerHTML]="iconService.getSanitizedIcon(icon)">
-    </div>
+<button
+  class="flex items-center justify-center gap-2 min-w-8 min-h-8 text-primary hover:text-accent"
+  [ngClass]="{
+    'flex-row': iconPosition === 'left',
+    'flex-row-reverse': iconPosition === 'right',
+    'flex-col': iconPosition === 'top',
+    'flex-col-reverse': iconPosition === 'bottom'
+  }"
+>
+  <div
+    class="pointer-events-none"
+    [innerHTML]="iconService.getSanitizedIcon(icon)">
+  </div>
+  <span *ngIf="text" class="pointer-events-none">{{ text }}</span>
 </button>
