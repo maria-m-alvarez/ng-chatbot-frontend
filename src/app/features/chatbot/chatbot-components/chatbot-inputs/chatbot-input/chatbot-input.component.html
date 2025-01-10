@@ -1,5 +1,5 @@
 <!-- Full-Screen Drop Zone -->
-@if (currentInputState === chatbotInputStates.Dragging) {
+@if (allowFileUpload && currentInputState === chatbotInputStates.Dragging) {
   <div
     class="absolute inset-0 bg-minsait-pruno-dark bg-opacity-80 flex items-center justify-center z-50">
     <div class="w-[60%] h-[60%] flex items-center justify-center
@@ -78,15 +78,17 @@
         @else {
           <div class="w-full flex items-center justify-between">
             <!-- Attachment Button -->
-            <button
-              (click)="openFileSelector()"
-              class="hover:text-accent flex items-center justify-center h-12 w-12 rounded-md self-end transition-colors"
-              aria-label="Attach File">
-              <svg class="w-2/4 h-2/4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M7 8v8a5 5 0 1 0 10 0V6.5a3.5 3.5 0 1 0-7 0V15a2 2 0 0 0 4 0V8" />
-              </svg>
-            </button>
+             @if (allowFileUpload) {
+              <button
+                (click)="openFileSelector()"
+                class="hover:text-accent flex items-center justify-center h-12 w-12 rounded-md self-end transition-colors"
+                aria-label="Attach File">
+                <svg class="w-2/4 h-2/4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M7 8v8a5 5 0 1 0 10 0V6.5a3.5 3.5 0 1 0-7 0V15a2 2 0 0 0 4 0V8" />
+                </svg>
+              </button>
+             }
     
             <!-- Hidden file input -->
             <input

@@ -6,6 +6,7 @@ import { ChatbotEventService } from '../chatbot-events/chatbot-event.service';
 import { ChatRequestOptions, ChatCompletion, ChatRequest } from '../../chatbot-models/chatbot-api-models';
 import { AuthService } from '../../../authentication/auth-service/auth.service';
 import { HostService } from '../../../../core/services/host-service/host.service';
+import { ChatSession } from '../../chatbot-models/chatbot-session';
 
 @Injectable({
   providedIn: 'root',
@@ -37,6 +38,8 @@ export class ChatbotApiService {
   // API Methods
   // ------------------------------
 
+  // Providers & LLMs
+  // ------------------------------
   getAllProviders(): Observable<string[]> {
     const url = `${this.baseChatbotUrl}/providers`;
     return this.http.get<string[]>(url, this.getAuthHeaders());
@@ -56,6 +59,31 @@ export class ChatbotApiService {
     );
   }
 
+
+  // Sessions
+  // ------------------------------
+  getAllSessions(): Observable<ChatSession[]> {
+    const url = `${this.baseChatbotUrl}/sessions`;
+    return this.http.get<ChatSession[]>(url, this.getAuthHeaders());
+  }
+  
+  createSession(sessionName: string): Observable<ChatSession> {
+    const url = `${this.baseChatbotUrl}/sessions`;
+    return this.http.post<ChatSession>(
+      url,
+      { name: sessionName },
+      this.getAuthHeaders()
+    );
+  }
+  
+  getSessionById(sessionId: number): Observable<ChatSession> {
+    const url = `${this.baseChatbotUrl}/sessions/${sessionId}`;
+    return this.http.get<ChatSession>(url, this.getAuthHeaders());
+  }
+  
+
+  // Chatbot Requests
+  // ------------------------------
   requestUserChatCompletion(
     prompt: string,
     provider: string = 'azure_openai',
@@ -91,49 +119,7 @@ export class ChatbotApiService {
     return this.http.post<any>(url, requestBody, this.getAuthHeaders());
   }
 
-  // ------------------------------
-  // WebSocket Management
-  // ------------------------------
-
-  private createWebSocket(webSocketUrl: string): Subject<string> {
-    if (this.webSocket) {
-      return this.webSocketSubject!;
-    }
-
-    this.webSocket = new WebSocket(webSocketUrl);
-    this.webSocketSubject = new Subject<string>();
-
-    this.webSocket.onopen = () => console.log('WebSocket connection opened');
-    this.webSocket.onmessage = (event) => this.webSocketSubject!.next(event.data);
-    this.webSocket.onclose = () => {
-      console.log('WebSocket connection closed');
-      this.webSocketSubject!.complete();
-      this.webSocket = null;
-    };
-    this.webSocket.onerror = (error) => console.error('WebSocket error:', error);
-
-    return this.webSocketSubject;
-  }
-
-  sendChatPromptViaWebSocket(webSocketUrl: string, prompt: string, modelName: string): Observable<string> {
-    const webSocketSubject = this.createWebSocket(webSocketUrl);
-
-    if (this.webSocket && this.webSocket.readyState === WebSocket.OPEN) {
-      const requestBody = JSON.stringify({ prompt, model_name: modelName });
-      this.webSocket.send(requestBody);
-    }
-
-    return webSocketSubject.asObservable();
-  }
-
-  closeWebSocket(): void {
-    if (this.webSocket) {
-      this.webSocket.close();
-      this.webSocket = null;
-      this.webSocketSubject = null;
-    }
-  }
-
+  
   // ------------------------------
   // VectorDB Methods
   // ------------------------------

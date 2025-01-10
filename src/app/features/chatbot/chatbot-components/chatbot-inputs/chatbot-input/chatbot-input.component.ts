@@ -5,6 +5,7 @@ import { ChatbotSettingsButtonComponent } from "../chatbot-settings-button/chatb
 import { ChatbotSettingsComponent } from "../../chatbot-settings/chatbot-settings.component";
 import { NgStyle } from '@angular/common';
 import { WebRequestResult } from '../../../../../core/models/enums';
+import { environment } from '../../../../../../environments/environment';
 
 @Component({
   selector: 'app-chatbot-input',
@@ -17,6 +18,7 @@ export class ChatbotInputComponent {
   @ViewChild('chatInput') chatInput!: ElementRef<HTMLDivElement>;
   @ViewChild('chatTextInput') chatTextInput!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  
 
   public readonly chatbotInputStates = ChatbotBrainService.chatbotInputStates;
 
@@ -30,6 +32,8 @@ export class ChatbotInputComponent {
   countdownDuration: number = 5000;
   countdownInterval: any = null;
   isRunningCountdown: boolean = false;
+
+  allowFileUpload = environment.allowFileUpload;
 
   constructor(readonly brain: ChatbotBrainService) {
     brain.chatbotEventService.onPromptAnswerReceived.subscribe((result) => {
