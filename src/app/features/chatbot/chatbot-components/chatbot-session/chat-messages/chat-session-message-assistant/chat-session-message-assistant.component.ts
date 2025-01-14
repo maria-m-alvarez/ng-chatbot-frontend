@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { ChatbotChatMessageComponent } from '../chatbot-chat-message.component';
 import { ChatSessionMessageVoteComponent } from "../chat-session-message-vote/chat-session-message-vote.component";
 import { CommonModule } from '@angular/common';
-import { FileService } from '../../../../../core/services/file-service/file.service';
-import { ChatbotBrainService } from '../../../chatbot-services/chatbot-brain/chatbot-brain.service';
+import { FileService } from '../../../../../../core/services/file-service/file.service';
+import { ChatbotBrainService } from '../../../../chatbot-services/chatbot-brain/chatbot-brain.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ChatbotChatMessageComponent } from '../chatbot-chat-message.component';
 
 @Component({
   selector: 'app-chat-session-message-assistant',
@@ -15,7 +15,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class ChatSessionMessageAssistantComponent extends ChatbotChatMessageComponent {
   constructor(
-      override brain: ChatbotBrainService,
+      brain: ChatbotBrainService,
       override sanitizer: DomSanitizer,
       private readonly fileService: FileService) {
     super(brain, sanitizer);

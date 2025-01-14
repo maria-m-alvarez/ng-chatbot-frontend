@@ -14,8 +14,6 @@ import { ChatSession } from '../../chatbot-models/chatbot-session';
 export class ChatbotApiService {
   private readonly baseUrl: string;
   private readonly baseChatbotUrl: string;
-  private webSocket: WebSocket | null = null;
-  private webSocketSubject: Subject<string> | null = null;
 
   constructor(
     private readonly http: HttpClient,
@@ -81,7 +79,17 @@ export class ChatbotApiService {
     return this.http.get<ChatSession>(url, this.getAuthHeaders());
   }
   
+  getSessionWithMessages(sessionId: number): Observable<any> {
+    const url = `${this.baseChatbotUrl}/sessions/${sessionId}/messages`;
+    return this.http.get<any>(url, this.getAuthHeaders()).pipe(
+      map((response) => {
+        console.log('Session with Messages Response:', response);
+        return response;
+      })
+    );
+  }
 
+  
   // Chatbot Requests
   // ------------------------------
   requestUserChatCompletion(
@@ -99,7 +107,7 @@ export class ChatbotApiService {
       provider,
       provider_model,
       options,
-      messages: [{ role: 'user', content: prompt, message_uuid: null }],
+      messages: [{ role: 'user', content: prompt }],
     };
   
     console.log('Chat Request:', chatRequest);

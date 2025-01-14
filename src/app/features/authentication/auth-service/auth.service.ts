@@ -5,6 +5,7 @@ import { map, delay, catchError } from 'rxjs/operators';
 import { LoginRequest, LoginResponse, TokenValidationRequest, PasswordChangeRequest } from '../models/auth_models';
 import { environment } from '../../../../environments/environment'; // Update the path as needed
 import { HostService } from '../../../core/services/host-service/host.service';
+import { AppState } from '../../../core/app-state';
 
 @Injectable({
   providedIn: 'root',
@@ -16,13 +17,15 @@ export class AuthService {
 
   constructor(
     private readonly http: HttpClient,
-    private readonly hostService: HostService
+    private readonly hostService: HostService,
+    private readonly appState: AppState
   ) {
     this.apiUrl = `${this.hostService.getHostBaseURL()}/auth`;
   
     const token = this.getToken();
     if (token) {
       this.updateAuthHeaders(token);
+      this.updateAppStateFromToken(token);
     }
   }
   
@@ -45,6 +48,7 @@ export class AuthService {
     return this.http.post<LoginResponse>(url, body).pipe(
       map((response) => {
         this.saveToken(response.access_token);
+        this.updateAppStateFromToken(response.access_token, { email });
         return response.access_token;
       }),
       catchError((error) => {
@@ -72,6 +76,7 @@ export class AuthService {
     return this.http.post<LoginResponse>(url, body).pipe(
       map((response) => {
         this.saveToken(response.access_token);
+        this.updateAppStateFromToken(response.access_token, { email });
         console.log(`Logged response: ${response.access_token} ${response.token_type}`);
         return response.access_token;
       }),
@@ -138,6 +143,7 @@ export class AuthService {
 
   logout(): void {
     this.clearToken();
+    this.appState.resetState();
   }
 
   isAuthenticated(): boolean {
@@ -147,6 +153,7 @@ export class AuthService {
   private saveToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
     this.updateAuthHeaders(token);
+    this.updateAppStateFromToken(token);
   }
 
   private getToken(): string | null {
@@ -157,9 +164,22 @@ export class AuthService {
   private clearToken(): void {
     localStorage.removeItem(this.tokenKey);
     this.authHeaders = new HttpHeaders(); // reset headers
+    this.appState.authHeader = null;
+    this.appState.currentUser = null;
   }
 
   private updateAuthHeaders(token: string): void {
     this.authHeaders = new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
+
+  private updateAppStateFromToken(token: string, userInfo?: Partial<{ email: string }>): void {
+    this.appState.setAuthHeader(token); // Set authHeader as HttpHeaders
+    if (userInfo?.email) {
+      this.appState.currentUser = {
+        id: Date.now(),
+        name: userInfo.email.split('@')[0],
+        email: userInfo.email,
+      };
+    }
+  }  
 }

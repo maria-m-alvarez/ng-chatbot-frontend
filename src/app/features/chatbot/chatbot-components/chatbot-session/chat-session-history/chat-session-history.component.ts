@@ -1,7 +1,7 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { ChatbotSessionService } from '../../../chatbot-services/chatbot-session/chatbot-session.service';
-import { ChatSessionMessageAssistantComponent } from '../chat-session-message-assistant/chat-session-message-assistant.component';
-import { ChatSessionMessageUserComponent } from '../chat-session-message-user/chat-session-message-user.component';
+import { ChatSessionMessageAssistantComponent } from '../chat-messages/chat-session-message-assistant/chat-session-message-assistant.component';
+import { ChatSessionMessageUserComponent } from '../chat-messages/chat-session-message-user/chat-session-message-user.component';
 import { ChatbotEventService } from '../../../chatbot-services/chatbot-events/chatbot-event.service';
 import { ChatSession } from '../../../chatbot-models/chatbot-session';
 

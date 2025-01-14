@@ -1,0 +1,16 @@
+<!-- Chat Sessions List -->
+<div class="flex flex-col gap-2 p-4 overflow-y-auto
+sb-bg-transparent sb-th-primary sb-h-accent">
+  @for (session of chatSessions; track session.sessionId) {
+    <div 
+      class="cursor-pointer p-2 rounded-lg hover:font-semibold"
+      [ngClass]="{
+        'bg-minsait-fucsia font-semibold': isCurrentSession(session.sessionId),
+        'hover:bg-secondary-hover': !isCurrentSession(session.sessionId)
+        }"
+      (click)="selectSession(session.sessionId)"
+    >
+      <span class="text-sm">{{ session.title }}</span>
+    </div>
+  }
+</div>

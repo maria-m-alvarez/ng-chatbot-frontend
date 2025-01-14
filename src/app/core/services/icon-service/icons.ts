@@ -6,22 +6,21 @@ export class Icons {
   // layout
   static readonly sidebarLeft: string = `
 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_2_19)">
-<rect x="0.75" y="0.75" width="18.5" height="18.5" rx="2.25" stroke="currentColor" stroke-width="1.5"/>
-<path d="M6.5 0V20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</g>
-
+  <g clip-path="url(#clip0_2_19)">
+    <rect x="0.75" y="0.75" width="18.5" height="18.5" rx="2.25" stroke="currentColor" stroke-width="2"/>
+    <path d="M6.5 0V20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
 </svg>
 `;
 
   static readonly sidebarLeftCollapse: string = `
 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_2_7)">
-<rect x="0.75" y="0.75" width="18.5" height="18.5" rx="2.25" stroke="currentColor" stroke-width="1.5"/>
-<path d="M6.5 0V20M14.5 7.5L11.5 10.5L14.5 13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</g>
+    <g clip-path="url(#clip0_4_2)">
+        <rect x="1" y="1" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+        <path d="M6.5 0V20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="1" y="1" width="5" height="18" fill="currentColor"/>
+    </g>
 </svg>
-
   `;
 
   // Session

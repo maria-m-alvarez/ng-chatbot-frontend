@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { ChatbotBaseComponentComponent } from '../chatbot-base-component/chatbot-base-component.component';
-import { ChatbotBrainService } from '../../chatbot-services/chatbot-brain/chatbot-brain.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { ChatMessage } from '../../chatbot-models/chatbot-session';
+import { ChatMessage } from '../../../chatbot-models/chatbot-api-models';
+import { ChatbotBrainService } from '../../../chatbot-services/chatbot-brain/chatbot-brain.service';
+import { ChatbotBaseComponentComponent } from '../../chatbot-base-component/chatbot-base-component.component';
 
 @Component({
   selector: 'app-chatbot-chat-message',
@@ -67,5 +67,5 @@ export class ChatbotChatMessageComponent extends ChatbotBaseComponentComponent {
     doc_content: string;
   }[] {
     return this.chatMessage?.metadata?.documents || [];
-  }
+  }  
 }

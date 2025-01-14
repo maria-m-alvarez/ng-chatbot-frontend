@@ -1,4 +1,4 @@
-<div class="h-full bg-minsait-gris shadow-lg">
+<div class="h-full bg-minsait-gris shadow-lg sb-bg-transparent sb-th-primary sb-h-accent">
   <app-sidebar
     #sidebar
     [componentId]="'chatbot-sidebar'"
@@ -8,11 +8,11 @@
     [minWidth]="'300'"
     >
     <ng-template>
-      <div class="h-full flex flex-col p-4 gap-4 overflow-y-auto
+      <div class="h-full flex flex-col
       sb-bg-transparent sb-th-primary sb-h-accent">
         
         <!-- New Session Button -->
-        <div class="w-full flex flex-row justify-between gap-4">
+        <div class="w-full flex flex-row justify-between p-4 gap-4">
           <app-button-icon
           #newSessionBtn
           [icon]="newSessionBtn.iconService.icons.newSession"
@@ -28,22 +28,11 @@
           iconPosition="left"
           (click)="createNewSession()">
         </app-button-icon>
-        
-        </div>
+      </div>
 
-        <h3 class="text-lg font-semibold">Sessões de Chat</h3>
-
-        <!-- Chat Sessions List -->
-        <div class="flex flex-col gap-2">
-          @for (session of chatSessions; track session.sessionId) {
-            <div 
-              class="cursor-pointer p-2 rounded-lg hover:ring-2 hover:ring-minsait-pruno-dark"
-              [ngClass]="{ 'bg-minsait-fucsia font-semibold': isCurrentSession(session.sessionId) }"
-              (click)="selectSession(session.sessionId)"
-            >
-              <span class="text-sm">{{ session.title }}</span>
-            </div>
-          }
+        <div class="w-full flex-1 flex flex-col overflow-auto
+        sb-bg-transparent sb-th-primary sb-h-accent">
+          <app-chat-session-list></app-chat-session-list>
         </div>
       </div>
     </ng-template>

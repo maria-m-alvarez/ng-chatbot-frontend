@@ -5,6 +5,8 @@ import { ChatbotApiService } from '../chatbot-api/chatbot-api.service';
 import { SelectorOption } from '../../../../core/components/input-components/input-selector/input-selector.component';
 import { WebRequestResult } from '../../../../core/models/enums';
 import { environment } from '../../../../../environments/environment';
+import { AppState } from '../../../../core/app-state';
+import { ChatMessageMetadata } from '../../chatbot-models/chatbot-api-models';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +20,7 @@ export class ChatbotSessionService {
   selectedModel: SelectorOption | null = null;
 
   constructor(
+    private readonly appState: AppState,
     private readonly chatbotEventService: ChatbotEventService,
     private readonly chatbotApiService: ChatbotApiService
   ) {
@@ -96,9 +99,9 @@ export class ChatbotSessionService {
     this.currentSession = session;
   }
 
-  createEmptySession(sessionTitle: string = 'New Chat Session'): void {
+  createEmptySession(sessionTitle: string = 'Nova Sessão'): void {
     const sessionId = this.generateSessionId();
-    const session = new ChatSession(sessionId, sessionTitle, 'user123');
+    const session = new ChatSession(sessionId, sessionTitle, '');
     this.sessions.push(session);
     this.switchSession(sessionId);
   }
@@ -107,12 +110,32 @@ export class ChatbotSessionService {
     return this.sessions;
   }
 
+  fetchSessions(): void {
+    this.chatbotApiService.getAllSessions().subscribe({
+      next: (sessions) => {
+        this.sessions = this.transformSessions(sessions);
+        if (this.sessions.length > 0) {
+          this.currentSession = this.sessions[0];
+        }
+        this.chatbotEventService.onSessionListUpdated.emit();
+      },
+      error: (error) => {
+        console.error('Error fetching chat sessions:', error);
+      },
+    });
+  }
+
   switchSession(sessionId: string): void {
-    const session = this.sessions.find((s) => s.sessionId === sessionId);
-    if (session) {
-      this.currentSession = session;
-      this.chatbotEventService.onSessionChanged.emit();
-    }
+    this.chatbotApiService.getSessionWithMessages(+sessionId).subscribe({
+      next: (response) => {
+        this.currentSession = this.transformSessionWithMessages(response);
+        this.chatbotEventService.onSessionChanged.emit();
+        console.log('Switched to session:', this.currentSession);
+      },
+      error: (error) => {
+        console.error('Error switching session:', error);
+      },
+    });
   }
 
   handleAssistantResponse(
@@ -129,38 +152,48 @@ export class ChatbotSessionService {
   sendMessage(promptMessage: string): void {
     const { value: provider } = this.selectedProvider ?? {};
     const { value: model } = this.selectedModel ?? {};
-
+  
     if (!provider || !model) {
       console.error('Provider or model is not selected.');
       return;
     }
-
+  
+    // Check if a current session exists; if not, create a new session
+    if (!this.currentSession) {
+      console.warn('No current session found. Creating a new session...');
+      this.createEmptySession();
+      return;
+    }
+  
     const userMessage = this.currentSession.addUserMessage(promptMessage);
     this.chatbotEventService.onPromptSent.emit();
-
-    this.chatbotApiService.requestUserChatCompletion(promptMessage, provider, model).subscribe({
-      next: (apiResponse) => {
-        const assistantMessageContent =
-          apiResponse?.messages.find((msg) => msg.role === 'assistant')?.content ?? '';
-        const metadata = apiResponse?.references
-          ? {
-              documents: apiResponse.references.map((ref: any) => ({
-                doc_id: ref.Document.doc_id || 0,
-                doc_name: ref.Document.doc_name || '',
-                doc_page: ref.Document.doc_page || 0,
-                doc_content: ref.Document.doc_content || '',
-              })),
-            }
-          : {};
-        this.handleAssistantResponse(userMessage.id, assistantMessageContent, metadata);
-        this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Success);
-      },
-      error: (error) => {
-        console.error('Error from chatbot API:', error);
-        this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Error);
-      },
-    });
-  }
+  
+    // Send the message to the API
+    this.chatbotApiService
+      .requestUserChatCompletion(promptMessage, provider, model, null, +this.currentSession.sessionId)
+      .subscribe({
+        next: (apiResponse) => {
+          const assistantMessageContent =
+            apiResponse?.messages.find((msg) => msg.role === 'assistant')?.content ?? '';
+          const metadata = apiResponse?.references
+            ? {
+                documents: apiResponse.references.map((ref: any) => ({
+                  doc_id: ref.Document.doc_id || 0,
+                  doc_name: ref.Document.doc_name || '',
+                  doc_page: ref.Document.doc_page || 0,
+                  doc_content: ref.Document.doc_content || '',
+                })),
+              }
+            : {};
+          this.handleAssistantResponse(userMessage.id, assistantMessageContent, metadata);
+          this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Success);
+        },
+        error: (error) => {
+          console.error('Error from chatbot API:', error);
+          this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Error);
+        },
+      });
+  }  
 
   private generateSessionId(): string {
     return Math.random().toString(36).slice(2, 11);
@@ -174,53 +207,62 @@ export class ChatbotSessionService {
     console.log('[WIP] Implement: Stop Processing');
   }
 
-  fetchSessions(): void {
-    // Fetch sessions from the API
-    this.chatbotApiService.getAllSessions().subscribe({
-      next: (sessions) => {
-        // Transform API response into ChatSession objects
-        this.sessions = this.transformSessions(sessions);
-  
-        // Set the current session to the first one, if available
-        if (this.sessions.length > 0) {
-          this.currentSession = this.sessions[0];
-        }
-  
-        // Notify other components about the updated session list
-        this.chatbotEventService.onSessionListUpdated.emit();
-      },
-      error: (error) => {
-        console.error('Error fetching chat sessions:', error);
-      },
-    });
-  }
-  
   private transformSessions(sessions: any[]): ChatSession[] {
     return sessions.map((session) => {
       const chatSession = new ChatSession(
-        session.id.toString(), // Ensure the session ID is a string
+        session.id.toString(),
         session.name,
         session.user
       );
-  
-      // Populate messages if they exist in the API response
-      if (session.messages && Array.isArray(session.messages)) {
-        session.messages.forEach((message: ChatMessage) => {
-          const chatMessage = new ChatMessage(
-            message.id,
-            message.role,
-            message.content,
-            message.metadata || {}
-          );
-          chatSession.messages.push(chatMessage);
-        });
-      }
-  
-      // Set creation and update timestamps
       chatSession.createdAt = new Date(session.created_at);
       chatSession.updatedAt = new Date(session.updated_at);
   
+      // Process messages with metadata, including documents
+      if (session.messages) {
+        chatSession.messages = session.messages.map((message: any) =>
+          this.transformMessage(message)
+        );
+      }
+  
       return chatSession;
     });
+  }
+  
+  private transformSessionWithMessages(sessionData: any): ChatSession {
+    const chatSession = new ChatSession(
+      sessionData.session.id.toString(),
+      sessionData.session.name,
+      sessionData.session.user
+    );
+    chatSession.createdAt = new Date(sessionData.session.created_at);
+    chatSession.updatedAt = new Date(sessionData.session.updated_at);
+  
+    // Process messages with metadata, including documents
+    if (sessionData.messages) {
+      chatSession.messages = sessionData.messages.map((message: any) =>
+        this.transformMessage(message)
+      );
+    }
+  
+    return chatSession;
+  }
+  
+  private transformMessage(message: any): ChatMessage {
+    // Ensure document references are extracted correctly
+    const metadata: ChatMessageMetadata = {
+      documents: message.references?.map((ref: any) => ({
+        doc_id: ref.Document.doc_id,
+        doc_name: ref.Document.doc_name,
+        doc_page: ref.Document.doc_page,
+        doc_content: ref.Document.doc_page_content,
+      })) || [],
+    };
+  
+    return new ChatMessage(
+      message.id.toString(),
+      message.role,
+      message.content,
+      metadata
+    );
   }
 }

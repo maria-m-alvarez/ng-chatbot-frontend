@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ChatbotBaseComponentComponent } from '../../../features/chatbot/chatbot-components/chatbot-base-component/chatbot-base-component.component';
 import { ModularHeaderComponent } from "../../../core/components/modular/modular-header/modular-header.component";
 import { UserOptionsButtonComponent } from "../../../features/user/user-components/user-options-button/user-options-button.component";
@@ -6,7 +6,6 @@ import { ButtonForToggleablesComponent } from "../../../core/components/button-f
 import { ChatbotInputWithSessionComponent } from "../../../features/chatbot/chatbot-components/chatbot-input-with-session/chatbot-input-with-session.component";
 import { ChatbotSidebarComponent } from "../../../features/chatbot/chatbot-components/chatbot-sidebar/chatbot-sidebar.component";
 import { environment } from '../../../../environments/environment';
-import { ChatbotSessionService } from '../../../features/chatbot/chatbot-services/chatbot-session/chatbot-session.service';
 import { ChatbotBrainService } from '../../../features/chatbot/chatbot-services/chatbot-brain/chatbot-brain.service';
 
 @Component({
@@ -22,21 +21,21 @@ import { ChatbotBrainService } from '../../../features/chatbot/chatbot-services/
   templateUrl: './page-chatbot.component.html',
   styleUrls: ['./page-chatbot.component.scss'],
 })
-export class PageChatbotComponent extends ChatbotBaseComponentComponent implements OnInit {
+export class PageChatbotComponent extends ChatbotBaseComponentComponent {
   allowSidebar = environment.allowSidebar;
 
   constructor(
     brainService: ChatbotBrainService,
-    private readonly chatbotSessionService: ChatbotSessionService
   ) {
     super(brainService);
+    this.fetchAllSessions();
   }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     this.fetchAllSessions();
   }
 
   private fetchAllSessions(): void {
-    this.chatbotSessionService.getSessions();
+    this.brain.chatbotSessionService.fetchSessions();
   }
 }

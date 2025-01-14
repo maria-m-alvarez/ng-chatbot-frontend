@@ -1,18 +1,11 @@
+import { ChatMessageMetadata, DocumentReference } from "./chatbot-api-models";
+
 export class ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
-  metadata?: {
-    documents?: {
-      doc_id: number;
-      doc_name: string;
-      doc_page: number;
-      doc_content: string;
-    }[];
-  };
+  metadata?: ChatMessageMetadata;
   timestamp: Date;
-  question?: string;
-  answer?: string;
   requestTokens?: number;
   responseTokens?: number;
   totalTokens?: number;
@@ -24,14 +17,7 @@ export class ChatMessage {
     id: string,
     role: 'user' | 'assistant',
     content: string,
-    metadata: {
-      documents?: {
-        doc_id: number;
-        doc_name: string;
-        doc_page: number;
-        doc_content: string;
-      }[];
-    } = {}
+    metadata: ChatMessageMetadata = {}
   ) {
     this.id = id;
     this.role = role;
@@ -39,8 +25,13 @@ export class ChatMessage {
     this.metadata = metadata;
     this.timestamp = new Date();
   }
+
+  getDocuments(): DocumentReference[] {
+    return this.metadata?.documents || [];
+  }
 }
   
+
 export class ChatSession {
   sessionId: string;
   title: string;
@@ -59,34 +50,32 @@ export class ChatSession {
     this.updatedAt = new Date();
   }
 
-  addUserMessage(content: string, metadata: any = {}): ChatMessage {
-    const prompt = new ChatMessage(this.generateId(), 'user', content, metadata);
-    this.messages.push(prompt);
+  /**
+   * Adds a user message to the session.
+   * @param content The message content.
+   * @param metadata Additional metadata, including document references.
+   */
+  addUserMessage(content: string, metadata: ChatMessageMetadata = {}): ChatMessage {
+    const message = new ChatMessage('-1', 'user', content, metadata);
+    this.messages.push(message);
     this.updatedAt = new Date();
-    return prompt;
+    return message;
   }
 
+  /**
+   * Adds an assistant message to the session.
+   * @param promptId The ID of the prompt this message responds to.
+   * @param content The message content.
+   * @param metadata Additional metadata, including document references.
+   */
   addAssistantMessage(
     promptId: string,
     content: string,
-    metadata: {
-      documents?: {
-        doc_id: number;
-        doc_name: string;
-        doc_page: number;
-        doc_content: string;
-      }[];
-    } = {}
+    metadata: ChatMessageMetadata = {}
   ): ChatMessage {
-    const response = new ChatMessage(this.generateId(), 'assistant', content, metadata);
-    this.messages.push(response);
+    const message = new ChatMessage('-1', 'assistant', content, metadata);
+    this.messages.push(message);
     this.updatedAt = new Date();
-    return response;
-  }
-
-  private generateId(): string {
-    return Math.random().toString(36).slice(2, 11);
+    return message;
   }
 }
-
-  

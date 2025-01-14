@@ -1,8 +1,19 @@
 // chatbot-models.ts
+export interface DocumentReference {
+  doc_id: number;
+  doc_name: string;
+  doc_page: number;
+  doc_content: string;
+}
+
+export interface ChatMessageMetadata {
+  documents?: DocumentReference[];
+}
+
 export interface ChatMessage {
-  role: string;  // 'user' or 'assistant'
+  role: 'user' | 'assistant';
   content: string;
-  message_uuid?: string | null;
+  metadata?: ChatMessageMetadata;
 }
 
 export interface ChatRequestOptions {
