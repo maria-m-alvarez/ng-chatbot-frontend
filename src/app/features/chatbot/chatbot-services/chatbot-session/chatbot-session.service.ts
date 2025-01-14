@@ -68,43 +68,42 @@ export class ChatbotSessionService {
   }
 
   private initializeSessions(): void {
-    this.createSession('-1', 'Example Session', 'user123', [
-      { prompt: 'Hello, chatbot!', answer: 'Hello! How can I assist you today?' },
-      { prompt: 'What’s the weather like?', answer: 'It’s sunny and 75°F right now.' },
-      {
-        prompt: 'Is it possible for a strawberry to be a banana?',
-        answer: 'While it may seem odd, we can explore imaginative possibilities.',
-      },
-    ]);
-
     if (!environment.allowSidebar) {
       this.createEmptySession();
     }
   }
 
-  private createSession(
-    sessionId: string,
-    title: string,
-    userId: string,
-    interactions: { prompt: string; answer: string }[]
-  ): void {
-    const session = new ChatSession(sessionId, title, userId);
-
-    interactions.forEach(({ prompt, answer }) => {
-      const userMessage = session.addUserMessage(prompt);
-      session.addAssistantMessage(userMessage.id, answer);
+  private createSession(sessionName: string): void {
+    if (!sessionName.trim()) {
+      console.error('Session name cannot be empty.');
+      return;
+    }
+  
+    this.chatbotApiService.createSession(sessionName).subscribe({
+      next: (newSession) => {
+        // Add the new session to the sessions list
+        this.sessions.push(newSession);
+  
+        console.log('Session created successfully:', this.currentSession);
+  
+        // Emit an event to notify other components
+        this.switchSession(newSession.sessionId);
+      },
+      error: (error) => {
+        if (error.status === 422) {
+          console.error('Invalid session name:', error.error.detail);
+        } else {
+          console.error('Error creating session:', error);
+        }
+      },
     });
-
-    this.sessions.push(session);
-    this.currentSession = session;
   }
+  
 
   createEmptySession(sessionTitle: string = 'Nova Sessão'): void {
-    const sessionId = this.generateSessionId();
-    const session = new ChatSession(sessionId, sessionTitle, '');
-    this.sessions.push(session);
-    this.switchSession(sessionId);
+    this.createSession(sessionTitle);
   }
+  
 
   getSessions(): ChatSession[] {
     return this.sessions;
@@ -193,10 +192,6 @@ export class ChatbotSessionService {
           this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Error);
         },
       });
-  }  
-
-  private generateSessionId(): string {
-    return Math.random().toString(36).slice(2, 11);
   }
 
   handleFiles(files: File[]): void {

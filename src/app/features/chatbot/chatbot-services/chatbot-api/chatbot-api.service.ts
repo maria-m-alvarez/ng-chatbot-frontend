@@ -66,13 +66,25 @@ export class ChatbotApiService {
   }
   
   createSession(sessionName: string): Observable<ChatSession> {
-    const url = `${this.baseChatbotUrl}/sessions`;
-    return this.http.post<ChatSession>(
-      url,
-      { name: sessionName },
-      this.getAuthHeaders()
+    const url = `${this.baseChatbotUrl}/session`;
+    const requestBody = { name: sessionName };
+  
+    console.log('Creating session with name:', sessionName);
+  
+    return this.http.post<ChatSession>(url, requestBody, this.getAuthHeaders()).pipe(
+      map((response: any) => {
+        console.log('Session creation response:', response);
+  
+        // Ensure compatibility with the ChatSession model
+        return new ChatSession(
+          response.id.toString(),
+          response.name,
+          response.user
+        );
+      })
     );
-  }
+  }  
+  
   
   getSessionById(sessionId: number): Observable<ChatSession> {
     const url = `${this.baseChatbotUrl}/sessions/${sessionId}`;
