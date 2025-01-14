@@ -39,13 +39,14 @@
                 *ngFor="let doc of groupedSources; let last = last"
                 [class.mb-2]="!last"
               >
-                <button class="underline" (click)="downloadDocument(doc.doc_name)">
-                  <strong>{{ doc.doc_name }}</strong>: pag. {{ doc.pages.join(', ') }}
+                <button class="underline"
+                (click)="downloadDocument(doc.doc_name)"
+                [innerHTML]="formatReference(doc)">
                 </button>
               </li>
             </ul>
           </div>
-        </div>        
+        </div>       
       </div>
 
       <!-- Option Buttons -->

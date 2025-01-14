@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ChatbotEventService } from '../chatbot-events/chatbot-event.service';
-import { ChatSession } from '../../chatbot-models/chatbot-session';
+import { ChatMessage, ChatSession } from '../../chatbot-models/chatbot-session';
 import { ChatbotApiService } from '../chatbot-api/chatbot-api.service';
 import { SelectorOption } from '../../../../core/components/input-components/input-selector/input-selector.component';
 import { WebRequestResult } from '../../../../core/models/enums';
@@ -172,5 +172,55 @@ export class ChatbotSessionService {
 
   stopProcessing() {
     console.log('[WIP] Implement: Stop Processing');
+  }
+
+  fetchSessions(): void {
+    // Fetch sessions from the API
+    this.chatbotApiService.getAllSessions().subscribe({
+      next: (sessions) => {
+        // Transform API response into ChatSession objects
+        this.sessions = this.transformSessions(sessions);
+  
+        // Set the current session to the first one, if available
+        if (this.sessions.length > 0) {
+          this.currentSession = this.sessions[0];
+        }
+  
+        // Notify other components about the updated session list
+        this.chatbotEventService.onSessionListUpdated.emit();
+      },
+      error: (error) => {
+        console.error('Error fetching chat sessions:', error);
+      },
+    });
+  }
+  
+  private transformSessions(sessions: any[]): ChatSession[] {
+    return sessions.map((session) => {
+      const chatSession = new ChatSession(
+        session.id.toString(), // Ensure the session ID is a string
+        session.name,
+        session.user
+      );
+  
+      // Populate messages if they exist in the API response
+      if (session.messages && Array.isArray(session.messages)) {
+        session.messages.forEach((message: ChatMessage) => {
+          const chatMessage = new ChatMessage(
+            message.id,
+            message.role,
+            message.content,
+            message.metadata || {}
+          );
+          chatSession.messages.push(chatMessage);
+        });
+      }
+  
+      // Set creation and update timestamps
+      chatSession.createdAt = new Date(session.created_at);
+      chatSession.updatedAt = new Date(session.updated_at);
+  
+      return chatSession;
+    });
   }
 }

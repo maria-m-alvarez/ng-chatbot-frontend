@@ -37,6 +37,13 @@ export class ChatSessionMessageAssistantComponent extends ChatbotChatMessageComp
     console.log("WIP Pressed some other action:");
   }
 
+  formatReference(document: any): string {
+    const { doc_name, pages } = document;
+    const formattedPages = pages && pages.length > 0 ? `: pag. ${pages.join(', ')}` : '';
+    return `<strong>${doc_name}</strong>${formattedPages}`;
+  }
+  
+
   downloadDocument(docId: string) {
     this.fileService.referenceFileDownload(docId).subscribe({
       next: (message) => console.log(message),
