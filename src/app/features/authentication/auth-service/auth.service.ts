@@ -6,6 +6,7 @@ import { LoginRequest, LoginResponse, TokenValidationRequest, PasswordChangeRequ
 import { environment } from '../../../../environments/environment'; // Update the path as needed
 import { HostService } from '../../../core/services/host-service/host.service';
 import { AppState } from '../../../core/app-state';
+import { EventService } from '../../../core/services/event-service/event.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,7 @@ export class AuthService {
   private authHeaders: HttpHeaders = new HttpHeaders();
 
   constructor(
+    private readonly eventService: EventService,
     private readonly http: HttpClient,
     private readonly hostService: HostService,
     private readonly appState: AppState

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ChatbotEventService } from '../chatbot-events/chatbot-event.service';
 import { ChatRequestOptions, ChatCompletion, ChatRequest } from '../../chatbot-models/chatbot-api-models';
@@ -63,6 +63,17 @@ export class ChatbotApiService {
   getAllSessions(): Observable<ChatSession[]> {
     const url = `${this.baseChatbotUrl}/sessions`;
     return this.http.get<ChatSession[]>(url, this.getAuthHeaders());
+  }
+
+  getLastAccessedSession(): Observable<ChatSession> {
+    const url = `${this.baseChatbotUrl}/sessions/last-accessed`;
+    return this.http.get<ChatSession>(url, this.getAuthHeaders()).pipe(
+      map((response: any) => {
+        console.log('Last accessed session response:', response);
+
+        return new ChatSession(response.id.toString(), response.name, response.user);
+      })
+    );
   }
   
   createSession(sessionName: string): Observable<ChatSession> {

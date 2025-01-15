@@ -6,9 +6,14 @@ import { SelectorOption } from '../../components/input-components/input-selector
 })
 export class EventService {
 
+  // authentication & User
+  public readonly onUserLoginEvt = new EventEmitter<void>();
+  public readonly onUserLogoutEvt = new EventEmitter<void>();
+
   public readonly userOptionsClickEvt = new EventEmitter<string>();
 
   public readonly selectorClickedEvt = new EventEmitter<{selectorId: string, selectedOption: SelectorOption}>();
+
 
   constructor() { }
 

@@ -22,8 +22,9 @@ export class ChatSessionListComponent {
   }
 
   isCurrentSession(sessionId: string): boolean {
-    return this.brain.chatbotSessionService.currentSession.sessionId === sessionId;
-  }
+    const currentSession = this.brain.chatbotSessionService.currentSession;
+    return currentSession ? currentSession.sessionId === sessionId : false;
+}
 
   selectSession(sessionId: string): void {
     this.brain.chatbotSessionService.switchSession(sessionId);
