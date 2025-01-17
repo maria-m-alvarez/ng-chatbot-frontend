@@ -1,5 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { WebRequestResult } from '../../../../core/models/enums';
+import { PromptResultFeedback } from '../../chatbot-models/chatbot-api-response-models';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +24,8 @@ export class ChatbotEventService {
   // Chat Sessions
   readonly onSessionChanged = new EventEmitter<void>();
   readonly onSessionListUpdated = new EventEmitter<void>();
+
+  readonly onFeedbackSent = new EventEmitter<any>();
 
   readonly tempEvent_OnChromaDBCount = new EventEmitter<string>();
 

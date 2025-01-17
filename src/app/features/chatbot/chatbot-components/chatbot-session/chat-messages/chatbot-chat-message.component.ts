@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { ChatMessage } from '../../../chatbot-models/chatbot-api-models';
+import { ChatMessage } from '../../../chatbot-models/chatbot-api-response-models';
+import { ClientChatMessage } from '../../../chatbot-models/chatbot-client-session';
 import { ChatbotBrainService } from '../../../chatbot-services/chatbot-brain/chatbot-brain.service';
 import { ChatbotBaseComponentComponent } from '../../chatbot-base-component/chatbot-base-component.component';
 
@@ -10,8 +11,8 @@ import { ChatbotBaseComponentComponent } from '../../chatbot-base-component/chat
   template: '',
   styles: '',
 })
-export class ChatbotChatMessageComponent extends ChatbotBaseComponentComponent {
-  @Input() chatMessage: ChatMessage | null = null;
+export class ChatbotChatMessageComponent extends ChatbotBaseComponentComponent implements OnChanges {
+  @Input() chatMessage: ChatMessage | ClientChatMessage | null = null;
   sanitizedMessage: SafeHtml = '';
   showSources: boolean = false;
   groupedSources: { doc_name: string; pages: number[] }[] = [];
@@ -23,7 +24,7 @@ export class ChatbotChatMessageComponent extends ChatbotBaseComponentComponent {
     super(brain);
   }
 
-  async ngOnChanges(): Promise<void> {
+  ngOnChanges(): void {
     if (this.chatMessage) {
       this.sanitizedMessage = this.sanitizeMessage(this.chatMessage.content);
       this.groupedSources = this.groupDocumentSources();
@@ -60,12 +61,8 @@ export class ChatbotChatMessageComponent extends ChatbotBaseComponentComponent {
     return this.sanitizer.bypassSecurityTrustHtml(message);
   }
 
-  private getDocuments(): {
-    doc_id: number;
-    doc_name: string;
-    doc_page: number;
-    doc_content: string;
-  }[] {
-    return this.chatMessage?.metadata?.documents || [];
-  }  
+  private getDocuments(): { doc_id: number; doc_name: string; doc_page: number; doc_content: string }[] {
+    if (!this.chatMessage) return [];
+    return (this.chatMessage as any)?.metadata?.documents ?? [];
+  }
 }

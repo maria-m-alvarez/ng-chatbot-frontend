@@ -76,7 +76,7 @@ export class ChatbotInputComponent {
   submitMessage(): void {
     const message = this.chatTextInput?.nativeElement.value.trim();
     if (message) {
-      this.brain.chatbotSessionService.sendMessage(message);
+      this.brain.chatbotSessionService.sendChatMessageForCurrentChatSession(message);
       this.changeInputState(this.chatbotInputStates.Waiting);
 
       if (this.files.length > 0) {

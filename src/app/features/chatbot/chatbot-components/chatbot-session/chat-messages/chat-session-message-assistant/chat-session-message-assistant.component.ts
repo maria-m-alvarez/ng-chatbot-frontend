@@ -50,4 +50,8 @@ export class ChatSessionMessageAssistantComponent extends ChatbotChatMessageComp
       error: (err) => console.error(`Error downloading document: ${err}`),
     });
   }
+
+  getMessageIdAsString() {
+    return this.chatMessage?.id?.toString() || '';
+  }
 }

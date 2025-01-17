@@ -4,7 +4,7 @@ export const environment = {
     
     allowUserRegistration: false,
     allowSimulatedLogin: false,
-    allowFileUpload: true,
+    allowFileUpload: false,
     allowSidebar: true,
 
     simulateLogins: {

@@ -1,10 +1,10 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { SidebarComponent } from '../../../../lib/components/sidebar/sidebar.component';
-import { ChatSession } from '../../chatbot-models/chatbot-session';
+import { ClientChatSession } from '../../chatbot-models/chatbot-client-session';
 import { ToggleService } from '../../../../lib/toggleable/toggleable.service';
-import { ButtonIconComponent } from "../../../../core/components/button-icon/button-icon.component";
+import { ButtonIconComponent } from '../../../../core/components/button-icon/button-icon.component';
 import { ChatbotBrainService } from '../../chatbot-services/chatbot-brain/chatbot-brain.service';
-import { ChatSessionListComponent } from "../chatbot-session/chat-session-list/chat-session-list.component";
+import { ChatSessionListComponent } from '../chatbot-session/chat-session-list/chat-session-list.component';
 
 @Component({
   selector: 'app-chatbot-sidebar',
@@ -15,17 +15,18 @@ import { ChatSessionListComponent } from "../chatbot-session/chat-session-list/c
 })
 export class ChatbotSidebarComponent implements OnInit, AfterViewInit {
   @ViewChild('sidebar') sidebar!: SidebarComponent;
-  chatSessions: ChatSession[] = [];
+  
+  chatSessions: ClientChatSession[];
 
   constructor(
     private readonly toggleService: ToggleService,
     private readonly brain: ChatbotBrainService
   ) {
-    this.brain.chatbotEventService.onSessionListUpdated.subscribe(() => {
-      this.chatSessions = this.brain.chatbotSessionService.getSessions();
-    });
+    // Subscribe to session updates using observable (eliminates manual state tracking)
+    this.chatSessions = this.brain.chatbotSessionService.sessions;
   }
 
+  /** Get Sidebar Component */
   getSidebar(): SidebarComponent | null {
     if (!this.sidebar) {
       console.warn('Sidebar component is not initialized yet.');
@@ -36,7 +37,6 @@ export class ChatbotSidebarComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.brain.chatbotEventService.onSidebarToggled.subscribe(() => this.toggle());
-    this.chatSessions = this.brain.chatbotSessionService.getSessions();
   }
 
   ngAfterViewInit(): void {
@@ -53,7 +53,6 @@ export class ChatbotSidebarComponent implements OnInit, AfterViewInit {
   }
 
   createNewSession(): void {
-    this.brain.chatbotSessionService.createEmptySession(); // Assuming this method exists in the service
-    this.chatSessions = this.brain.chatbotSessionService.getSessions(); // Refresh the list
+    this.brain.chatbotSessionService.createEmptyChatSession();
   }
 }

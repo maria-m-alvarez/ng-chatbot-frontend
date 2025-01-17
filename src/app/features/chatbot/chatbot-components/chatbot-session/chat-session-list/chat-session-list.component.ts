@@ -1,7 +1,7 @@
 import { NgClass } from '@angular/common';
 import { Component } from '@angular/core';
 import { ChatbotBrainService } from '../../../chatbot-services/chatbot-brain/chatbot-brain.service';
-import { ChatSession } from '../../../chatbot-models/chatbot-session';
+import { ClientChatSession } from '../../../chatbot-models/chatbot-client-session';
 
 @Component({
   selector: 'app-chat-session-list',
@@ -11,13 +11,13 @@ import { ChatSession } from '../../../chatbot-models/chatbot-session';
   styleUrl: './chat-session-list.component.scss'
 })
 export class ChatSessionListComponent {
-  chatSessions: ChatSession[] = [];
+  chatSessions: ClientChatSession[] = [];
 
   constructor(
     private readonly brain: ChatbotBrainService
   ) {
     this.brain.chatbotEventService.onSessionListUpdated.subscribe(() => {
-      this.chatSessions = this.brain.chatbotSessionService.getSessions();
+      this.chatSessions = this.brain.chatbotSessionService.sessions;
     });
   }
 
@@ -27,6 +27,6 @@ export class ChatSessionListComponent {
 }
 
   selectSession(sessionId: string): void {
-    this.brain.chatbotSessionService.switchSession(sessionId);
+    this.brain.chatbotSessionService.switchChatSession(sessionId);
   }
 }
