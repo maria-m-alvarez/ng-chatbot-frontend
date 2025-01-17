@@ -8,6 +8,7 @@ import {
   ChatMessage,
   ChatSession,
   ChatSessionWithMessages,
+  DocumentReference,
 } from '../../chatbot-models/chatbot-api-response-models';
 import {
   ClientChatMessage,
@@ -130,16 +131,22 @@ export class ChatbotSessionService {
       .requestUserChatCompletion(promptMessage, 'azure_openai', 'Azure gpt-4o-mini', null, +this.currentSession.sessionId)
       .subscribe({
         next: (apiResponse) => {
+          console.log('Chatbot API Response:', apiResponse);
           const assistantMessage = apiResponse.messages.find((msg) => msg.role === 'assistant');
 
-          // Transform references into DocumentReference objects
+          // ✅ FIX: Correctly access the nested Document inside references
           const metadata: ChatMessageMetadata = {
-            documents: apiResponse.references?.map((ref: any) => ({
-              doc_id: ref.doc_id ?? 0,
-              doc_name: ref.doc_name ?? 'Unknown Document',
-              doc_page: ref.doc_page ?? 1,
-              doc_content: ref.doc_content ?? '',
-            })) || [],
+            documents: apiResponse.references?.map((ref: any) => {
+              const doc = ref?.Document; // Ensure we access the correct nested property
+              return doc
+                ? {
+                    doc_id: doc.doc_id ?? 0,
+                    doc_name: doc.doc_name ?? 'Unknown Document',
+                    doc_page: doc.doc_page ?? 1,
+                    doc_content: doc.doc_page_content ?? '',
+                  }
+                : null;
+            }).filter((doc): doc is DocumentReference => doc !== null) || [], // Filter out null values
           };
 
           this.handleAssistantChatMessageResponse(userMessage.id, assistantMessage?.content || '', metadata);
@@ -151,6 +158,7 @@ export class ChatbotSessionService {
         },
       });
   }
+
 
   handleAssistantChatMessageResponse(promptId: string, message: string, metadata: ChatMessageMetadata = {}): void {
     this.currentSession.addAssistantMessage(promptId, message, metadata);
@@ -199,37 +207,43 @@ export class ChatbotSessionService {
 
   private transformMessage(message: ChatMessage): ClientChatMessage {
     const metadata: ChatMessageMetadata = {
-      documents: message.references?.map(ref => ({
-        doc_id: ref['Document'].doc_id,
-      doc_name: ref['Document'].doc_name,
-      doc_page: ref['Document'].doc_page,
-      doc_content: ref['Document'].doc_page_content
-      })) || [],
+        documents: message.references?.map(ref => {
+            const doc = ref?.['Document']; // Ensure we safely access Document property
+            return doc
+                ? {
+                      doc_id: doc.doc_id,
+                      doc_name: doc.doc_name,
+                      doc_page: doc.doc_page,
+                      doc_content: doc.doc_page_content
+                  }
+                : null;
+        }).filter((doc): doc is DocumentReference => doc !== null) || [], // Remove null values
     };
-  
+
     const feedback: ClientChatMessageFeedback | null = message.feedback
-      ? {
-          id: message.feedback.id ?? null,
-          rating: message.feedback.rating ?? null,
-          user_id: message.feedback.user_id ?? null,
-          comments: message.feedback.comments ?? null,
-        }
-      : null;
-  
+        ? {
+              id: message.feedback.id ?? null,
+              rating: message.feedback.rating ?? null,
+              user_id: message.feedback.user_id ?? null,
+              comments: message.feedback.comments ?? null,
+          }
+        : null;
+
     return new ClientChatMessage(
-      message.id.toString(),
-      message.role,
-      message.content ?? '',
-      metadata,
-      new Date(message.created_at),
-      message.request_tokens ?? null,
-      message.response_tokens ?? null,
-      message.total_tokens ?? null,
-      message.retrieval_time ?? null,
-      message.generation_time ?? null,
-      feedback
+        message.id.toString(),
+        message.role,
+        message.content ?? '',
+        metadata,
+        new Date(message.created_at),
+        message.request_tokens ?? null,
+        message.response_tokens ?? null,
+        message.total_tokens ?? null,
+        message.retrieval_time ?? null,
+        message.generation_time ?? null,
+        feedback
     );
-  }
+}
+
 
   handleFiles(files: File[]): void {
     console.log('[WIP] Implement: Handling Files:', files);
