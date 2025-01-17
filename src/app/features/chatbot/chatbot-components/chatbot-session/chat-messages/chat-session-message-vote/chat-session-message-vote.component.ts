@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ChatbotSessionService } from '../../../../chatbot-services/chatbot-session/chatbot-session.service';
 
 export enum VoteStyle {
@@ -16,6 +16,9 @@ export class ChatSessionMessageVoteComponent {
   @Input() messageId: string = '';
   @Input() voteStyle: string = VoteStyle.Thumbs;
   @Input() maxRating: number = 5;
+  @Input() initialRating: number = 0;
+
+  @Output() voteUpdated = new EventEmitter<number>();
 
   ratingOptions: number[] = [];
   selectedRating = 0;
@@ -28,6 +31,8 @@ export class ChatSessionMessageVoteComponent {
 
   ngOnInit() {
     this.initializeRatingOptions();
+    this.selectedRating = this.initialRating;
+    this.hasVoted = this.selectedRating > 0;
   }
 
   initializeRatingOptions() {
@@ -47,6 +52,7 @@ export class ChatSessionMessageVoteComponent {
     this.hasVoted = true;
     
     this.chatbotSessionService.sendPromptResultFeedback(this.messageId, this.selectedRating, "");
+    this.voteUpdated.emit(this.selectedRating);
   }
 
   setVote(messageId: string, rating: number) {

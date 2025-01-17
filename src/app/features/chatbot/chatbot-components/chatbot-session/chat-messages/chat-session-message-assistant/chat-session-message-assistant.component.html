@@ -45,9 +45,11 @@
         class="p-3 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-150 justify-start items-center space-x-4 text-sm text-main-secondary-lighter"
       >
         <app-chat-session-message-vote
+          #feedback
           [voteStyle]="'rating'"
           [maxRating]="5"
           [messageId]="chatMessage?.id?.toString() || ''"
+          [initialRating]="chatMessage?.feedback?.rating || 0"
         ></app-chat-session-message-vote>
         @if (allowCopy === true) {
           <button
