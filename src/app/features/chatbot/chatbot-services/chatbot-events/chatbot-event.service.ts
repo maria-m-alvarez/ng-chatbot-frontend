@@ -1,6 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { WebRequestResult } from '../../../../core/models/enums';
-import { PromptResultFeedback } from '../../chatbot-models/chatbot-api-response-models';
 
 @Injectable({
   providedIn: 'root'

@@ -57,7 +57,6 @@ export class ChatbotSessionService {
   // ------------------------------
   private initializeSessions(): void {
     this.fetchAllChatSessions();
-    this.fetchLastAccessedChatSession();
   }
 
   fetchAllChatSessions(): void {
@@ -74,8 +73,9 @@ export class ChatbotSessionService {
   fetchLastAccessedChatSession(): void {
     this.chatbotApiService.getRecentlyAccessedSession().subscribe({
       next: (session) => {
-        this.currentSession = this.transformSession(session);
+        this.switchChatSession(session.id.toString());
         this.chatbotEventService.onSessionChanged.emit();
+        console.log('Fetched last accessed session:', session);
       },
       error: (error) => console.error('Error fetching last accessed session:', error),
     });
@@ -113,6 +113,28 @@ export class ChatbotSessionService {
   createEmptyChatSession(sessionTitle: string = 'New Session'): void {
     this.createChatSession(sessionTitle);
   }
+
+  renameSession(sessionId: string, newTitle: string): void {
+    this.chatbotApiService.renameSession(sessionId, newTitle).subscribe({
+      next: (response) => {
+        const session = this.sessions.find(s => s.sessionId === sessionId);
+        if (session) session.name = response.session.name ?? 'Untitled';
+        this.chatbotEventService.onSessionListUpdated.emit();
+      },
+      error: (err) => console.error(`Error renaming session: ${err}`),
+    });
+  }
+  
+  deleteSession(sessionId: string): void {
+    this.chatbotApiService.softDeleteSession(sessionId).subscribe({
+      next: () => {
+        this.sessions = this.sessions.filter(s => s.sessionId !== sessionId);
+        this.chatbotEventService.onSessionListUpdated.emit();
+      },
+      error: (err) => console.error(`Error deleting session: ${err}`),
+    });
+  }
+  
 
   // ------------------------------
   // ✉️ Chat Message Handling

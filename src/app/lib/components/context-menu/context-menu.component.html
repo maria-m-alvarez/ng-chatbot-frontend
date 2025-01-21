@@ -1,0 +1,21 @@
+<div class="bg-white shadow rounded p-2 w-48 z-50">
+    @for (item of items; track item.id) {
+      <div 
+        class="flex items-center space-x-2 hover:bg-gray-100 p-2 cursor-pointer"
+        (click)="$event.preventDefault(); onItemClick(item)"
+      >
+        @if (itemTemplate) {
+          <ng-container
+            [ngTemplateOutlet]="itemTemplate"
+            [ngTemplateOutletContext]="{ $implicit: item }"
+          ></ng-container>
+        } @else {
+          @if(item.icon) {
+            <div [innerHTML]= ></div>
+            <img [src]="item.icon" alt="icon" class="w-4 h-4" />
+          }
+          <span class="text-gray-700">{{ item.label }}</span>
+        }
+      </div>
+    }
+</div>

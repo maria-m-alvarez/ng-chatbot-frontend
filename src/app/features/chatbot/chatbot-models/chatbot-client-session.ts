@@ -59,7 +59,7 @@ export class ClientChatMessage {
 // Chat Session Model
 export class ClientChatSession {
   sessionId: string;
-  title: string;
+  name: string;
   messages: ClientChatMessage[];
   userId: string;
   createdAt: Date;
@@ -68,7 +68,7 @@ export class ClientChatSession {
 
   constructor(sessionId: string, title: string, userId: string, projectConfiguration?: number) {
     this.sessionId = sessionId;
-    this.title = title;
+    this.name = title;
     this.messages = [];
     this.userId = userId;
     this.createdAt = new Date();

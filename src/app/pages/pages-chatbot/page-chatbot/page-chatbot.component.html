@@ -23,7 +23,7 @@
   @if (allowSidebar) {
     <app-button-for-toggleables
       #btnToggle
-      [icon]="!chatbotSidebar.getSidebar()?.isOpen ? btnToggle.iconService.icons.sidebarLeft : btnToggle.iconService.icons.sidebarLeftCollapse"
+      [icon]="!chatbotSidebar.sidebar?.isOpen ? btnToggle.iconService.icons.sidebarLeft : btnToggle.iconService.icons.sidebarLeftCollapse"
       [toggleableId]="chatbotSidebar.getSidebar()?.componentId || ''"
     />
   }

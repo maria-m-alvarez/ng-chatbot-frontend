@@ -20,7 +20,9 @@ export class ModularHeaderComponent {
 
   routes = Constants.ROUTES;
 
-  constructor(public readonly brain: ChatbotBrainService) {}
+  constructor(
+    public readonly brain: ChatbotBrainService
+  ) {}
 
   getLogo(): string {
     return this.useNegativeLogo

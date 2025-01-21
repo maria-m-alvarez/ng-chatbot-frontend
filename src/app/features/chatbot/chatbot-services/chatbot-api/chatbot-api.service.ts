@@ -77,6 +77,22 @@ export class ChatbotApiService {
       this.getAuthHeaders()
     );
   }
+
+  renameSession(sessionId: string | number, newName: string): Observable<{ message: string; session: ChatSession }> {
+    return this.http.put<{ message: string; session: ChatSession }>(
+      `${this.baseChatbotUrl}/sessions/${sessionId}/rename?new_name=${encodeURIComponent(newName)}`,
+      {},
+      this.getAuthHeaders()
+    );
+  }
+  
+  softDeleteSession(sessionId: string | number): Observable<{ message: string; session: ChatSession }> {
+    return this.http.put<{ message: string; session: ChatSession }>(
+      `${this.baseChatbotUrl}/sessions/${sessionId}/delete`,
+      {},
+      this.getAuthHeaders()
+    );
+  }
   
 
   // ------------------------------

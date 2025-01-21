@@ -1,16 +1,47 @@
 <!-- Chat Sessions List -->
-<div class="flex flex-col gap-2 p-4 overflow-y-auto
-sb-bg-transparent sb-th-primary sb-h-accent">
+<div 
+  class="flex flex-col gap-1 p-4 overflow-y-auto sb-bg-transparent sb-th-primary sb-h-accent"
+  #sessionListContainer
+>
   @for (session of chatSessions; track session.sessionId) {
-    <div 
-      class="cursor-pointer p-2 rounded-lg hover:font-semibold"
+    <div
+      class="h-10 cursor-pointer p-2 rounded-lg flex justify-between items-center hover:font-semibold relative"
       [ngClass]="{
         'bg-minsait-fucsia font-semibold': isCurrentSession(session.sessionId),
         'hover:bg-secondary-hover': !isCurrentSession(session.sessionId)
-        }"
+      }"
       (click)="selectSession(session.sessionId)"
+      (contextmenu)="onContextMenu($event, session)"
     >
-      <span class="text-sm">{{ session.title }}</span>
+      <!-- Conditionally Render Input or Text -->
+       @if (editingSession === session.sessionId) {
+        <input
+        #sessionInput
+        class="w-full h-full p-2 rounded-lg border border-gray-300 font-normal"
+        [value]="session.name"
+        (keydown.enter)="updateSessionName(session, sessionInput.value)"
+        (keydown.escape)="cancelEditing()"
+        (blur)="cancelEditing()"
+        autofocus
+      />
+       } @else {
+        <span class="text-sm">{{ session.name }}</span>
+       }
+
+      <!-- Three Dots Button -->
+      <button 
+        class="text-lg text-center w-8 h-8 flex items-center justify-center"
+        [ngClass]="{
+          'hover:text-accent': !isCurrentSession(session.sessionId), 
+          'hover:text-secondary': isCurrentSession(session.sessionId)
+        }"
+        (click)="onContextMenu($event, session)"
+      >
+        <div
+          class="pointer-events-none"
+          [innerHTML]="brain.iconService.getSanitizedIcon(brain.iconService.icons.verticalDots)">
+        </div>
+      </button>
     </div>
   }
 </div>

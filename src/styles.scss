@@ -3,6 +3,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import '@angular/cdk/overlay-prebuilt.css';
+
 @font-face {
   font-family: 'ForFutureSans';
   src: url('/Fonts/future_sans/WOFF2/ForFutureSans-Regular.woff2') format('woff2'),
