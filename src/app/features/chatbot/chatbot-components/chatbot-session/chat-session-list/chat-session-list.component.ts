@@ -38,6 +38,10 @@ export class ChatSessionListComponent {
   }
 
   selectSession(sessionId: string): void {
+    if (this.editingSession) {
+      return;
+    }
+  
     this.brain.chatbotSessionService.switchChatSession(sessionId);
   }
 
