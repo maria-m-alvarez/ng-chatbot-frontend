@@ -51,13 +51,16 @@ export class ChatSessionListComponent {
       {
         id: 'edit',
         label: 'Edit',
-        icon: '✏️',
+        icon: this.iconService.icons.pencil,
         callback: () => this.enterEditMode(session)
       },
       {
         id: 'delete',
         label: 'Delete',
-        icon: '🗑️',
+        textClass: 'text-red-500',
+        hoverBgClass: 'hover:bg-red-100',
+        hoverTextClass: 'hover:text-red-700',
+        icon: this.iconService.icons.delete,
         callback: () => this.deleteSession(session)
       }
     ];
