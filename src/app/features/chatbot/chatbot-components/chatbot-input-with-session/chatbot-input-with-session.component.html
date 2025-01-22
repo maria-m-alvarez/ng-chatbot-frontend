@@ -1,12 +1,28 @@
-<div class="h-full w-full flex flex-col">
-    <!-- Session History -->
-    <div class="flex-grow overflow-y-auto">
-      <app-chat-session-history></app-chat-session-history>
-    </div>
-  
-    <!-- Chat Input -->
-    <div class="flex-shrink-0 px-2">
-      <app-chatbot-input></app-chatbot-input>
-    </div>
+<div class="h-full w-full px-2">
+
+    @if (chatSessionState() == chatSessionStateEnum.NoSession || chatSessionState() == chatSessionStateEnum.NewSession) {
+      <div class="h-full w-full flex flex-col gap-4">
+        <!-- Center -->
+        <div class="flex flex-col items-center justify-center flex-grow">
+          <h1 class="text-2xl font-semibold pb-8">Olá! Como posso ajudar?</h1>
+          <app-chatbot-input class="w-[60%]"></app-chatbot-input>
+          <!-- Later chatbot suggestions will appear here -->
+        </div>
+        <app-chatbot-input-settings></app-chatbot-input-settings>
+      </div>
+    }
+    @else if (chatSessionState() == chatSessionStateEnum.ActiveSession) {
+      <div class="h-full w-full flex flex-col">
+        <!-- Session History -->
+        <div class="flex-grow overflow-y-auto">
+          <app-chat-session-history></app-chat-session-history>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="flex flex-col">
+          <app-chatbot-input></app-chatbot-input>
+          <app-chatbot-input-settings></app-chatbot-input-settings>
+        </div>
+      </div>
+    }
   </div>
-  

@@ -57,9 +57,9 @@
     <div
         #chatInput
         class="w-full flex items-center bg-primary text-secondary rounded-xl p-2 shadow-xl relative min-h-16 flex-shrink-0
-          {{ currentInputState === chatbotInputStates.Waiting ? 'cursor-not-allowed' : '' }}">
+          {{ currentInputState === chatbotInputStates.Loading ? 'cursor-not-allowed' : '' }}">
   
-        @if (currentInputState === chatbotInputStates.Waiting) {
+        @if (currentInputState === chatbotInputStates.Loading) {
           <div class="flex-grow mx-2 flex items-center justify-center">
             <div class="flex-grow flex items-center justify-center text-text-secondary">
               <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -118,11 +118,6 @@
             </button>
           </div>
         }
-    </div>
-    
-    <!-- Settings Button becomes invisible -->
-    <div class="w-full min-h-8">
-      <app-chatbot-settings-button></app-chatbot-settings-button>
     </div>
   </div>
 </div>

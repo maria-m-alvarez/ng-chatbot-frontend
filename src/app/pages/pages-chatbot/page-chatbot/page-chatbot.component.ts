@@ -37,6 +37,6 @@ export class PageChatbotComponent extends ChatbotBaseComponentComponent {
 
   private fetchAllSessions(): void {
     this.brain.chatbotSessionService.fetchAllChatSessions();
-    this.brain.chatbotSessionService.fetchLastAccessedChatSession();
+    //this.brain.chatbotSessionService.fetchLastAccessedChatSession();
   }
 }

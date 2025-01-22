@@ -16,6 +16,8 @@ import {
   ClientChatMessageFeedback,
 } from '../../chatbot-models/chatbot-client-session';
 import { SelectorOption } from '../../../../core/components/input-components/input-selector/input-selector.component';
+import { AppState } from '../../../../core/app-state';
+import { ChatSessionInteractionState, ChatSessionState } from '../../chatbot-models/chatbot-enums';
 
 @Injectable({
   providedIn: 'root',
@@ -23,8 +25,6 @@ import { SelectorOption } from '../../../../core/components/input-components/inp
 export class ChatbotSessionService {
   providers: SelectorOption[] = [];
   modelsByProvider: { [key: string]: SelectorOption[] } = {};
-
-  currentSession!: ClientChatSession;
   sessions: ClientChatSession[] = [];
 
   constructor(
@@ -55,6 +55,20 @@ export class ChatbotSessionService {
   // ------------------------------
   // 📌 Session Management
   // ------------------------------
+  private setSessionState(session: ClientChatSession | null): void {
+    if (!session) {
+      AppState.updateChatSessionState(ChatSessionState.NoSession);
+    } else if (session.messages.length === 0) {
+      AppState.updateChatSessionState(ChatSessionState.NewSession);
+    } else {
+      AppState.updateChatSessionState(ChatSessionState.ActiveSession);
+    }
+  }
+
+  private setInteractionState(state: ChatSessionInteractionState): void {
+    AppState.updateChatSessionInteractionState(state);
+  }
+
   private initializeSessions(): void {
     this.fetchAllChatSessions();
   }
@@ -74,21 +88,34 @@ export class ChatbotSessionService {
     this.chatbotApiService.getRecentlyAccessedSession().subscribe({
       next: (session) => {
         this.switchChatSession(session.id.toString());
-        this.chatbotEventService.onSessionChanged.emit();
         console.log('Fetched last accessed session:', session);
       },
       error: (error) => console.error('Error fetching last accessed session:', error),
     });
   }
+  
 
   switchChatSession(sessionId: string | number): void {
+    this.setInteractionState(ChatSessionInteractionState.Loading);
+  
     this.chatbotApiService.getSessionWithMessages(sessionId).subscribe({
       next: (chatSession) => {
-        this.currentSession = this.transformSessionWithMessages(chatSession);
+        const transformedSession = this.transformSessionWithMessages(chatSession);
+        AppState.currentSessionID.set(sessionId.toString());
+        AppState.currentChatSession.set(transformedSession);
+  
+        // Determine session state
+        const newState = transformedSession.messages.length > 0
+          ? ChatSessionState.ActiveSession
+          : ChatSessionState.NewSession;
+        AppState.updateChatSessionState(newState);
+  
         this.chatbotEventService.onSessionChanged.emit();
+        this.setInteractionState(ChatSessionInteractionState.Idle);
       },
       error: (error) => {
         console.error('Error switching session:', error);
+        this.setInteractionState(ChatSessionInteractionState.Error);
       },
     });
   }
@@ -98,21 +125,45 @@ export class ChatbotSessionService {
       console.error('Session name cannot be empty.');
       return;
     }
-
+  
+    this.setInteractionState(ChatSessionInteractionState.Loading);
+  
     this.chatbotApiService.createSession(sessionName).subscribe({
       next: (newSession) => {
         const transformedSession = this.transformSession(newSession);
         this.sessions.push(transformedSession);
-        this.currentSession = transformedSession;
-        this.chatbotEventService.onSessionChanged.emit();
+        this.switchChatSession(newSession.id);
       },
-      error: (error) => console.error('Error creating session:', error),
+      error: (error) => {
+        console.error('Error creating session:', error);
+        this.setInteractionState(ChatSessionInteractionState.Error);
+      },
     });
   }
 
-  createEmptyChatSession(sessionTitle: string = 'New Session'): void {
+  createEmptyChatSession(sessionTitle: string = 'Nova Sessão'): void {
     this.createChatSession(sessionTitle);
   }
+
+  private createEmptyChatSessionAndSendMessage(promptMessage: string): void {
+    this.setInteractionState(ChatSessionInteractionState.Loading);
+  
+    this.chatbotApiService.createSession('Nova Sessão').subscribe({
+      next: (newSession) => {
+        const transformedSession = this.transformSession(newSession);
+        this.sessions.push(transformedSession);
+        AppState.currentChatSession.set(transformedSession);
+        AppState.currentSessionID.set(newSession.id.toString());
+  
+        this.setSessionState(transformedSession);
+        this.sendChatMessageForCurrentChatSession(promptMessage);
+      },
+      error: (error) => {
+        console.error('Error creating session:', error);
+        this.setInteractionState(ChatSessionInteractionState.Error);
+      },
+    });
+  }  
 
   renameSession(sessionId: string, newTitle: string): void {
     this.chatbotApiService.renameSession(sessionId, newTitle).subscribe({
@@ -126,12 +177,23 @@ export class ChatbotSessionService {
   }
   
   deleteSession(sessionId: string): void {
+    this.setInteractionState(ChatSessionInteractionState.Loading);
+  
     this.chatbotApiService.softDeleteSession(sessionId).subscribe({
       next: () => {
         this.sessions = this.sessions.filter(s => s.sessionId !== sessionId);
+        if (AppState.currentSessionID() === sessionId.toString()) {
+          AppState.currentSessionID.set(null);
+          AppState.currentChatSession.set(null);
+          AppState.updateChatSessionState(ChatSessionState.NoSession);
+        }
         this.chatbotEventService.onSessionListUpdated.emit();
+        this.setInteractionState(ChatSessionInteractionState.Idle);
       },
-      error: (err) => console.error(`Error deleting session: ${err}`),
+      error: (err) => {
+        console.error(`Error deleting session: ${err}`);
+        this.setInteractionState(ChatSessionInteractionState.Error);
+      },
     });
   }
   
@@ -140,50 +202,66 @@ export class ChatbotSessionService {
   // ✉️ Chat Message Handling
   // ------------------------------
   sendChatMessageForCurrentChatSession(promptMessage: string): void {
-    if (!this.currentSession) {
-      console.warn('No current session found. Creating a new session...');
-      this.createEmptyChatSession();
-      return;
+    let currentSession = AppState.currentChatSession();
+
+    // If no session exists, create a new one and wait for it to be selected
+    if (!currentSession) {
+        console.warn('No current session found. Creating a new session...');
+        this.createEmptyChatSessionAndSendMessage(promptMessage);
+        return;
+    }
+    
+    // Add user message to the current session
+    const userMessage = currentSession.addUserMessage(promptMessage);
+    AppState.currentChatSession.set(currentSession);
+    this.setInteractionState(ChatSessionInteractionState.Loading);
+
+    // Transition session from NewSession to ActiveSession after first message
+    if (AppState.chatSessionState() === ChatSessionState.NewSession) {
+        AppState.updateChatSessionState(ChatSessionState.ActiveSession);
     }
 
-    const userMessage = this.currentSession.addUserMessage(promptMessage);
     this.chatbotEventService.onPromptSent.emit();
 
     this.chatbotApiService
-      .requestUserChatCompletion(promptMessage, 'azure_openai', 'Azure gpt-4o-mini', null, +this.currentSession.sessionId)
-      .subscribe({
-        next: (apiResponse) => {
-          console.log('Chatbot API Response:', apiResponse);
-          const assistantMessage = apiResponse.messages.find((msg) => msg.role === 'assistant');
+        .requestUserChatCompletion(promptMessage, 'azure_openai', 'Azure gpt-4o-mini', null, +currentSession.sessionId)
+        .subscribe({
+            next: (apiResponse) => {
+                console.log('Chatbot API Response:', apiResponse);
+                const assistantMessage = apiResponse.messages.find((msg) => msg.role === 'assistant');
 
-          // ✅ FIX: Correctly access the nested Document inside references
-          const metadata: ChatMessageMetadata = {
-            documents: apiResponse.references?.map((ref: any) => {
-              const doc = ref?.Document; // Ensure we access the correct nested property
-              return doc
-                ? {
-                    doc_id: doc.doc_id ?? 0,
-                    doc_name: doc.doc_name ?? 'Unknown Document',
-                    doc_page: doc.doc_page ?? 1,
-                    doc_content: doc.doc_page_content ?? '',
-                  }
-                : null;
-            }).filter((doc): doc is DocumentReference => doc !== null) || [], // Filter out null values
-          };
+                const metadata: ChatMessageMetadata = {
+                    documents: apiResponse.references?.map((ref: any) => {
+                        const doc = ref?.Document;
+                        return doc
+                            ? {
+                                doc_id: doc.doc_id ?? 0,
+                                doc_name: doc.doc_name ?? 'Unknown Document',
+                                doc_page: doc.doc_page ?? 1,
+                                doc_content: doc.doc_page_content ?? '',
+                            }
+                            : null;
+                    }).filter((doc): doc is DocumentReference => doc !== null) || [],
+                };
 
-          this.handleAssistantChatMessageResponse(userMessage.id, assistantMessage?.content || '', metadata);
-          this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Success);
-        },
-        error: (error) => {
-          console.error('Error from chatbot API:', error);
-          this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Error);
-        },
-      });
+                this.handleAssistantChatMessageResponse(userMessage.id, assistantMessage?.content || '', metadata);
+                this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Success);
+
+                // Return to idle state after response
+                this.setInteractionState(ChatSessionInteractionState.Idle);
+            },
+            error: (error) => {
+                console.error('Error from chatbot API:', error);
+                this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Error);
+
+                // Set to error state
+                this.setInteractionState(ChatSessionInteractionState.Error);
+            },
+        });
   }
 
-
   handleAssistantChatMessageResponse(promptId: string, message: string, metadata: ChatMessageMetadata = {}): void {
-    this.currentSession.addAssistantMessage(promptId, message, metadata);
+    AppState.currentChatSession()?.addAssistantMessage(promptId, message, metadata);
     this.chatbotEventService.onPromptAnswerReceived.emit();
   }
 

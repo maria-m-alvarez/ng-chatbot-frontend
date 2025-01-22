@@ -1,9 +1,9 @@
-import { Component, ElementRef, ViewChild, OnInit, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnInit, AfterViewInit, computed } from '@angular/core';
 import { ChatbotSessionService } from '../../../chatbot-services/chatbot-session/chatbot-session.service';
 import { ChatSessionMessageAssistantComponent } from '../chat-messages/chat-session-message-assistant/chat-session-message-assistant.component';
 import { ChatSessionMessageUserComponent } from '../chat-messages/chat-session-message-user/chat-session-message-user.component';
 import { ChatbotEventService } from '../../../chatbot-services/chatbot-events/chatbot-event.service';
-import { ClientChatSession } from '../../../chatbot-models/chatbot-client-session';
+import { AppState } from '../../../../../core/app-state';
 
 @Component({
   selector: 'app-chat-session-history',
@@ -15,7 +15,8 @@ import { ClientChatSession } from '../../../chatbot-models/chatbot-client-sessio
 export class ChatSessionHistoryComponent implements OnInit, AfterViewInit {
   @ViewChild('chatHistoryContainer') readonly chatHistoryContainer!: ElementRef<HTMLDivElement>;
 
-  session!: ClientChatSession;
+  // Reactive Session from AppState
+  session = computed(() => AppState.currentChatSession());
   isAtBottom: boolean = true;
   private observer!: IntersectionObserver;
 
@@ -25,25 +26,16 @@ export class ChatSessionHistoryComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.refreshSession();
+    this.scrollToBottom();
 
-    // Listen to session updates and refresh the session view dynamically
-    this.chatbotEventService.onSessionChanged.subscribe(() => {
-      this.refreshSession();
-      this.scrollToBottom();
-    });
-
-    // Scroll handling for new messages
+    // Listen to session updates and refresh view dynamically
+    this.chatbotEventService.onSessionChanged.subscribe(() => this.scrollToBottom());
     this.chatbotEventService.onPromptSent.subscribe(() => this.scrollToBottom());
     this.chatbotEventService.onPromptAnswerReceived.subscribe(() => this.scrollToBottom());
   }
 
   ngAfterViewInit(): void {
     this.setupScrollObserver();
-  }
-
-  refreshSession(): void {
-    this.session = this.chatbotSessionService.currentSession;
   }
 
   private setupScrollObserver(): void {

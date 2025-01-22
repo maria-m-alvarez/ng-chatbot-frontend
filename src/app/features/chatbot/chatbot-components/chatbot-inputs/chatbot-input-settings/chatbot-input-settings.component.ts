@@ -5,13 +5,13 @@ import { ChatbotBrainService } from '../../../chatbot-services/chatbot-brain/cha
 import { ToggleService } from '../../../../../lib/toggleable/toggleable.service';
 
 @Component({
-  selector: 'app-chatbot-settings-button',
+  selector: 'app-chatbot-input-settings',
   standalone: true,
   imports: [],
-  templateUrl: './chatbot-settings-button.component.html',
-  styleUrl: './chatbot-settings-button.component.scss'
+  templateUrl: './chatbot-input-settings.component.html',
+  styleUrl: './chatbot-input-settings.component.scss'
 })
-export class ChatbotSettingsButtonComponent extends ChatbotBaseComponentComponent {
+export class ChatbotInputSettingsComponent extends ChatbotBaseComponentComponent {
 
   constructor(
     brain: ChatbotBrainService,

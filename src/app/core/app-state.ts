@@ -1,39 +1,59 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { User } from '../features/user/models/userModels';
 import { HttpHeaders } from '@angular/common/http';
+import { ClientChatSession } from '../features/chatbot/chatbot-models/chatbot-client-session';
+import { ChatSessionInteractionState, ChatSessionState } from '../features/chatbot/chatbot-models/chatbot-enums';
 
 @Injectable({
-  providedIn: 'root', // Makes it a singleton service available throughout the app
+  providedIn: 'root',
 })
 export class AppState {
-  // Current logged-in user details
-  currentUser: User | null = null;
+  static readonly currentUser = signal<User | null>(null);
+  static readonly authHeader = signal<HttpHeaders | null>(null);
+  static readonly currentSessionID = signal<string | null>(null);
+  static readonly currentChatSession = signal<ClientChatSession | null>(null);
+  static readonly chatSessionState = signal<ChatSessionState>(ChatSessionState.NoSession);
+  static readonly chatSessionInteractionState = signal<ChatSessionInteractionState>(ChatSessionInteractionState.Idle);
 
-  // Authentication header for API requests
-  authHeader: HttpHeaders | null = null;
 
-  // Current session ID
-  currentSessionID: string | null = null;
-
-  // Set current user details
-  setCurrentUser(user: User): void {
-    this.currentUser = user;
+  // ------------------------------
+  // Auth & Current User
+  // ------------------------------
+  static setCurrentUser(user: User): void {
+    this.currentUser.set(user);
   }
 
-  // Update authentication header
-  setAuthHeader(token: string): void {
-    this.authHeader = new HttpHeaders({ Authorization: `Bearer ${token}` });
+  static setAuthHeader(token: string): void {
+    this.authHeader.set(new HttpHeaders({ Authorization: `Bearer ${token}` }));
   }
 
-  // Set the current session ID
-  setSessionID(sessionID: string): void {
-    this.currentSessionID = sessionID;
+  static setCurrentChatSession(session: ClientChatSession | null): void {
+    this.currentChatSession.set(session);
+    this.currentSessionID.set(session ? session.sessionId : null);
+    this.updateChatSessionState(session ? ChatSessionState.ActiveSession : ChatSessionState.NoSession);
   }
-  
-  // Reset application state
-  resetState(): void {
-    this.currentUser = null;
-    this.authHeader = null;
-    this.currentSessionID = null;
+
+
+  // ------------------------------
+  // Chat Session State
+  // ------------------------------
+  static updateChatSessionState(state: ChatSessionState): void {
+    this.chatSessionState.set(state);
+  }
+
+  static updateChatSessionInteractionState(state: ChatSessionInteractionState): void {
+    this.chatSessionInteractionState.set(state);
+  }
+
+
+  // ------------------------------
+  // Reset App State
+  // ------------------------------
+  static resetState(): void {
+    this.currentUser.set(null);
+    this.authHeader.set(null);
+    this.currentSessionID.set(null);
+    this.currentChatSession.set(null);
+    this.updateChatSessionState(ChatSessionState.NoSession);
   }
 }

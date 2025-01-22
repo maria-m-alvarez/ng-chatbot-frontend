@@ -4,8 +4,8 @@
   (scroll)="onScroll()"
   class="h-full w-full p-4 flex flex-col overflow-y-auto
   sb-bg-transparent sb-th-primary sb-h-accent scroll-pr-2">
-  @if (session) {
-    @for (msg of session.messages; track $index) {
+  @if (session()) {
+    @for (msg of session()?.messages; track $index) {
       @if (msg.role === 'user') {
         <app-chat-session-message-user
           [chatMessage]="msg"

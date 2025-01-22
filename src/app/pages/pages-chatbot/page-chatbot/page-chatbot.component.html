@@ -20,10 +20,10 @@
 
 <!-- Header Content -->
 <ng-template #leftContent>
-  @if (allowSidebar) {
+  @if (allowSidebar && chatbotSidebar.sidebar) {
     <app-button-for-toggleables
       #btnToggle
-      [icon]="!chatbotSidebar.sidebar?.isOpen ? btnToggle.iconService.icons.sidebarLeft : btnToggle.iconService.icons.sidebarLeftCollapse"
+      [icon]="!chatbotSidebar.sidebar.isOpen ? btnToggle.iconService.icons.sidebarLeft : btnToggle.iconService.icons.sidebarLeftCollapse"
       [toggleableId]="chatbotSidebar.getSidebar()?.componentId || ''"
     />
   }

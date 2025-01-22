@@ -7,6 +7,9 @@ export interface LoginRequest {
 export interface LoginResponse {
   access_token: string;
   token_type: string;
+  user_id: number;
+  username: string;
+  user_email: string;
 }
 
 export interface TokenValidationRequest {

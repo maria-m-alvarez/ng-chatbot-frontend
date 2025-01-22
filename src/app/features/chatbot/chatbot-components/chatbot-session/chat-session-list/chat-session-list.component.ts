@@ -1,11 +1,12 @@
 import { NgClass } from '@angular/common';
-import { Component, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, ViewChild, ElementRef, HostListener, computed } from '@angular/core';
 import { ChatbotBrainService } from '../../../chatbot-services/chatbot-brain/chatbot-brain.service';
 import { ClientChatSession } from '../../../chatbot-models/chatbot-client-session';
 import { Overlay, OverlayModule, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { ContextMenuItem, ContextMenuComponent } from '../../../../../lib/components/context-menu/context-menu.component';
 import { IconService } from '../../../../../core/services/icon-service/icon.service';
+import { AppState } from '../../../../../core/app-state';
 
 @Component({
   selector: 'app-chat-session-list',
@@ -16,10 +17,12 @@ import { IconService } from '../../../../../core/services/icon-service/icon.serv
 })
 export class ChatSessionListComponent {
   chatSessions: ClientChatSession[] = [];
-  selectedSession: ClientChatSession | null = null;
-  editingSession: string | null = null; // Track which session is being edited
+  editingSession: string | null = null;
   private overlayRef?: OverlayRef;
   private isContextMenuOpen = false;
+
+  // Reactive Signals
+  selectedSession = computed(() => AppState.currentChatSession());
 
   @ViewChild('sessionListContainer', { static: false }) containerRef!: ElementRef;
 
@@ -34,14 +37,13 @@ export class ChatSessionListComponent {
   }
 
   isCurrentSession(sessionId: string): boolean {
-    return this.brain.chatbotSessionService.currentSession?.sessionId === sessionId;
+    return AppState.currentSessionID() === sessionId;
   }
 
   selectSession(sessionId: string): void {
     if (this.editingSession) {
       return;
     }
-  
     this.brain.chatbotSessionService.switchChatSession(sessionId);
   }
 
@@ -72,9 +74,7 @@ export class ChatSessionListComponent {
     const positionStrategy = this.overlay
       .position()
       .flexibleConnectedTo({ x: event.clientX, y: event.clientY })
-      .withPositions([
-        { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'top' }
-      ])
+      .withPositions([{ originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'top' }])
       .withPush(false);
 
     this.overlayRef = this.overlay.create({
@@ -107,7 +107,7 @@ export class ChatSessionListComponent {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event): void {
-    if (!this.selectedSession) {
+    if (!this.selectedSession()) {
       return;
     }
     this.closeContextMenu();
@@ -118,7 +118,7 @@ export class ChatSessionListComponent {
   // ----------------------
   enterEditMode(session: ClientChatSession): void {
     this.editingSession = session.sessionId;
-    this.closeContextMenu(); // Close the context menu when entering edit mode
+    this.closeContextMenu();
   }
 
   updateSessionName(session: ClientChatSession, newName: string): void {
