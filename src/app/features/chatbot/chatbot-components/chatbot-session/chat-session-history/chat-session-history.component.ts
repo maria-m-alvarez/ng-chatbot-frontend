@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild, OnInit, AfterViewInit, computed } from '@angular/core';
+import { CdkScrollable } from '@angular/cdk/scrolling';
 import { ChatbotSessionService } from '../../../chatbot-services/chatbot-session/chatbot-session.service';
 import { ChatSessionMessageAssistantComponent } from '../chat-messages/chat-session-message-assistant/chat-session-message-assistant.component';
 import { ChatSessionMessageUserComponent } from '../chat-messages/chat-session-message-user/chat-session-message-user.component';
@@ -8,17 +9,16 @@ import { AppState } from '../../../../../core/app-state';
 @Component({
   selector: 'app-chat-session-history',
   standalone: true,
-  imports: [ChatSessionMessageAssistantComponent, ChatSessionMessageUserComponent],
+  imports: [ChatSessionMessageAssistantComponent, ChatSessionMessageUserComponent, CdkScrollable],
   templateUrl: './chat-session-history.component.html',
   styleUrls: ['./chat-session-history.component.scss'],
 })
 export class ChatSessionHistoryComponent implements OnInit, AfterViewInit {
+  @ViewChild(CdkScrollable) scrollable!: CdkScrollable;
   @ViewChild('chatHistoryContainer') readonly chatHistoryContainer!: ElementRef<HTMLDivElement>;
 
-  // Reactive Session from AppState
   session = computed(() => AppState.currentChatSession());
-  isAtBottom: boolean = true;
-  private observer!: IntersectionObserver;
+  isAtBottom = true;
 
   constructor(
     readonly chatbotEventService: ChatbotEventService,
@@ -26,50 +26,44 @@ export class ChatSessionHistoryComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.scrollToBottom();
-
-    // Listen to session updates and refresh view dynamically
-    this.chatbotEventService.onSessionChanged.subscribe(() => this.scrollToBottom());
+    this.chatbotEventService.onSessionChanged.subscribe(() => this.handleSessionChange());
     this.chatbotEventService.onPromptSent.subscribe(() => this.scrollToBottom());
     this.chatbotEventService.onPromptAnswerReceived.subscribe(() => this.scrollToBottom());
   }
 
   ngAfterViewInit(): void {
-    this.setupScrollObserver();
+    this.scrollable.elementScrolled().subscribe(() => this.onScroll());
   }
 
-  private setupScrollObserver(): void {
-    if (!this.chatHistoryContainer || !this.chatHistoryContainer.nativeElement) return;
-
-    this.observer = new IntersectionObserver(
-      ([entry]) => {
-        this.isAtBottom = entry.isIntersecting;
-      },
-      { root: this.chatHistoryContainer.nativeElement, threshold: 0.9 }
-    );
-
-    const lastElement = this.chatHistoryContainer.nativeElement.lastElementChild;
-    if (lastElement) {
-      this.observer.observe(lastElement);
-    }
+  private handleSessionChange(): void {
+    // Ensure new session messages are rendered before scrolling
+    setTimeout(() => {
+      requestAnimationFrame(() => {
+        this.scrollToBottom();
+      });
+    }, 50);
   }
 
   onScroll(): void {
+    if (!this.chatHistoryContainer?.nativeElement) return;
+
     const container = this.chatHistoryContainer.nativeElement;
     const isScrolledToBottom =
-      container.scrollHeight - container.scrollTop <= container.clientHeight + 150;
+      Math.abs(container.scrollHeight - container.scrollTop - container.clientHeight) < 10;
 
     this.isAtBottom = isScrolledToBottom;
   }
 
   scrollToBottom(): void {
     setTimeout(() => {
-      if (this.chatHistoryContainer?.nativeElement) {
-        this.chatHistoryContainer.nativeElement.scrollTo({
-          top: this.chatHistoryContainer.nativeElement.scrollHeight,
-          behavior: 'smooth',
-        });
-      }
+      if (!this.chatHistoryContainer?.nativeElement) return;
+
+      this.chatHistoryContainer.nativeElement.scrollTo({
+        top: this.chatHistoryContainer.nativeElement.scrollHeight,
+        behavior: 'smooth',
+      });
+
+      setTimeout(() => this.onScroll(), 200);
     }, 10);
   }
 }
