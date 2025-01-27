@@ -19,7 +19,7 @@ export class ChatbotBrainService {
     Idle: 'idle',
     Waiting: 'waiting',
     Dragging: 'dragging',
-    Error: 'error',
+    Error: 'error', 
   };
 
   private readonly LOCAL_STORAGE_KEY = 'chatbotSettings';
@@ -54,7 +54,7 @@ export class ChatbotBrainService {
     } else {
       ChatbotBrainService.chatbotSettings = new ChatbotSettings(
         'azure_openai',
-        'gpt-35-turbo',
+        'gpt-4o-mini',
         'azure_openai',
         false,
         false,
