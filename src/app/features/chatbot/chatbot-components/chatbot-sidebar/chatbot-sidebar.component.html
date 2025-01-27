@@ -16,18 +16,20 @@
           <app-button-icon
           #newSessionBtn
           [icon]="newSessionBtn.iconService.icons.newSession"
-          text="Novo Chat"
+          [text]="localizationKeys.NEW_SESSION | translate"
           iconPosition="left"
           (click)="createNewSession()">
         </app-button-icon>
         
-        <app-button-icon
-          #newDocSessionBtn
-          [icon]="newSessionBtn.iconService.icons.newDocumentSession"
-          text="Novo Doc Chat"
-          iconPosition="left"
-          (click)="createNewSession()">
-        </app-button-icon>
+        @if (allowDocChat) {
+          <app-button-icon
+            #newDocSessionBtn
+            [icon]="newSessionBtn.iconService.icons.newDocumentSession"
+            [text]="localizationKeys.NEW_DOC_SESSION | translate"
+            iconPosition="left"
+            (click)="createNewSession()">
+          </app-button-icon>
+        }
       </div>
 
         <div class="w-full flex-1 flex flex-col overflow-auto

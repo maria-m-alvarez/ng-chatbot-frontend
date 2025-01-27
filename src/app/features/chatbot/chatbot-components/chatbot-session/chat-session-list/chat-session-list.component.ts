@@ -5,13 +5,15 @@ import { ClientChatSession } from '../../../chatbot-models/chatbot-client-sessio
 import { Overlay, OverlayModule, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { ContextMenuItem, ContextMenuComponent } from '../../../../../lib/components/context-menu/context-menu.component';
-import { IconService } from '../../../../../core/services/icon-service/icon.service';
 import { AppState } from '../../../../../core/app-state';
+import { TranslatePipe } from '../../../../../core/pipes/translate-pipe.pipe';
+import { LocalizationKeys } from '../../../../../core/services/localization-service/localization.models';
+import { LocalizationService } from '../../../../../core/services/localization-service/localization.service';
 
 @Component({
   selector: 'app-chat-session-list',
   standalone: true,
-  imports: [NgClass, OverlayModule],
+  imports: [NgClass, OverlayModule, TranslatePipe],
   templateUrl: './chat-session-list.component.html',
   styleUrls: ['./chat-session-list.component.scss']
 })
@@ -20,6 +22,7 @@ export class ChatSessionListComponent {
   editingSession: string | null = null;
   private overlayRef?: OverlayRef;
   private isContextMenuOpen = false;
+  private translatePipe!: TranslatePipe;
 
   // Reactive Signals
   selectedSession = computed(() => AppState.currentChatSession());
@@ -28,9 +31,11 @@ export class ChatSessionListComponent {
 
   constructor(
     public readonly brain: ChatbotBrainService,
-    private readonly overlay: Overlay,
-    private readonly iconService: IconService
+    private readonly overlay: Overlay,    
+    private readonly localizationService: LocalizationService
   ) {
+    this.translatePipe = new TranslatePipe(this.localizationService);
+
     this.brain.chatbotEventService.onSessionListUpdated.subscribe(() => {
       this.chatSessions = this.brain.chatbotSessionService.sessions;
     });
@@ -56,17 +61,17 @@ export class ChatSessionListComponent {
     const menuItems: ContextMenuItem[] = [
       {
         id: 'edit',
-        label: 'Edit',
-        icon: this.iconService.icons.pencil,
+        label: this.translatePipe.transform(LocalizationKeys.EDIT),
+        icon: this.brain.iconService.icons.pencil,
         callback: () => this.enterEditMode(session)
       },
       {
         id: 'delete',
-        label: 'Delete',
+        label: this.translatePipe.transform(LocalizationKeys.DELETE),
         textClass: 'text-red-500',
         hoverBgClass: 'hover:bg-red-100',
         hoverTextClass: 'hover:text-red-700',
-        icon: this.iconService.icons.delete,
+        icon: this.brain.iconService.icons.delete,
         callback: () => this.deleteSession(session)
       }
     ];

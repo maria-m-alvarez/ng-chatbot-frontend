@@ -4,6 +4,7 @@
     <app-modular-header
       [showLogo]="false"
       [useNegativeLogo]="true"
+      [rightContent]="rightContent"
       >
     </app-modular-header>
   
@@ -11,4 +12,8 @@
       <router-outlet></router-outlet>
     </div>
   </div>
+
+  <ng-template #rightContent>
+    <app-language-selector />
+  </ng-template>
   

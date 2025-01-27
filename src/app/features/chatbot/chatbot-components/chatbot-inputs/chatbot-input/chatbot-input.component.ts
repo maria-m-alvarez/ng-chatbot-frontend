@@ -7,13 +7,15 @@ import { WebRequestResult } from '../../../../../core/models/enums';
 import { environment } from '../../../../../../environments/environment';
 import { AppState } from '../../../../../core/app-state';
 import { ChatSessionInteractionState } from '../../../chatbot-models/chatbot-enums';
+import { LocalizationKeys } from '../../../../../core/services/localization-service/localization.models';
+import { TranslatePipe } from "../../../../../core/pipes/translate-pipe.pipe";
 
 @Component({
   selector: 'app-chatbot-input',
   standalone: true,
   templateUrl: './chatbot-input.component.html',
   styleUrls: ['./chatbot-input.component.scss'],
-  imports: [NgStyle, ChatbotInputAttachmentComponent, ChatbotSettingsComponent]
+  imports: [NgStyle, ChatbotInputAttachmentComponent, ChatbotSettingsComponent, TranslatePipe]
 })
 export class ChatbotInputComponent {
   @ViewChild('chatInput') chatInput!: ElementRef<HTMLDivElement>;
@@ -34,6 +36,8 @@ export class ChatbotInputComponent {
   isRunningCountdown: boolean = false;
 
   allowFileUpload = environment.allowFileUpload;
+
+  LocalizationKeys = LocalizationKeys;
 
   constructor(readonly brain: ChatbotBrainService) {
     brain.chatbotEventService.onPromptAnswerReceived.subscribe((result) => {

@@ -1,11 +1,12 @@
 import { Component, Input } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { ModularHeaderComponent } from '../../../core/components/modular/modular-header/modular-header.component';
+import { LanguageSelectorComponent } from "../../../core/components/language-selector/language-selector.component";
 
 @Component({
   selector: 'app-page-auth-main',
   standalone: true,
-  imports: [ModularHeaderComponent, RouterOutlet, RouterLink],
+  imports: [ModularHeaderComponent, RouterOutlet, LanguageSelectorComponent],
   templateUrl: './page-auth-main.component.html',
   styleUrl: './page-auth-main.component.scss'
 })

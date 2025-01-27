@@ -7,6 +7,7 @@ import { ChatbotInputWithSessionComponent } from "../../../features/chatbot/chat
 import { ChatbotSidebarComponent } from "../../../features/chatbot/chatbot-components/chatbot-sidebar/chatbot-sidebar.component";
 import { environment } from '../../../../environments/environment';
 import { ChatbotBrainService } from '../../../features/chatbot/chatbot-services/chatbot-brain/chatbot-brain.service';
+import { LanguageSelectorComponent } from "../../../core/components/language-selector/language-selector.component";
 
 @Component({
   selector: 'app-page-chatbot',
@@ -17,7 +18,8 @@ import { ChatbotBrainService } from '../../../features/chatbot/chatbot-services/
     ButtonForToggleablesComponent,
     ChatbotInputWithSessionComponent,
     ChatbotSidebarComponent,
-  ],
+    LanguageSelectorComponent
+],
   templateUrl: './page-chatbot.component.html',
   styleUrls: ['./page-chatbot.component.scss'],
 })

@@ -2,7 +2,7 @@
     <!-- Left Section -->
     <div class="flex flex-row items-start space-x-2">
         <p>
-            Modelo:
+            {{ LocalizationKeys.AI_MODEL | translate }}:
         </p>
     
         <div class="flex items-center space-x- hover:text-highlight-secondary hover:underline hover:cursor-pointer"
@@ -18,6 +18,6 @@
     </div>
 
     <div class="flex flex-grow justify-end text-right">
-        Respostas geradas por IA podem conter incorreções. Por favor, valide informações importantes.
+        {{ LocalizationKeys.AI_MESSAGE | translate }}
     </div>
 </div>

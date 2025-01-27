@@ -6,16 +6,19 @@ import { EventService } from '../../../../core/services/event-service/event.serv
 import { ThemeService } from '../../../../core/services/theme-service/theme.service';
 import { AuthService } from '../../../authentication/auth-service/auth.service';
 import { ToggleService } from '../../../../lib/toggleable/toggleable.service';
+import { TranslatePipe } from '../../../../core/pipes/translate-pipe.pipe';
+import { LocalizationKeys } from '../../../../core/services/localization-service/localization.models';
 
 @Component({
   selector: 'app-user-options-button',
   standalone: true,
-  imports: [ThemeToggleComponent, UserSettingsModalComponent],
+  imports: [ThemeToggleComponent, UserSettingsModalComponent, TranslatePipe],
   templateUrl: './user-options-button.component.html',
   styleUrls: ['./user-options-button.component.scss']
 })
 export class UserOptionsButtonComponent {
   isDropdownOpen = false;
+  LanguageKeys = LocalizationKeys;
 
   constructor(
     readonly toggleService: ToggleService,

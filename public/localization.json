@@ -1,0 +1,286 @@
+{
+  "languages": [
+    { "code": "pt", "name": "Português" },
+    { "code": "en", "name": "English" },
+    { "code": "es", "name": "Español" },
+    { "code": "it", "name": "Italiano" }
+  ],
+  "entries": {
+    "yes": {
+      "pt": "Sim",
+      "en": "Yes",
+      "es": "Sí",
+      "it": "Sì"
+    },
+    "no": {
+      "pt": "Não",
+      "en": "No",
+      "es": "No",
+      "it": "No"
+    },
+    "cancel": {
+      "pt": "Cancelar",
+      "en": "Cancel",
+      "es": "Cancelar",
+      "it": "Annulla"
+    },
+    "save": {
+      "pt": "Guardar",
+      "en": "Save",
+      "es": "Guardar",
+      "it": "Salvare"
+    },
+    "delete": {
+      "pt": "Eliminar",
+      "en": "Delete",
+      "es": "Eliminar",
+      "it": "Eliminare"
+    },
+    "edit": {
+      "pt": "Editar",
+      "en": "Edit",
+      "es": "Editar",
+      "it": "Modifica"
+    },
+    "add": {
+      "pt": "Adicionar",
+      "en": "Add",
+      "es": "Agregar",
+      "it": "Aggiungere"
+    },
+    "close": {
+      "pt": "Fechar",
+      "en": "Close",
+      "es": "Cerrar",
+      "it": "Chiudere"
+    },
+    "clear": {
+      "pt": "Limpar",
+      "en": "Clear",
+      "es": "Limpiar",
+      "it": "Chiaro"
+    },
+    "search": {
+      "pt": "Pesquisar",
+      "en": "Search",
+      "es": "Buscar",
+      "it": "Cerca"
+    },
+    "loading": {
+      "pt": "A carregar...",
+      "en": "Loading...",
+      "es": "Cargando...",
+      "it": "Caricamento..."
+    },
+    "error": {
+      "pt": "Erro",
+      "en": "Error",
+      "es": "Error",
+      "it": "Errore"
+    },
+    "warning": {
+      "pt": "Aviso",
+      "en": "Warning",
+      "es": "Advertencia",
+      "it": "Avviso"
+    },
+    "info": {
+      "pt": "Informação",
+      "en": "Information",
+      "es": "Información",
+      "it": "Informazione"
+    },
+    "confirm": {
+      "pt": "Confirmar",
+      "en": "Confirm",
+      "es": "Confirmar",
+      "it": "Confermare"
+    },
+    "confirmDelete": {
+      "pt": "Tem a certeza que deseja eliminar?",
+      "en": "Are you sure you want to delete?",
+      "es": "¿Estás seguro de que quieres eliminar?",
+      "it": "Sei sicuro di voler eliminare?"
+    },
+    "confirmCancel": {
+      "pt": "Tem a certeza que deseja cancelar?",
+      "en": "Are you sure you want to cancel?",
+      "es": "¿Estás seguro de que quieres cancelar?",
+      "it": "Sei sicuro di voler annullare?"
+    },
+    "profile": {
+      "pt": "Perfil",
+      "en": "Profile",
+      "es": "Perfil",
+      "it": "Profilo"
+    },
+    "settings": {
+      "pt": "Definições",
+      "en": "Settings",
+      "es": "Configuraciones",
+      "it": "Impostazioni"
+    },
+    "options": {
+      "pt": "Opções",
+      "en": "Options",
+      "es": "Opciones",
+      "it": "Opzioni"
+    },
+    "theme": {
+      "pt": "Tema",
+      "en": "Theme",
+      "es": "Tema",
+      "it": "Tema"
+    },
+    "language": {
+      "pt": "Idioma",
+      "en": "Language",
+      "es": "Idioma",
+      "it": "Lingua"
+    },
+    "logout": {
+      "pt": "Sair",
+      "en": "Logout",
+      "es": "Cerrar sesión",
+      "it": "Disconnetti"
+    },
+    "login": {
+      "pt": "Entrar",
+      "en": "Login",
+      "es": "Iniciar sesión",
+      "it": "Accedi"
+    },
+    "sessionWelcomeMagia": {
+      "pt": "Olá! Sou o MagIA",
+      "en": "Hello! I'm MagIA",
+      "es": "¡Hola! Soy MagIA",
+      "it": "Ciao! Sono MagIA"
+    },
+    "sessionWelcome": {
+      "pt": "Como posso ajudar?",
+      "en": "How can I help?",
+      "es": "¿Cómo puedo ayudar?",
+      "it": "Come posso aiutarti?"
+    },
+    "sessionInputPlaceholder": {
+      "pt": "Escreve a tua pergunta...",
+      "en": "Type your question...",
+      "es": "Escribe tu pregunta...",
+      "it": "Scrivi la tua domanda..."
+    },
+    "newSession": {
+      "pt": "Novo Chat",
+      "en": "New Chat",
+      "es": "Nuevo Chat",
+      "it": "Nuova Chat"
+    },
+    "newDocSession": {
+      "pt": "Novo Doc Chat",
+      "en": "New Doc Chat",
+      "es": "Nuevo Doc Chat",
+      "it": "Nuova Chat Doc"
+    },
+    "references": {
+      "pt": "Referências",
+      "en": "References",
+      "es": "Referencias",
+      "it": "Riferimenti"
+    },
+    "aiMessage": {
+      "pt": "O MagIA pode cometer erros. Por favor, validar informações importantes.",
+      "en": "MagIA may make mistakes. Please verify important information.",
+      "es": "MagIA puede cometer errores. Por favor, verifica la información importante.",
+      "it": "MagIA può commettere errori. Si prega di verificare le informazioni importanti."
+    },
+    "aiModel": {
+      "pt": "Modelo",
+      "en": "Model",
+      "es": "Modelo",
+      "it": "Modello"
+    },
+    "prompt": {
+      "pt": "Prompt",
+      "en": "Prompt",
+      "es": "Prompt",
+      "it": "Prompt"
+    },
+    "systemPrompt": {
+      "pt": "Prompt do Sistema",
+      "en": "System Prompt",
+      "es": "Prompt del Sistema",
+      "it": "Prompt di Sistema"
+    },
+    "system": {
+      "pt": "Sistema",
+      "en": "System",
+      "es": "Sistema",
+      "it": "Sistema"
+    },
+    "response": {
+      "pt": "Resposta",
+      "en": "Response",
+      "es": "Respuesta",
+      "it": "Risposta"
+    },
+    "provider": {
+      "pt": "Fornecedor",
+      "en": "Provider",
+      "es": "Proveedor",
+      "it": "Fornitore"
+    },
+    "modelConfig": {
+      "pt": "Configuração do Modelo",
+      "en": "Model Configuration",
+      "es": "Configuración del Modelo",
+      "it": "Configurazione del Modello"
+    },
+    "stream": {
+      "pt": "Stream",
+      "en": "Stream",
+      "es": "Flujo",
+      "it": "Flusso"
+    },
+    "seed": {
+      "pt": "Seed",
+      "en": "Seed",
+      "es": "Semilla",
+      "it": "Seed"
+    },
+    "temperature": {
+      "pt": "Temperatura",
+      "en": "Temperature",
+      "es": "Temperatura",
+      "it": "Temperatura"
+    },
+    "repetitionPenalty": {
+      "pt": "Penalidade de Repetição",
+      "en": "Repetition Penalty",
+      "es": "Penalización por Repetición",
+      "it": "Penalità di Ripetizione"
+    },
+    "maxTokens": {
+      "pt": "Máximo de Tokens",
+      "en": "Max Tokens",
+      "es": "Máximo de Tokens",
+      "it": "Massimo di Token"
+    },
+    "stopTokens": {
+      "pt": "Stop Tokens",
+      "en": "Stop Tokens",
+      "es": "Tokens de Parada",
+      "it": "Token di Stop"
+    },
+    "dimension": {
+      "pt": "Dimensão",
+      "en": "Dimension",
+      "es": "Dimensión",
+      "it": "Dimensione"
+    },
+    "dropZoneMessage": {
+      "pt": "Largue como se estivesse quente",
+      "en": "Drop it like it's hot",
+      "es": "Suéltalo como si estuviera caliente",
+      "it": "Lascia cadere come se fosse caldo"
+    }
+  }
+}

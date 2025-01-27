@@ -6,7 +6,7 @@
     rounded-32 bg-minsait-pruno
     border-dashed border-4 border-border-highlight"
     (dragover)="onDragOver($event)" (drop)="onDrop($event)">
-      <p class="text-2xl font-semibold text-minsait-fucsia">Larga como se estivesse quente!</p>
+    <p class="text-2xl font-semibold text-minsait-fucsia">{{ LocalizationKeys.DROP_ZONE_MESSAGE | translate }}</p>
     </div>
   </div>
 }
@@ -29,7 +29,7 @@
       <button
         (click)="clearFiles()"
         class="p-2 bg-minsait-fucsia hover:bg-error text-white rounded-md shadow-lg">
-        Clear
+        {{ LocalizationKeys.CLEAR | translate }}
       </button>
     </div>
   }
@@ -66,7 +66,7 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Processing...
+              {{ LocalizationKeys.LOADING | translate }}
             </div>
             <button (click)="stopProcessing()" class="p-2 rounded-lg ml-4 bg-border-highlight hover:bg-highlight-secondary text-text-tertiary hover:text-text-highlight">
               <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
@@ -103,7 +103,9 @@
             <div class="flex-grow mx-2">
               <textarea #chatTextInput
                 class="w-full max-h-32 resize-none bg-transparent px-3 py-2 outline-none"
-                placeholder="Escreve a tua pergunta..." rows="1" id="chat-input"
+                placeholder="{{ LocalizationKeys.SESSION_INPUT_PLACEHOLDER| translate }}"
+                rows="1"
+                id="chat-input"
                 (input)="adjustTextareaHeight($event)" (keydown)="handleKeyDown($event)"></textarea>
             </div>
           

@@ -4,7 +4,11 @@
       <div class="h-full w-full flex flex-col gap-4">
         <!-- Center -->
         <div class="flex flex-col items-center justify-center flex-grow">
-          <h1 class="text-2xl font-semibold pb-8">Olá! Como posso ajudar?</h1>
+          <div class="pb-8 flex flex-col items-center justify-center gap-2">
+            <h1 class="text-2xl font-semibold flex items-center gap-1" [innerHTML]="LocalizationKeys.SESSION_WELCOME_MAGIA | translate | magia"></h1>
+            <h1 class="text-lg">{{ LocalizationKeys.SESSION_WELCOME | translate }}</h1>
+          </div>
+
           <app-chatbot-input class="w-[60%]"></app-chatbot-input>
           <!-- Later chatbot suggestions will appear here -->
         </div>

@@ -5,18 +5,23 @@ import { ToggleService } from '../../../../lib/toggleable/toggleable.service';
 import { ButtonIconComponent } from '../../../../core/components/button-icon/button-icon.component';
 import { ChatbotBrainService } from '../../chatbot-services/chatbot-brain/chatbot-brain.service';
 import { ChatSessionListComponent } from '../chatbot-session/chat-session-list/chat-session-list.component';
+import { LocalizationKeys } from '../../../../core/services/localization-service/localization.models';
+import { TranslatePipe } from "../../../../core/pipes/translate-pipe.pipe";
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-chatbot-sidebar',
   standalone: true,
   templateUrl: './chatbot-sidebar.component.html',
   styleUrls: ['./chatbot-sidebar.component.scss'],
-  imports: [SidebarComponent, ButtonIconComponent, ChatSessionListComponent],
+  imports: [SidebarComponent, ButtonIconComponent, ChatSessionListComponent, TranslatePipe],
 })
 export class ChatbotSidebarComponent implements OnInit, AfterViewInit {
   @ViewChild('sidebar') sidebar!: SidebarComponent;
+  allowDocChat = environment.allowDocumentChat;
   
   chatSessions: ClientChatSession[];
+  localizationKeys = LocalizationKeys;
 
   constructor(
     private readonly toggleService: ToggleService,
