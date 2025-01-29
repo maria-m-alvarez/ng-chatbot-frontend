@@ -48,7 +48,7 @@
           #feedback
           [voteStyle]="'rating'"
           [maxRating]="5"
-          [messageId]="chatMessage?.id?.toString() || ''"
+          [chatMessage]="chatMessage"
           [initialRating]="chatMessage?.feedback?.rating || 0"
         ></app-chat-session-message-vote>
         @if (allowCopy === true) {

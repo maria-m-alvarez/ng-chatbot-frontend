@@ -203,76 +203,91 @@ export class ChatbotSessionService {
   // ------------------------------
   sendChatMessageForCurrentChatSession(promptMessage: string): void {
     let currentSession = AppState.currentChatSession();
-
+  
     // If no session exists, create a new one and wait for it to be selected
     if (!currentSession) {
-        console.warn('No current session found. Creating a new session...');
-        this.createEmptyChatSessionAndSendMessage(promptMessage);
-        return;
+      console.warn('No current session found. Creating a new session...');
+      this.createEmptyChatSessionAndSendMessage(promptMessage);
+      return;
     }
-    
-    // Add user message to the current session
+  
+    // 1) Add local user message with placeholder ID
     const userMessage = currentSession.addUserMessage(promptMessage);
     AppState.currentChatSession.set(currentSession);
     this.setInteractionState(ChatSessionInteractionState.Loading);
-
-    // Transition session from NewSession to ActiveSession after first message
+  
     if (AppState.chatSessionState() === ChatSessionState.NewSession) {
-        AppState.updateChatSessionState(ChatSessionState.ActiveSession);
+      AppState.updateChatSessionState(ChatSessionState.ActiveSession);
     }
-
+  
     this.chatbotEventService.onPromptSent.emit();
-
+  
     this.chatbotApiService
-        .requestUserChatCompletion(promptMessage, 'azure_openai', 'Azure gpt-4o-mini', null, +currentSession.sessionId)
-        .subscribe({
-            next: (apiResponse) => {
-                console.log('Chatbot API Response:', apiResponse);
-                const assistantMessage = apiResponse.messages.find((msg) => msg.role === 'assistant');
-
-                const metadata: ChatMessageMetadata = {
-                    documents: apiResponse.references?.map((ref: any) => {
-                        const doc = ref?.Document;
-                        return doc
-                            ? {
-                                doc_id: doc.doc_id ?? 0,
-                                doc_name: doc.doc_name ?? 'Unknown Document',
-                                doc_page: doc.doc_page ?? 1,
-                                doc_content: doc.doc_page_content ?? '',
-                            }
-                            : null;
-                    }).filter((doc): doc is DocumentReference => doc !== null) || [],
-                };
-
-                this.handleAssistantChatMessageResponse(userMessage.id, assistantMessage?.content || '', metadata);
-                this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Success);
-
-                // Return to idle state after response
-                this.setInteractionState(ChatSessionInteractionState.Idle);
-            },
-            error: (error) => {
-                console.error('Error from chatbot API:', error);
-                this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Error);
-
-                // Set to error state
-                this.setInteractionState(ChatSessionInteractionState.Error);
-            },
-        });
+      .requestUserChatCompletion(promptMessage, 'azure_openai', 'Azure gpt-4o-mini', null, +currentSession.sessionId)
+      .subscribe({
+        next: (apiResponse) => {
+          console.log('Chatbot API Response:', apiResponse);
+  
+          // 2) Identify user & assistant from server
+          const serverUser = apiResponse.messages.find(m => m.role === 'user');
+          const serverAssistant = apiResponse.messages.find(m => m.role === 'assistant');
+  
+          // 3) Update local userMessage ID with real ID
+          if (serverUser?.message_id != null) {
+            userMessage.id = String(serverUser.message_id);
+          }
+  
+          // 4) Collect references & metadata
+          const metadata = {
+            documents: apiResponse.references?.map((ref: any) => {
+              const doc = ref?.Document;
+              return doc
+                ? {
+                    doc_id: doc.doc_id ?? 0,
+                    doc_name: doc.doc_name ?? 'Unknown Document',
+                    doc_page: doc.doc_page ?? 1,
+                    doc_content: doc.doc_page_content ?? '',
+                  }
+                : null;
+            }).filter((doc): doc is DocumentReference => doc !== null) || [],
+          };
+  
+          // 5) Create local assistant message
+          if (serverAssistant?.message_id != null) {
+            const newAssistant = currentSession.addAssistantMessage(
+              userMessage.id,                  // Just link it to the user message
+              serverAssistant.content || '',
+              metadata
+            );
+            // Assign the correct ID from server
+            newAssistant.id = String(serverAssistant.message_id);
+          }
+  
+          // 6) Save changes & update states
+          AppState.currentChatSession.set(currentSession);
+          this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Success);
+          this.setInteractionState(ChatSessionInteractionState.Idle);
+        },
+        error: (error) => {
+          console.error('Error from chatbot API:', error);
+          this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Error);
+          this.setInteractionState(ChatSessionInteractionState.Error);
+        },
+      });
   }
 
-  handleAssistantChatMessageResponse(promptId: string, message: string, metadata: ChatMessageMetadata = {}): void {
-    AppState.currentChatSession()?.addAssistantMessage(promptId, message, metadata);
-    this.chatbotEventService.onPromptAnswerReceived.emit();
-  }
-
-  sendPromptResultFeedback(messageId: string, rating: number, comments?: string): void {
-    if (!messageId || !rating) {
+  sendAssistantMessageFeedback(messageId: string, rating: number, comments?: string): void {    
+    if (!messageId || messageId == "-1" || !rating) {
       console.error('Invalid messageId or rating.');
+      console.log('Sending feedback for message:', messageId, 'Rating:', rating, 'Comments:', comments);
       return;
     }
 
     this.chatbotApiService.sendPromptResultFeedback(messageId, rating, comments).subscribe({
-      next: (response) => this.chatbotEventService.onFeedbackSent.emit(response),
+      next: (response) => {
+        console.log("Feedback sent:", response);
+        this.chatbotEventService.onFeedbackSent.emit(response)
+      },
       error: (error) => console.error('Error submitting feedback:', error),
     });
   }

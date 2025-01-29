@@ -24,7 +24,7 @@
       @for (rating of ratingOptions; track rating) {
         <button 
           (mouseenter)="hoverStar(rating)"  
-          (click)="voteStar(rating)" 
+          (click)="applyVoteRating(rating)" 
           class="{{ 
             rating <= hoverRating || rating <= selectedRating 
               ? (hasVoted 

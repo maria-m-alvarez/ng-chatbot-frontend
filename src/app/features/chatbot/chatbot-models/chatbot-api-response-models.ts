@@ -146,6 +146,7 @@ export interface ChatMessageFeedback {
 }
 
 export interface ChatMessage extends DBModel {
+  message_id: number;
   session: number;
   role: 'user' | 'assistant' | 'system';
   content: string;

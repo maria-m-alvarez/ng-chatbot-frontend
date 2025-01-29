@@ -24,6 +24,10 @@ export class ChatbotChatMessageComponent extends ChatbotBaseComponentComponent i
     super(brain);
   }
 
+  ngAfterViewInit(): void {
+    console.log("Message:", this.chatMessage);
+  }
+
   ngOnChanges(): void {
     if (this.chatMessage) {
       this.sanitizedMessage = this.sanitizeMessage(this.chatMessage.content);

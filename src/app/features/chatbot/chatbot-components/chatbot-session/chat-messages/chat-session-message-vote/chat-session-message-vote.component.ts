@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ChatbotSessionService } from '../../../../chatbot-services/chatbot-session/chatbot-session.service';
+import { ChatMessage } from '../../../../chatbot-models/chatbot-api-response-models';
+import { ClientChatMessage } from '../../../../chatbot-models/chatbot-client-session';
 
 export enum VoteStyle {
   Thumbs = 'thumbs',
@@ -13,7 +15,7 @@ export enum VoteStyle {
   styleUrls: ['./chat-session-message-vote.component.scss'],
 })
 export class ChatSessionMessageVoteComponent {
-  @Input() messageId: string = '';
+  @Input() chatMessage: ChatMessage | ClientChatMessage | null = null;
   @Input() voteStyle: string = VoteStyle.Thumbs;
   @Input() maxRating: number = 5;
   @Input() initialRating: number = 0;
@@ -43,7 +45,7 @@ export class ChatSessionMessageVoteComponent {
     console.log('Voted:', vote);
   }
 
-  voteStar(vote: number) {
+  applyVoteRating(vote: number) {
     if (this.hasVoted) {
       return;
     }
@@ -51,16 +53,13 @@ export class ChatSessionMessageVoteComponent {
     this.selectedRating = vote;
     this.hasVoted = true;
     
-    this.chatbotSessionService.sendPromptResultFeedback(this.messageId, this.selectedRating, "");
+    if (this.chatMessage?.id) {
+      this.chatbotSessionService.sendAssistantMessageFeedback(this.chatMessage.id.toString(), this.selectedRating, "");
+    }
     this.voteUpdated.emit(this.selectedRating);
   }
 
-  setVote(messageId: string, rating: number) {
-    if (this.messageId !== messageId) {
-      console.warn('Vote message ID does not match:', this.messageId, messageId);
-      return;
-    }
-
+  setVote(rating: number) {
     this.selectedRating = rating;
     this.hasVoted = true;
   }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { ChatSessionMessageVoteComponent } from "../chat-session-message-vote/chat-session-message-vote.component";
 import { CommonModule } from '@angular/common';
 import { FileService } from '../../../../../../core/services/file-service/file.service';
@@ -13,12 +13,39 @@ import { ChatbotChatMessageComponent } from '../chatbot-chat-message.component';
   templateUrl: './chat-session-message-assistant.component.html',
   styleUrl: './chat-session-message-assistant.component.scss',
 })
-export class ChatSessionMessageAssistantComponent extends ChatbotChatMessageComponent {
+export class ChatSessionMessageAssistantComponent extends ChatbotChatMessageComponent implements AfterViewInit {
+  @ViewChild('feedback') feedbackComponent!: ChatSessionMessageVoteComponent;
+  private feedbackComponentLoaded = false;
+
   constructor(
       brain: ChatbotBrainService,
       override sanitizer: DomSanitizer,
       private readonly fileService: FileService) {
     super(brain, sanitizer);
+  }
+
+  override ngAfterViewInit(): void {
+    super.ngAfterViewInit();
+    this.feedbackComponentLoaded = true;
+    this.updateFeedbackComponent();
+  }
+
+  override ngOnChanges(): void {
+    super.ngOnChanges();
+    this.updateFeedbackComponent();
+  }
+
+  private updateFeedbackComponent(): void {
+    if (this.feedbackComponentLoaded && this.feedbackComponent) {
+      if (this.chatMessage?.feedback) {
+        this.feedbackComponent.setVote(
+          this.chatMessage.feedback.rating ?? 0
+        );
+      } else {
+        this.feedbackComponent.selectedRating = 0;
+        this.feedbackComponent.hasVoted = false;
+      }
+    }
   }
 
   get allowCopy(): boolean {
@@ -43,7 +70,6 @@ export class ChatSessionMessageAssistantComponent extends ChatbotChatMessageComp
     return `<strong>${doc_name}</strong>${formattedPages}`;
   }
   
-
   downloadDocument(docId: string) {
     this.fileService.referenceFileDownload(docId).subscribe({
       next: (message) => console.log(message),
@@ -52,6 +78,6 @@ export class ChatSessionMessageAssistantComponent extends ChatbotChatMessageComp
   }
 
   getMessageIdAsString() {
-    return this.chatMessage?.id?.toString() || '';
+    return this.chatMessage?.id?.toString() ?? '';
   }
 }
