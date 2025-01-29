@@ -150,6 +150,42 @@
       "es": "Iniciar sesión",
       "it": "Accedi"
     },
+    "insertEmail": {
+      "pt": "Insira o seu email",
+      "en": "Insert your email",
+      "es": "Inserta tu email",
+      "it": "Inserisci la tua email"
+    },
+    "insertPassword": {
+      "pt": "Insira a sua palavra-passe",
+      "en": "Insert your password",
+      "es": "Inserta tu contraseña",
+      "it": "Inserisci la tua password"
+    },
+    "invalidEmail": {
+      "pt": "Email inválido",
+      "en": "Invalid email",
+      "es": "Email inválido",
+      "it": "Email non valida"
+    },
+    "invalidPassword": {
+      "pt": "Palavra-passe inválida",
+      "en": "Invalid password",
+      "es": "Contraseña inválida",
+      "it": "Password non valida"
+    },
+    "forgotPassword": {
+      "pt": "Esqueceu-se da palavra-passe?",
+      "en": "Forgot your password?",
+      "es": "¿Olvidaste tu contraseña?",
+      "it": "Hai dimenticato la password?"
+    },
+    "noAccount": {
+      "pt": "Não tem conta?",
+      "en": "Don't have an account?",
+      "es": "¿No tienes una cuenta?",
+      "it": "Non hai un account?"
+    },
     "sessionWelcomeMagia": {
       "pt": "Olá! Sou o MagIA",
       "en": "Hello! I'm MagIA",

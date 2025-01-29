@@ -5,11 +5,12 @@ import { AuthService } from '../../../features/authentication/auth-service/auth.
 import { CommonModule } from '@angular/common';
 import { PageAuthMainComponent } from '../page-auth-main/page-auth-main.component';
 import { environment } from '../../../../environments/environment'; // Import environment
+import { TranslatePipe } from '../../../core/pipes/translate-pipe.pipe';
 
 @Component({
   selector: 'app-page-auth-login',
   standalone: true,
-  imports: [CommonModule, RouterLink, ReactiveFormsModule],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule, TranslatePipe],
   templateUrl: './page-auth-login.component.html',
   styleUrls: ['./page-auth-login.component.scss']
 })

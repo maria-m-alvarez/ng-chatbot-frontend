@@ -41,6 +41,12 @@ export interface Language {
     LANGUAGE = "language",
     LOGOUT = "logout",
     LOGIN = "login",
+    INSERT_EMAIL = "insertEmail",
+    INSERT_PASSWORD = "insertPassword",
+    INVALID_EMAIL = "invalidEmail",
+    INVALID_PASSWORD = "invalidPassword",
+    FORGOT_PASSWORD = "forgotPassword",
+    NO_ACCOUNT = "noAccount",
   
     // Session & Input
     SESSION_WELCOME_MAGIA = "sessionWelcomeMagia",

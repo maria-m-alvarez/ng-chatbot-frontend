@@ -9,11 +9,11 @@
           type="email" 
           id="email" 
           formControlName="email"
-          placeholder="Inserir o teu email"
+          placeholder="{{ LanguageKeys.INSERT_EMAIL | translate }}"
           class="mt-1 w-full px-4 py-2 border border-accent rounded-lg shadow-sm focus:ring focus:ring-accent focus:outline-none text-background-contrast"
         >
         <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="text-sm text-error">
-          Por favor, insira um email válido.
+          {{ LanguageKeys.INVALID_EMAIL | translate }}
         </div>
       </div>
 
@@ -24,11 +24,11 @@
           type="password"
           id="password" 
           formControlName="password"
-          placeholder="Inserir a tua password"
+          placeholder="{{ LanguageKeys.INSERT_PASSWORD | translate }}"
           class="mt-1 w-full px-4 py-2 border border-accent rounded-lg shadow-sm focus:ring focus:ring-accent focus:outline-none text-background-contrast"
         >
         <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-sm text-error">
-          A password deve ter pelo menos 6 caracteres.
+          {{ LanguageKeys.INVALID_PASSWORD | translate }}
         </div>
       </div>
 
