@@ -9,6 +9,13 @@ export interface ChatOptionsRequest {
   presence_penalty?: number;
 }
 
+export interface ChatSessionRequest {
+  session_id: number | string;
+  get_messages?: boolean;
+  mark_as_latest?: boolean;
+  state?: string[];
+}
+
 export interface ChatMessageRequest {
   role: string; // 'user' | 'assistant' | 'system'
   content: string;

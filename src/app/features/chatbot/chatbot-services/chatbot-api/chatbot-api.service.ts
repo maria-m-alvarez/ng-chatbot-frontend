@@ -12,7 +12,7 @@ import {
 } from '../../chatbot-models/chatbot-api-response-models';
 import { AuthService } from '../../../authentication/auth-service/auth.service';
 import { HostService } from '../../../../core/services/host-service/host.service';
-import { ChatOptionsRequest, ChatRequest, PromptResultFeedbackRequest } from '../../chatbot-models/chatbot-api-request-models';
+import { ChatOptionsRequest, ChatRequest, ChatSessionRequest, PromptResultFeedbackRequest } from '../../chatbot-models/chatbot-api-request-models';
 
 @Injectable({
   providedIn: 'root',
@@ -67,13 +67,40 @@ export class ChatbotApiService {
     return this.http.get<ChatSession>(`${this.baseChatbotUrl}/sessions/recent`, this.getAuthHeaders());
   }
 
-  getSessionById(sessionId: string): Observable<ChatSession> {
-    return this.http.get<ChatSession>(`${this.baseChatbotUrl}/sessions/${sessionId}`, this.getAuthHeaders());
+  getSessionById(
+    sessionId: number,
+    markAsLatest = false,
+    state?: string[]
+  ): Observable<ChatSession> {
+    const requestBody: ChatSessionRequest = {
+      session_id: sessionId,
+      get_messages: false,
+      mark_as_latest: markAsLatest,
+      state: state && state.length > 0 ? state : ["a"]
+    };
+  
+    return this.http.post<ChatSession>(
+      `${this.baseChatbotUrl}/sessions/get`,
+      requestBody,
+      this.getAuthHeaders()
+    );
   }
 
-  getSessionWithMessages(sessionId: string | number): Observable<ChatSessionWithMessages> {
-    return this.http.get<ChatSessionWithMessages>(
-      `${this.baseChatbotUrl}/sessions/${sessionId}/messages`,
+  getSessionWithMessages(
+    sessionId: number | string,
+    markAsLatest = false,
+    state?: string[]
+  ): Observable<ChatSessionWithMessages> {
+    const requestBody: ChatSessionRequest = {
+      session_id: sessionId,
+      get_messages: true,
+      mark_as_latest: markAsLatest,
+      state: state && state.length > 0 ? state : ["a"]
+    };
+  
+    return this.http.post<ChatSessionWithMessages>(
+      `${this.baseChatbotUrl}/sessions/get`,
+      requestBody,
       this.getAuthHeaders()
     );
   }
