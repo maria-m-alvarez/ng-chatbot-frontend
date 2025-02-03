@@ -216,6 +216,42 @@
       "es": "Nuevo Doc Chat",
       "it": "Nuova Chat Doc"
     },
+    "insertSessionName": {
+      "pt": "Insira o nome da sessão",
+      "en": "Insert session name",
+      "es": "Inserta el nombre de la sesión",
+      "it": "Inserisci il nome della sessione"
+    },
+    "sessionName": {
+      "pt": "Nome da Sessão",
+      "en": "Session Name",
+      "es": "Nombre de la Sesión",
+      "it": "Nome della Sessione"
+    },
+    "requiredSessionName": {
+      "pt": "O nome da sessão é obrigatório",
+      "en": "Session name is required",
+      "es": "El nombre de la sesión es obligatorio",
+      "it": "Il nome della sessione è obbligatorio"
+    },
+    "sessionUploadFiles": {
+      "pt": "Carregar Ficheiros",
+      "en": "Upload Files",
+      "es": "Subir Archivos",
+      "it": "Carica File"
+    },
+    "sessionCreate": {
+      "pt": "Criar Sessão",
+      "en": "Create Session",
+      "es": "Crear Sesión",
+      "it": "Crea Sessione"
+    },
+    "sessionDocumentCreateTitle": {
+      "pt": "Criar Novo Doc Chat",
+      "en": "Create New Doc Chat",
+      "es": "Crear Nuevo Doc Chat",
+      "it": "Crea Nuovo Doc Chat"
+    },
     "references": {
       "pt": "Referências",
       "en": "References",

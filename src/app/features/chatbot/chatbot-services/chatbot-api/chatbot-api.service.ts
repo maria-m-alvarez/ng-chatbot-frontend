@@ -121,6 +121,28 @@ export class ChatbotApiService {
     );
   }
   
+  createDocSessionWithFiles(name: string, files: File[]): Observable<ChatSession> {
+    const formData = new FormData();
+    formData.append('name', name);
+    files.forEach((file) => formData.append('files', file, file.name));
+
+    return this.http.post<ChatSession>(
+      `${this.baseChatbotUrl}/sessions/doc_session`,
+      formData,
+      this.getAuthHeaders()
+    );
+  }
+
+  addFilesToSession(sessionId: number, files: File[]): Observable<ChatSession> {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('files', file, file.name));
+
+    return this.http.post<ChatSession>(
+      `${this.baseChatbotUrl}/sessions/${sessionId}/files`,
+      formData,
+      this.getAuthHeaders()
+    );
+  }
 
   // ------------------------------
   // Chatbot Requests

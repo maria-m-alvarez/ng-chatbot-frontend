@@ -6,7 +6,7 @@ export const environment = {
     allowSimulatedLogin: false,
     allowFileUpload: false,
     allowSidebar: true,
-    allowDocumentChat: false,
+    allowDocumentChat: true,
 
     simulateLogins: {
       'admin@minsait.com': { password: 'admin@minsait.com', role: 'admin' },

@@ -43,7 +43,7 @@
           type="submit"
           [disabled]="loginForm.invalid"
           class="px-4 py-2 text-secondary bg-main-primary border border-accent rounded-lg shadow transition duration-200 focus:outline-none focus:ring focus:ring-accent"
-          [ngClass]="loginForm.invalid ? 'cursor-not-allowed' : 'hover:bg-accent'"
+          [class]="loginForm.invalid ? 'cursor-not-allowed' : 'hover:bg-accent'"
         >
           Login
         </button>
@@ -52,7 +52,7 @@
           type="button"
           (click)="simulateLogin()"
           class="px-4 py-2 text-secondary bg-main-primary border border-accent rounded-lg shadow transition duration-200 focus:outline-none focus:ring focus:ring-accent"
-          [ngClass]="loginForm.invalid ? 'cursor-not-allowed' : 'hover:bg-accent'"
+          [class]="loginForm.invalid ? 'cursor-not-allowed' : 'hover:bg-accent'"
           *ngIf="allowSimulatedLogin"
         >
           Simulate Login

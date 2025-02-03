@@ -8,6 +8,9 @@ import { ChatSessionListComponent } from '../chatbot-session/chat-session-list/c
 import { LocalizationKeys } from '../../../../core/services/localization-service/localization.models';
 import { TranslatePipe } from "../../../../core/pipes/translate-pipe.pipe";
 import { environment } from '../../../../../environments/environment';
+import { OverlayRef, Overlay } from '@angular/cdk/overlay';
+import { ComponentPortal } from '@angular/cdk/portal';
+import { DocSessionModalComponent } from '../chatbot-session/doc-session-modal/doc-session-modal.component';
 
 @Component({
   selector: 'app-chatbot-sidebar',
@@ -22,10 +25,12 @@ export class ChatbotSidebarComponent implements OnInit, AfterViewInit {
   
   chatSessions: ClientChatSession[];
   localizationKeys = LocalizationKeys;
+  private overlayRef!: OverlayRef;
 
   constructor(
     private readonly toggleService: ToggleService,
-    private readonly brain: ChatbotBrainService
+    private readonly brain: ChatbotBrainService,
+    private overlay: Overlay
   ) {
     // Subscribe to session updates using observable (eliminates manual state tracking)
     this.chatSessions = this.brain.chatbotSessionService.sessions;
@@ -59,5 +64,24 @@ export class ChatbotSidebarComponent implements OnInit, AfterViewInit {
 
   createNewSession(): void {
     this.brain.chatbotSessionService.createEmptyChatSession();
+  }
+
+  createNewDocumentSession(): void {
+    // Step 1: Create overlay
+    this.overlayRef = this.overlay.create({
+      hasBackdrop: true,
+      positionStrategy: this.overlay.position()
+        .global()
+        .centerHorizontally()
+        .centerVertically(),
+      backdropClass: 'cdk-overlay-dark-backdrop'
+    });
+
+    // Step 2: Attach modal component
+    const modalPortal = new ComponentPortal(DocSessionModalComponent);
+    const modalInstance = this.overlayRef.attach(modalPortal).instance;
+
+    // Step 3: Pass overlay reference manually
+    modalInstance.overlayRef = this.overlayRef;
   }
 }
