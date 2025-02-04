@@ -18,6 +18,8 @@ import {
 import { SelectorOption } from '../../../../core/components/input-components/input-selector/input-selector.component';
 import { AppState } from '../../../../core/app-state';
 import { ChatSessionInteractionState, ChatSessionState } from '../../chatbot-models/chatbot-enums';
+import { catchError, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -143,6 +145,46 @@ export class ChatbotSessionService {
 
   createEmptyChatSession(sessionTitle: string = 'Nova Sessão'): void {
     this.createChatSession(sessionTitle);
+  }
+
+  createDocSessionWithFiles(sessionName: string, files: File[]): Observable<ChatSession> {
+    if (!sessionName.trim()) {
+      console.error('[createDocSessionWithFiles] Error: Session name cannot be empty');
+      // Return an immediately failing observable
+      return new Observable<ChatSession>((observer) => {
+        observer.error('Session name cannot be empty');
+      });
+    }
+
+    // 1) Indicate loading
+    this.setInteractionState(ChatSessionInteractionState.Loading);
+
+    // 2) Call API
+    return this.chatbotApiService.createDocSessionWithFiles(sessionName, files).pipe(
+      tap((newSession: ChatSession) => {
+        console.log('[ChatbotSessionService] createDocSessionWithFiles => newSession', newSession);
+
+        // 3) Transform the session -> ClientChatSession
+        const transformedSession = this.transformSession(newSession);
+
+        // 4) Push to local list of sessions
+        this.sessions.push(transformedSession);
+
+        // 5) Optionally switch to that session, or update state
+        AppState.currentSessionID.set(newSession.id.toString());
+        AppState.currentChatSession.set(transformedSession);
+        // If the session has no messages => set 'NewSession', else 'ActiveSession'
+        this.setSessionState(transformedSession);
+
+        // 6) Set interaction to Idle
+        this.setInteractionState(ChatSessionInteractionState.Idle);
+      }),
+      catchError((error) => {
+        console.error('[ChatbotSessionService] createDocSessionWithFiles => error', error);
+        this.setInteractionState(ChatSessionInteractionState.Error);
+        throw error;
+      })
+    );
   }
 
   private createEmptyChatSessionAndSendMessage(promptMessage: string): void {

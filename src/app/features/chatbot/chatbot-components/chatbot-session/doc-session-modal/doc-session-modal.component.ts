@@ -1,10 +1,12 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OverlayRef } from '@angular/cdk/overlay';
 import { ChatbotApiService } from '../../../chatbot-services/chatbot-api/chatbot-api.service';
 import { LocalizationKeys } from '../../../../../core/services/localization-service/localization.models';
 import { TranslatePipe } from '../../../../../core/pipes/translate-pipe.pipe';
+import { ChatbotSessionService } from '../../../chatbot-services/chatbot-session/chatbot-session.service';
+import { ChatSession } from '../../../chatbot-models/chatbot-api-response-models';
 
 @Component({
   selector: 'app-doc-session-modal',
@@ -14,6 +16,8 @@ import { TranslatePipe } from '../../../../../core/pipes/translate-pipe.pipe';
   styleUrls: ['./doc-session-modal.component.scss']
 })
 export class DocSessionModalComponent implements OnInit {
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  
   sessionForm!: FormGroup;
   files: File[] = [];
   isDraggingOver = false;
@@ -22,8 +26,9 @@ export class DocSessionModalComponent implements OnInit {
   LanguageKeys = LocalizationKeys;
 
   constructor(
-    private fb: FormBuilder,
-    private chatbotApi: ChatbotApiService
+    private readonly fb: FormBuilder,
+    private readonly chatbotApi: ChatbotApiService,
+    private readonly sessionService: ChatbotSessionService
   ) {}
 
   ngOnInit(): void {
@@ -35,16 +40,25 @@ export class DocSessionModalComponent implements OnInit {
   // (1) Click-to-Upload
   onFileSelected(event: any): void {
     const selectedFiles = event.target.files as FileList;
+    
     if (selectedFiles && selectedFiles.length) {
       for (let i = 0; i < selectedFiles.length; i++) {
         this.files.push(selectedFiles.item(i)!);
       }
     }
+
+    // Reset the file input to allow re-selecting the same file
+    event.target.value = ''; 
   }
 
   onRemoveFile(index: number): void {
     this.files.splice(index, 1);
-  }
+
+    // Reset file input field to reflect the updated number of files
+    if (this.fileInput) {
+      this.fileInput.nativeElement.value = '';
+    }
+}
 
   // (2) Drag-and-Drop
   @HostListener('document:dragover', ['$event'])
@@ -82,14 +96,15 @@ export class DocSessionModalComponent implements OnInit {
 
     const { name } = this.sessionForm.value;
 
-    // Call the service method to create doc session + files
-    this.chatbotApi.createDocSessionWithFiles(name, this.files).subscribe({
-      next: (response) => {
-        console.log('New session created with files:', response);
+    // ♻️ Instead of calling chatbotApi directly, call chatbotSessionService
+    this.sessionService.createDocSessionWithFiles(name, this.files).subscribe({
+      next: (session: ChatSession) => {
+        console.log('New doc session created with files:', session);
         this.overlayRef.dispose();
       },
       error: (error) => {
-        console.error('Error creating session with files:', error);
+        console.error('Error creating doc session with files:', error);
+        // Optionally show error message to user
       }
     });
   }

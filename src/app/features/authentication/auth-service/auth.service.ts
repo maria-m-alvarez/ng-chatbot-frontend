@@ -42,6 +42,28 @@ export class AuthService {
     });
   }
 
+  getJsonHeaders(): HttpHeaders {
+    const token = this.getToken();
+    let headers: { [key: string]: string } = { 'Content-Type': 'application/json' };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return new HttpHeaders(headers);
+  }
+
+  getMultipartHeaders(): HttpHeaders {
+    const token = this.getToken();
+    let headers: { [key: string]: string } = {};
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return new HttpHeaders(headers);
+  }
+
   // Login
   login(email: string, password: string): Observable<string> {
     const url = `${this.apiUrl}/login`;
