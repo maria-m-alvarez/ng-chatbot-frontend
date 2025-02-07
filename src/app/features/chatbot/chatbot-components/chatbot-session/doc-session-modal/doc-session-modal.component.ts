@@ -91,12 +91,11 @@ export class DocSessionModalComponent implements OnInit {
   // Called when user submits the modal form
   onSubmit(): void {
     if (this.sessionForm.invalid) {
-      return; // or display an error
+      return;
     }
 
     const { name } = this.sessionForm.value;
 
-    // ♻️ Instead of calling chatbotApi directly, call chatbotSessionService
     this.sessionService.createDocSessionWithFiles(name, this.files).subscribe({
       next: (session: ChatSession) => {
         console.log('New doc session created with files:', session);
@@ -104,7 +103,6 @@ export class DocSessionModalComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error creating doc session with files:', error);
-        // Optionally show error message to user
       }
     });
   }

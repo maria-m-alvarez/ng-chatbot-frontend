@@ -37,7 +37,6 @@ export class AuthService {
   get headers(): HttpHeaders {
     const token = this.getToken();
     return new HttpHeaders({
-      'Content-Type': 'application/json',
       ...(token && { Authorization: `Bearer ${token}` }),
     });
   }
@@ -62,6 +61,26 @@ export class AuthService {
     }
 
     return new HttpHeaders(headers);
+  }
+
+  isLoggedIn(): boolean {
+    return AppState.currentUser() !== null;
+  }
+
+  isTokenExpired(): boolean {
+    const authHeader = AppState.authHeader();
+    if (!authHeader) return true;
+
+    const token = authHeader.get('Authorization')?.split('Bearer ')[1];
+    if (!token) return true;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1])); // Decode JWT payload
+      const currentTime = Math.floor(Date.now() / 1000);
+      return payload.exp < currentTime; // Expired if `exp` is in the past
+    } catch (error) {
+      return true; // Treat as expired if decoding fails
+    }
   }
 
   // Login

@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import {
   ChatCompletion,
   ChatSession,
-  ChatMessage,
   PromptResultFeedback,
   ProviderModelsResponse,
   LLMProvider,

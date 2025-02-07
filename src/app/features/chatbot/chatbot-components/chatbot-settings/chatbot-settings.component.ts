@@ -104,10 +104,6 @@ export class ChatbotSettingsComponent extends ChatbotBaseComponentComponent {
     console.log('Configs:', ChatbotBrainService.chatbotSettings);
   }
 
-  onCollectionCountClicked() {
-    this.brain.chatbotApiService.vectorDbCount();
-  }
-
   onProviderChanged(newProvider: string): void {
     this.brain.updateChatbotProvider(newProvider);
     this.modelOptions = this.brain.chatbotSessionService.getProviderModelSelectorOptions(newProvider);
@@ -119,11 +115,44 @@ export class ChatbotSettingsComponent extends ChatbotBaseComponentComponent {
 
   click_tempChromaDbIngestion() {
     console.log('Ingesting Chroma DB');
-    this.brain.chatbotApiService.vectorDbIngestion().subscribe();
+
+    this.collectionCount = "0";
+    this.brain.chatbotApiService.vectorDbIngestion().subscribe({
+      next: (response) => {
+        console.log('Vector DB Ingestion:', response);
+        this.click_tempCollectionCount();
+      },
+      error: (error) => {
+        console.error('Error ingesting Vector DB:', error);
+      }
+    });
   }
 
   click_tempChromaDbDeletion() {
     console.log('Deleting Chroma DB');
-    this.brain.chatbotApiService.vectorDbDeletion().subscribe();
+    this.brain.chatbotApiService.vectorDbDeletion().subscribe({
+      next: (response) => {
+        this.collectionCount = "0";
+        console.log('Vector DB Deletion:', response);
+      },
+      error: (error) => {
+        console.error('Error deleting Vector DB:', error);
+      }
+    });
   }
+
+  click_tempCollectionCount() {
+    console.log('Getting Chroma DB Count');
+    
+    this.brain.chatbotApiService.vectorDbCount().subscribe({
+      next: (response) => {
+        console.log('Vector DB Count:', response);
+        this.collectionCount = response.message;
+      },
+      error: (error) => {
+        console.error('Error retrieving Vector DB count:', error);
+        this.collectionCount = 'Error';
+      }
+    });
+  }  
 }

@@ -17,7 +17,6 @@ export class LocalizationService {
     this.loadTranslations();
   }
 
-  // ✅ Improved JSON Parsing & Initialization
   private loadTranslations(): void {
     this.http.get<Translations>('/localization.json').subscribe({
       next: (data) => {
@@ -32,7 +31,7 @@ export class LocalizationService {
         };
 
         const savedLang = localStorage.getItem('language') ?? 'pt';
-        this.languageSubject.next(savedLang); // ✅ Ensuring BehaviorSubject always emits
+        this.languageSubject.next(savedLang);
         localStorage.setItem('language', savedLang);
 
         this.onLanguagesLoaded.emit();
@@ -44,7 +43,7 @@ export class LocalizationService {
     });
   }
 
-  // ✅ Force `BehaviorSubject` to Emit Even If Value is the Same
+  // Force `BehaviorSubject` to Emit Even If Value is the Same
   setLanguage(lang: string): void {
     if (!this.translations) {
       console.warn('⚠️ Attempted to set language before translations were loaded.');

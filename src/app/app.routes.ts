@@ -4,9 +4,11 @@ import { PageChatbotComponent } from './pages/pages-chatbot/page-chatbot/page-ch
 import { PageAuthLoginComponent } from './pages/pages-auth/page-auth-login/page-auth-login.component';
 import { PageAuthMainComponent } from './pages/pages-auth/page-auth-main/page-auth-main.component';
 import { PageAuthRegisterComponent } from './pages/pages-auth/page-auth-register/page-auth-register.component';
+import { AuthGuard } from './features/authentication/auth-service/auth.guard';
+
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'auth/login', pathMatch: 'full' }, // Redirect to login
+  { path: '', redirectTo: 'auth/login', pathMatch: 'full' }, // Redirect to login
   {
     path: 'auth',
     component: PageAuthMainComponent,
@@ -19,11 +21,16 @@ export const routes: Routes = [
   {
     path: 'chatbot',
     component: PageChatbotComponent,
+    canActivate: [AuthGuard],
     children: [
       { path: '', redirectTo: 'chat', pathMatch: 'full' },
       { path: 'chat', component: PageChatbotComponent },
     ]
   },
-  { path: Constants.ROUTES.CHATOBOT, component: PageChatbotComponent },
+  {
+    path: Constants.ROUTES.CHATOBOT,
+    component: PageChatbotComponent,
+    canActivate: [AuthGuard]
+  },
   { path: '**', redirectTo: Constants.ROUTES.AUTH_LOGIN, pathMatch: 'full' } // Wildcard route
 ];
