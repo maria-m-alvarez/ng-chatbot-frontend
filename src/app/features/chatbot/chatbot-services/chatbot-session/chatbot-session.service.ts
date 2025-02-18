@@ -20,6 +20,7 @@ import { AppState } from '../../../../core/app-state';
 import { ChatSessionInteractionState, ChatSessionState } from '../../chatbot-models/chatbot-enums';
 import { catchError, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { LocalizationService } from '../../../../core/services/localization-service/localization.service';
 
 @Injectable({
   providedIn: 'root',
@@ -32,7 +33,8 @@ export class ChatbotSessionService {
   constructor(
     private readonly eventService: EventService,
     private readonly chatbotEventService: ChatbotEventService,
-    private readonly chatbotApiService: ChatbotApiService
+    private readonly chatbotApiService: ChatbotApiService,
+    private readonly localizationService: LocalizationService
   ) {
     this.initializeEventListeners();
   }
@@ -250,7 +252,9 @@ export class ChatbotSessionService {
       return;
     }
   
+    // Check if this is the first message in a new session
     const isFirstMessage = currentSession.messages.length === 0;
+    const isNewSession = currentSession.name === this.localizationService.translate(this.localizationService.LocalizationKeys.NEW_SESSION) || currentSession.name === this.localizationService.translate(this.localizationService.LocalizationKeys.NEW_DOC_SESSION);
   
     // 1) Add local user message with placeholder ID
     const userMessage = currentSession.addUserMessage(promptMessage);
@@ -303,8 +307,9 @@ export class ChatbotSessionService {
           this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Success);
           this.setInteractionState(ChatSessionInteractionState.Idle);
   
-          // ✅ Generate session name only after the first assistant response
-          if (isFirstMessage) {
+          // Generate session name only after the first assistant response
+          if (isFirstMessage && isNewSession) {
+            console.log('Generating session name...');
             this.chatbotApiService.generateSessionName(+currentSession.sessionId).subscribe({
               next: (response) => {
                 console.log(`Generated session name: ${response.session_name}`);

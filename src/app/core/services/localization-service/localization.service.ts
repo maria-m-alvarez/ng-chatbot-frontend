@@ -13,6 +13,8 @@ export class LocalizationService {
 
   public readonly onLanguagesLoaded = new EventEmitter<void>();
 
+  LocalizationKeys = LocalizationKeys;
+
   constructor(private readonly http: HttpClient) {
     this.loadTranslations();
   }
