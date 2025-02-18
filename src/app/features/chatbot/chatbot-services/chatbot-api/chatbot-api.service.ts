@@ -88,13 +88,11 @@ export class ChatbotApiService {
   getSessionWithMessages(
     sessionId: number | string,
     markAsLatest = false,
-    state?: string[]
   ): Observable<ChatSessionWithMessages> {
     const requestBody: ChatSessionRequest = {
       session_id: sessionId,
       get_messages: true,
       mark_as_latest: markAsLatest,
-      state: state && state.length > 0 ? state : ["a"]
     };
   
     return this.http.post<ChatSessionWithMessages>(
@@ -104,6 +102,14 @@ export class ChatbotApiService {
     );
   }
 
+  generateSessionName(sessionId: number): Observable<{ session_name: string }> {
+    return this.http.post<{ session_name: string }>(
+      `${this.baseChatbotUrl}/sessions/generate_session_name?session_id=${sessionId}`,
+      {}, // Empty request body as per cURL
+      this.getAuthHeaders()
+    );
+  }
+  
   renameSession(sessionId: string | number, newName: string): Observable<{ message: string; session: ChatSession }> {
     return this.http.put<{ message: string; session: ChatSession }>(
       `${this.baseChatbotUrl}/sessions/${sessionId}/rename?new_name=${encodeURIComponent(newName)}`,
@@ -131,7 +137,7 @@ export class ChatbotApiService {
 
     // Use getMultipartHeaders()
     return this.http.post<ChatSession>(
-      `${this.baseChatbotUrl}/sessions/doc_session`,
+      `${this.baseChatbotUrl}/sessions/new/docs`,
       formData,
       { headers: this.authService.getMultipartHeaders() }
     );

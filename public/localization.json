@@ -353,6 +353,12 @@
       "en": "Drop it like it's hot",
       "es": "Suéltalo como si estuviera caliente",
       "it": "Lascia cadere come se fosse caldo"
+    },
+    "sessionErrorProcessingMessage": {
+      "pt": "Erro ao processar a mensagem",
+      "en": "Error processing message",
+      "es": "Error al procesar el mensaje",
+      "it": "Errore durante l'elaborazione del messaggio"
     }
   }
 }

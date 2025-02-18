@@ -125,12 +125,13 @@ export interface ChatSession extends DBModel {
   user: number;
   project_configuration: number;
   last_accessed_at?: string | null; // ISO date string
+  has_files: boolean;
 }
 
 export interface DocumentReference {
-  doc_id: number;
+  doc_id: string | number;
   doc_name: string;
-  doc_page: number;
+  doc_page: string | number;
   doc_content: string;
 }
 
@@ -170,9 +171,10 @@ export interface ChatSessionWithMessages {
   project_configuration: number;
   created_at: string;
   updated_at: string;
+  has_files: boolean;
   messages: ChatMessage[];
 }
-
+  
 // ------------------------------
 // Chatbot API Request & Response Models
 // ------------------------------

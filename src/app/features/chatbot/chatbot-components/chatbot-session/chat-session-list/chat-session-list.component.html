@@ -6,32 +6,37 @@
   @for (session of chatSessions; track session.sessionId) {
     <div
       class="h-10 cursor-pointer p-2 rounded-lg flex justify-between items-center hover:font-semibold relative"
-      [ngClass]="{
+      [class]="{
         'bg-minsait-fucsia font-semibold': isCurrentSession(session.sessionId),
         'hover:bg-secondary-hover': !isCurrentSession(session.sessionId)
       }"
       (click)="selectSession(session.sessionId)"
       (contextmenu)="onContextMenu($event, session)"
     >
-      <!-- Conditionally Render Input or Text -->
-       @if (editingSession === session.sessionId) {
+      <!-- Conditionally Render Input or Truncated Text -->
+      @if (editingSession === session.sessionId) {
         <input
-        #sessionInput
-        class="w-full h-full p-2 rounded-lg border border-gray-300 font-normal"
-        [value]="session.name"
-        (keydown.enter)="updateSessionName(session, sessionInput.value)"
-        (keydown.escape)="cancelEditing()"
-        (blur)="cancelEditing()"
-        autofocus
-      />
-       } @else {
-        <span class="text-sm">{{ session.name }}</span>
-       }
+          #sessionInput
+          class="w-full h-full p-2 rounded-lg border border-gray-300 font-normal"
+          [value]="session.name"
+          (keydown.enter)="updateSessionName(session, sessionInput.value)"
+          (keydown.escape)="cancelEditing()"
+          (blur)="cancelEditing()"
+          autofocus
+        />
+      } @else {
+        <div class="flex items-center w-full overflow-hidden">
+          @if (session.hasFiles) {
+            <span class="mr-1 flex-shrink-0" [innerHTML]="brain.iconService.getSanitizedIcon(brain.iconService.icons.file)"></span>
+          }
+          <span class="truncate text-sm flex-grow">{{ session.name }}</span>
+        </div>
+      }
 
-      <!-- Three Dots Button -->
+      <!-- Three Dots Button (Aligned to End) -->
       <button 
-        class="text-lg text-center w-8 h-8 flex items-center justify-center"
-        [ngClass]="{
+        class="text-lg text-center w-8 h-8 flex items-center justify-center flex-shrink-0 ml-2"
+        [class]="{
           'hover:text-accent': !isCurrentSession(session.sessionId), 
           'hover:text-secondary': isCurrentSession(session.sessionId)
         }"

@@ -5,6 +5,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { routes } from './app.routes';
 import { ConfigService } from './core/config/config.service';
 import { APP_CONFIG } from './core/config/config.token';
+import { provideMarkdown, MARKED_OPTIONS, CLIPBOARD_OPTIONS, ClipboardButtonComponent } from 'ngx-markdown';
 
 // Function to load the configuration before app initialization
 export function loadAppConfig(configService: ConfigService) {
@@ -27,6 +28,22 @@ export const appConfig: ApplicationConfig = {
       useFactory: loadAppConfig,
       deps: [ConfigService],
       multi: true
-    }
+    },
+    provideMarkdown({
+      markedOptions: {
+        provide: MARKED_OPTIONS,
+        useValue: {
+          gfm: true,
+          breaks: true,
+          pedantic: false,
+        },
+      },
+      clipboardOptions: {
+        provide: CLIPBOARD_OPTIONS,
+        useValue: {
+          buttonComponent: ClipboardButtonComponent,
+        },
+      }
+    })
   ]
 };

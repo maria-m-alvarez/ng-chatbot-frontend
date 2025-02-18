@@ -2,7 +2,11 @@
 module.exports = {
   darkMode: ['class', '[data-mode="dark"]'],
   content: [
-    "./src/**/*.{html,ts}",
+    "./src/**/*.{html,ts,scss}",
+    "node_modules/prismjs/**/*.js",
+    "node_modules/ngx-markdown/**/*.js",
+    "node_modules/emoji-toolkit/**/*.js",
+    "node_modules/clipboard/**/*.js"
   ],
   theme: {
     extend: {
@@ -12,6 +16,39 @@ module.exports = {
       borderRadius: {
         '32': '32px',
       },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            color: theme('colors.minsait-pruno'),
+            'h1, h2, h3, h4': {
+              color: theme('colors.primary'),
+            },
+            blockquote: {
+              borderLeftColor: theme('colors.accent'),
+            },
+            pre: {
+              backgroundColor: theme('colors.minsait-pruno-dark'),
+              color: theme('colors.minsait-white'),
+            },
+            code: {
+              backgroundColor: theme('colors.background'),
+              color: theme('colors.primary'),
+              borderRadius: '4px',
+              padding: '2px 4px',
+            },
+            'code::before': { content: 'none' },
+            'code::after': { content: 'none' },
+
+            // Reduce Default Spacing Between Elements
+            'h1, h2, h3, h4': { marginBottom: '0.5em' }, // Reduce spacing under headings
+            p: { marginBottom: '0.5em', lineHeight: '1.4' }, // Reduce paragraph spacing
+            blockquote: { marginBottom: '0.75em' },
+            ul: { marginBottom: '0.5em' },
+            ol: { marginBottom: '0.5em' },
+            'ul li, ol li': { marginBottom: '0.25em' }, // Reduce list spacing
+          }
+        }
+      }),
       colors: {
         // Minsait Main Colors
         'minsait-pruno': '#480E2A',         // Primary
@@ -74,12 +111,15 @@ module.exports = {
           'scrollbar-thumb': 'var(--scrollbar-thumb)',
           'scrollbar-thumb-hover': 'var(--scrollbar-thumb-hover)',
         
-    themes: {
-      light: '[data-theme="light"]',
-      dark: '[data-theme="dark"]'
-    },// Theme END
+        themes: {
+          light: '[data-theme="light"]',
+          dark: '[data-theme="dark"]'
+        },
+        // Theme END
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
 };

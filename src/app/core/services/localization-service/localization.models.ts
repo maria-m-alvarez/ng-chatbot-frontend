@@ -63,6 +63,7 @@ export interface Language {
     REFERENCES = "references",
     AI_MESSAGE = "aiMessage",
     AI_MODEL = "aiModel",
+    SESSION_ERROR_PROCESSING_MESSAGE = "sessionErrorProcessingMessage",
     
     // Session & Input
     PROMPT = "prompt",

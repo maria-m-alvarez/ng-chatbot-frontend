@@ -96,7 +96,6 @@ export class ChatbotSessionService {
     });
   }
   
-
   switchChatSession(sessionId: string | number): void {
     this.setInteractionState(ChatSessionInteractionState.Loading);
   
@@ -107,10 +106,9 @@ export class ChatbotSessionService {
         AppState.currentChatSession.set(transformedSession);
   
         // Determine session state
-        const newState = transformedSession.messages.length > 0
-          ? ChatSessionState.ActiveSession
-          : ChatSessionState.NewSession;
-        AppState.updateChatSessionState(newState);
+        AppState.updateChatSessionState(transformedSession.messages.length > 0 
+          ? ChatSessionState.ActiveSession 
+          : ChatSessionState.NewSession);
   
         this.chatbotEventService.onSessionChanged.emit();
         this.setInteractionState(ChatSessionInteractionState.Idle);
@@ -246,19 +244,20 @@ export class ChatbotSessionService {
   sendChatMessageForCurrentChatSession(promptMessage: string): void {
     let currentSession = AppState.currentChatSession();
   
-    // If no session exists, create a new one and wait for it to be selected
     if (!currentSession) {
       console.warn('No current session found. Creating a new session...');
       this.createEmptyChatSessionAndSendMessage(promptMessage);
       return;
     }
   
+    const isFirstMessage = currentSession.messages.length === 0;
+  
     // 1) Add local user message with placeholder ID
     const userMessage = currentSession.addUserMessage(promptMessage);
     AppState.currentChatSession.set(currentSession);
     this.setInteractionState(ChatSessionInteractionState.Loading);
   
-    if (AppState.chatSessionState() === ChatSessionState.NewSession) {
+    if (isFirstMessage) {
       AppState.updateChatSessionState(ChatSessionState.ActiveSession);
     }
   
@@ -270,16 +269,13 @@ export class ChatbotSessionService {
         next: (apiResponse) => {
           console.log('Chatbot API Response:', apiResponse);
   
-          // 2) Identify user & assistant from server
           const serverUser = apiResponse.messages.find(m => m.role === 'user');
           const serverAssistant = apiResponse.messages.find(m => m.role === 'assistant');
   
-          // 3) Update local userMessage ID with real ID
           if (serverUser?.message_id != null) {
             userMessage.id = String(serverUser.message_id);
           }
   
-          // 4) Collect references & metadata
           const metadata = {
             documents: apiResponse.references?.map((ref: any) => {
               const doc = ref?.Document;
@@ -294,21 +290,29 @@ export class ChatbotSessionService {
             }).filter((doc): doc is DocumentReference => doc !== null) || [],
           };
   
-          // 5) Create local assistant message
           if (serverAssistant?.message_id != null) {
             const newAssistant = currentSession.addAssistantMessage(
-              userMessage.id,                  // Just link it to the user message
+              userMessage.id,
               serverAssistant.content || '',
               metadata
             );
-            // Assign the correct ID from server
             newAssistant.id = String(serverAssistant.message_id);
           }
   
-          // 6) Save changes & update states
           AppState.currentChatSession.set(currentSession);
           this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Success);
           this.setInteractionState(ChatSessionInteractionState.Idle);
+  
+          // ✅ Generate session name only after the first assistant response
+          if (isFirstMessage) {
+            this.chatbotApiService.generateSessionName(+currentSession.sessionId).subscribe({
+              next: (response) => {
+                console.log(`Generated session name: ${response.session_name}`);
+                this.renameSession(currentSession.sessionId, response.session_name);
+              },
+              error: (error) => console.error('Error generating session name:', error),
+            });
+          }
         },
         error: (error) => {
           console.error('Error from chatbot API:', error);
@@ -342,6 +346,7 @@ export class ChatbotSessionService {
       session.id.toString(),
       session.name ?? 'Untitled',
       session.user?.toString() || 'Unknown User',
+      session.has_files ?? false,
       session.project_configuration
     );
   }
@@ -351,14 +356,14 @@ export class ChatbotSessionService {
       session.id.toString(),
       session.name ?? 'Untitled',
       session.user?.toString() || 'Unknown User',
+      session.has_files ?? false,
       session.project_configuration
     );
-  
+
     clientSession.createdAt = new Date(session.created_at);
     clientSession.updatedAt = new Date(session.updated_at);
-  
-    clientSession.messages = session.messages.map((msg) => this.transformMessage(msg));
-  
+    clientSession.messages = session.messages.map(this.transformMessage);
+
     return clientSession;
   }
 
@@ -399,7 +404,7 @@ export class ChatbotSessionService {
         message.generation_time ?? null,
         feedback
     );
-}
+  }
 
 
   handleFiles(files: File[]): void {

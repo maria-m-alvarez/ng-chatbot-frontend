@@ -38,7 +38,7 @@
   @if (errorMessage) {
     <div class="w-full mb-2 rounded-lg shadow-lg bg-error-secondary text-error flex justify-between flex-col overflow-hidden">
       <div class="w-full flex justify-between p-2">
-        <span>{{ errorMessage }}</span>
+        <span>{{ LocalizationKeys.SESSION_ERROR_PROCESSING_MESSAGE | translate }}</span>
         <button (click)="clearErrorMessage()" class="ml-2 text-error hover:text-text-primary">
           <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />

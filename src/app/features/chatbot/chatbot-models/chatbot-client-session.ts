@@ -64,15 +64,17 @@ export class ClientChatSession {
   userId: string;
   createdAt: Date;
   updatedAt: Date;
+  hasFiles: boolean;
   projectConfiguration?: number;
 
-  constructor(sessionId: string, title: string, userId: string, projectConfiguration?: number) {
+  constructor(sessionId: string, title: string, userId: string, hasFiles: boolean, projectConfiguration?: number) {
     this.sessionId = sessionId;
     this.name = title;
     this.messages = [];
     this.userId = userId;
     this.createdAt = new Date();
     this.updatedAt = new Date();
+    this.hasFiles = hasFiles;
     this.projectConfiguration = projectConfiguration;
   }
 

@@ -5,11 +5,12 @@ import { FileService } from '../../../../../../core/services/file-service/file.s
 import { ChatbotBrainService } from '../../../../chatbot-services/chatbot-brain/chatbot-brain.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ChatbotChatMessageComponent } from '../chatbot-chat-message.component';
+import { MarkdownComponent } from 'ngx-markdown';
 
 @Component({
   selector: 'app-chat-session-message-assistant',
   standalone: true,
-  imports: [CommonModule, ChatSessionMessageVoteComponent],
+  imports: [CommonModule, ChatSessionMessageVoteComponent, MarkdownComponent],
   templateUrl: './chat-session-message-assistant.component.html',
   styleUrl: './chat-session-message-assistant.component.scss',
 })
@@ -24,8 +25,10 @@ export class ChatSessionMessageAssistantComponent extends ChatbotChatMessageComp
     super(brain, sanitizer);
   }
 
-  override ngAfterViewInit(): void {
-    super.ngAfterViewInit();
+  ngAfterViewInit(): void {
+    console.log("Assistant Message:", this.chatMessage);
+    console.log("Reference Documents:", (this.chatMessage as any)?.metadata?.documents);
+
     this.feedbackComponentLoaded = true;
     this.updateFeedbackComponent();
   }
