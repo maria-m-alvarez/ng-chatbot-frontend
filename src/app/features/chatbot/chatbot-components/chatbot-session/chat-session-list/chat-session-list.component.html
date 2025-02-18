@@ -6,7 +6,7 @@
   @for (session of chatSessions; track session.sessionId) {
     <div
       class="h-10 cursor-pointer p-2 rounded-lg flex justify-between items-center hover:font-semibold relative"
-      [class]="{
+      [ngClass]="{
         'bg-minsait-fucsia font-semibold': isCurrentSession(session.sessionId),
         'hover:bg-secondary-hover': !isCurrentSession(session.sessionId)
       }"
@@ -36,7 +36,7 @@
       <!-- Three Dots Button (Aligned to End) -->
       <button 
         class="text-lg text-center w-8 h-8 flex items-center justify-center flex-shrink-0 ml-2"
-        [class]="{
+        [ngClass]="{
           'hover:text-accent': !isCurrentSession(session.sessionId), 
           'hover:text-secondary': isCurrentSession(session.sessionId)
         }"
