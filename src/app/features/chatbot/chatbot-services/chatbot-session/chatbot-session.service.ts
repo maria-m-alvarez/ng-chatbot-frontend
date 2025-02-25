@@ -77,6 +77,11 @@ export class ChatbotSessionService {
     this.fetchAllChatSessions();
   }
 
+  isDocumentSession(): boolean {
+    const session = AppState.currentChatSession();
+    return session?.hasFiles ?? false;
+  }
+
   fetchAllChatSessions(): void {
     this.chatbotApiService.getAllSessions().subscribe({
       next: (sessions) => {

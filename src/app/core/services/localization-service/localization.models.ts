@@ -64,6 +64,7 @@ export interface Language {
     AI_MESSAGE = "aiMessage",
     AI_MODEL = "aiModel",
     SESSION_ERROR_PROCESSING_MESSAGE = "sessionErrorProcessingMessage",
+    MADE_BY_MISNAIT = "madeByMinsait",
     
     // Session & Input
     PROMPT = "prompt",
@@ -83,6 +84,8 @@ export interface Language {
     INGESTION = "ingestion",
     DIMENSION = "dimension",
     DROP_ZONE_MESSAGE = "dropZoneMessage",
+    PROCESSING_DOC_SESSION_FILES = "processingDocSessionFiles",
+    SUGGESTION_SUMMARIZE_DOCUMENT = "suggestionSummarizeDocument"
   }
   
   

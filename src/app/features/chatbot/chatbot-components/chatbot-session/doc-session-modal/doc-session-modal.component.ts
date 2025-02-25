@@ -21,6 +21,7 @@ export class DocSessionModalComponent implements OnInit {
   sessionForm!: FormGroup;
   files: File[] = [];
   isDraggingOver = false;
+  isProcessing = false;
   overlayRef!: OverlayRef;
   
   LanguageKeys = LocalizationKeys;
@@ -37,30 +38,21 @@ export class DocSessionModalComponent implements OnInit {
     });
   }
 
-  // (1) Click-to-Upload
-  onFileSelected(event: any): void {
-    const selectedFiles = event.target.files as FileList;
-    
-    if (selectedFiles && selectedFiles.length) {
-      for (let i = 0; i < selectedFiles.length; i++) {
-        this.files.push(selectedFiles.item(i)!);
-      }
+  // File Upload Handling
+  onFileSelected(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    if (target.files) {
+      this.files.push(...Array.from(target.files));
+      target.value = ''; // Reset input
     }
-
-    // Reset the file input to allow re-selecting the same file
-    event.target.value = ''; 
   }
 
   onRemoveFile(index: number): void {
     this.files.splice(index, 1);
+    if (this.fileInput) this.fileInput.nativeElement.value = ''; // Reset input
+  }
 
-    // Reset file input field to reflect the updated number of files
-    if (this.fileInput) {
-      this.fileInput.nativeElement.value = '';
-    }
-}
-
-  // (2) Drag-and-Drop
+  // Drag-and-Drop Handling
   @HostListener('document:dragover', ['$event'])
   onDragOver(event: DragEvent) {
     event.preventDefault();
@@ -69,7 +61,6 @@ export class DocSessionModalComponent implements OnInit {
 
   @HostListener('document:dragleave', ['$event'])
   onDragLeave(event: DragEvent) {
-    // If leaving the window entirely => reset
     if (event.screenX === 0 && event.screenY === 0) {
       this.isDraggingOver = false;
     }
@@ -79,32 +70,28 @@ export class DocSessionModalComponent implements OnInit {
   onDrop(event: DragEvent) {
     event.preventDefault();
     this.isDraggingOver = false;
-
-    if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
-      for (let i = 0; i < event.dataTransfer.files.length; i++) {
-        this.files.push(event.dataTransfer.files.item(i)!);
-      }
+    if (event.dataTransfer?.files) {
+      this.files.push(...Array.from(event.dataTransfer.files));
       event.dataTransfer.clearData();
     }
   }
 
-  // Called when user submits the modal form
-  onSubmit(): void {
-    if (this.sessionForm.invalid) {
-      return;
+  // Form Submission
+  async onSubmit(): Promise<void> {
+    if (this.sessionForm.invalid) return;
+
+    this.isProcessing = true; // Start animation
+
+    try {
+      const { name } = this.sessionForm.value;
+      const session = await this.sessionService.createDocSessionWithFiles(name, this.files).toPromise();
+      console.log('New doc session created:', session);
+      this.overlayRef.dispose();
+    } catch (error) {
+      console.error('Error creating session:', error);
+    } finally {
+      this.isProcessing = false; // Stop animation
     }
-
-    const { name } = this.sessionForm.value;
-
-    this.sessionService.createDocSessionWithFiles(name, this.files).subscribe({
-      next: (session: ChatSession) => {
-        console.log('New doc session created with files:', session);
-        this.overlayRef.dispose();
-      },
-      error: (error) => {
-        console.error('Error creating doc session with files:', error);
-      }
-    });
   }
 
   onClose(): void {

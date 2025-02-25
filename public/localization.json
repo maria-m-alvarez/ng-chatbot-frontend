@@ -359,6 +359,24 @@
       "en": "Error processing message",
       "es": "Error al procesar el mensaje",
       "it": "Errore durante l'elaborazione del messaggio"
+    },
+    "processingDocSessionFiles": {
+      "pt": "A processar ficheiros...",
+      "en": "Processing files...",
+      "es": "Procesando archivos...",
+      "it": "Elaborazione di file..."
+    },
+    "suggestionSummarizeDocument": {
+      "pt": "Resumir documento",
+      "en": "Summarize document",
+      "es": "Resumir documento",
+      "it": "Sommario del documento"
+    },
+    "madeByMinsait": {
+      "pt": "Feito pela Minsait",
+      "en": "Made by Minsait",
+      "es": "Hecho por Minsait",
+      "it": "Fatto da Minsait"
     }
   }
 }

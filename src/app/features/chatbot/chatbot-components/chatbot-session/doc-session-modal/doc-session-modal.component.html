@@ -1,62 +1,85 @@
 @if (isDraggingOver) {
-  <div
-    class="absolute inset-0 bg-minsait-pruno-dark bg-opacity-80 flex items-center justify-center z-50">
-    <div class="w-[60%] h-[60%] flex items-center justify-center
-    rounded-32 bg-minsait-pruno
-    border-dashed border-4 border-border-highlight"
-    (dragover)="onDragOver($event)" (drop)="onDrop($event)">
-    <p class="text-2xl font-semibold text-minsait-fucsia">{{ LanguageKeys.DROP_ZONE_MESSAGE | translate }}</p>
+  <div class="absolute inset-0 bg-minsait-pruno-dark bg-opacity-80 flex items-center justify-center z-50">
+    <div class="w-[60%] h-[60%] flex items-center justify-center rounded-32 bg-minsait-pruno border-dashed border-4 border-border-highlight"
+         (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+      <p class="text-2xl font-semibold text-minsait-fucsia">
+        {{ LanguageKeys.DROP_ZONE_MESSAGE | translate }}
+      </p>
     </div>
   </div>
 }
 
-<div class="w-96 flex flex-col p-4 rounded-xl text-minsait-gris bg-minsait-pruno">
-    <h2 class="text-accent text-xl font-bold mb-4">{{ LanguageKeys.SESSION_DOC_CREATE_TITLE | translate }}</h2>
-  
-    <form [formGroup]="sessionForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
-      <div class="flex flex-col">
-        <label for="name" class="block text-sm font-medium mb-1">{{ LanguageKeys.SESSION_NAME | translate }}</label>
-        <input
-          id="name"
-          formControlName="name"
-          placeholder="{{ LanguageKeys.INSERT_SESSION_NAME | translate }}"
-          class="w-full px-4 py-2 border border-accent rounded-lg shadow-sm focus:ring focus:ring-accent focus:outline-none text-background-contrast"
-        />
-        <span *ngIf="sessionForm.controls['name'].invalid && sessionForm.controls['name'].touched" class="text-sm text-error">
-            {{ LanguageKeys.SESSION_NAME_REQUIRED | translate }}
-        </span>
+<div class="w-96 flex flex-col p-4 rounded-xl text-minsait-gris bg-minsait-pruno relative">
+  <h2 class="text-accent text-xl font-bold mb-4">
+    {{ LanguageKeys.SESSION_DOC_CREATE_TITLE | translate }}
+  </h2>
+
+  <form [formGroup]="sessionForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4 relative">
+    
+    <!-- Overlay when processing -->
+    @if (isProcessing) {
+      <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="flex flex-col items-center">
+          <svg class="animate-spin h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0116 0h-2a6 6 0 00-12 0H4z"></path>
+          </svg>
+          <p class="text-white mt-2">{{ LanguageKeys.PROCESSING_DOC_SESSION_FILES | translate }}</p>
+        </div>
       </div>
-  
-      <div class="flex flex-col">
-        <label class="block text-sm font-medium mb-1">{{ LanguageKeys.SESSION_UPLOAD_FILES | translate }}</label>
-        <input #fileInput type="file" multiple (change)="onFileSelected($event)" class="border p-2 rounded cursor-pointer"/>
-      </div>
-  
-        <!-- File List with Remove Buttons -->
-        @if (files.length > 0) {
+    }
+
+    <!-- Session Name Input -->
+    <div class="flex flex-col">
+      <label for="name" class="block text-sm font-medium mb-1">
+        {{ LanguageKeys.SESSION_NAME | translate }}
+      </label>
+      <input id="name" formControlName="name" placeholder="{{ LanguageKeys.INSERT_SESSION_NAME | translate }}"
+             class="w-full px-4 py-2 border border-accent rounded-lg shadow-sm focus:ring focus:ring-accent focus:outline-none text-background-contrast"
+             [disabled]="isProcessing" />
+      <span *ngIf="sessionForm.controls['name'].invalid && sessionForm.controls['name'].touched" class="text-sm text-error">
+        {{ LanguageKeys.SESSION_NAME_REQUIRED | translate }}
+      </span>
+    </div>
+
+    <!-- File Upload Input -->
+    <div class="flex flex-col">
+      <label class="block text-sm font-medium mb-1">
+        {{ LanguageKeys.SESSION_UPLOAD_FILES | translate }}
+      </label>
+      <input #fileInput type="file" multiple (change)="onFileSelected($event)"
+             class="border p-2 rounded cursor-pointer" [disabled]="isProcessing" />
+    </div>
+
+    <!-- File List -->
+    @if (files.length > 0) {
+      <div class="relative">
         <div class="flex flex-col gap-2 max-h-32 overflow-y-auto p-2 rounded">
-          <div *ngFor="let file of files; let i = index" class="flex items-center justify-between p-2 gap-2 border rounded shadow-sm">
+          <div *ngFor="let file of files; let i = index"
+               class="flex items-center justify-between p-2 gap-2 border rounded shadow-sm">
             <span class="text-sm truncate">{{ file.name }}</span>
-            <button type="button" (click)="onRemoveFile(i)" class="text-error text-lg font-bold hover:text-red-600">
+            <button type="button" (click)="onRemoveFile(i)" class="text-error text-lg font-bold hover:text-red-600"
+                    [disabled]="isProcessing">
               ❌
             </button>
           </div>
         </div>
-        }
-  
-      <div class="flex justify-end gap-2">
-        <button
-            class="px-4 py-2 text-secondary bg-main-primary border border-accent rounded-lg shadow transition duration-200 focus:outline-none focus:ring focus:ring-accent"
-            [class]="sessionForm.invalid ? 'cursor-not-allowed' : 'hover:bg-accent'"
-            type="submit"
-            [disabled]="sessionForm.invalid">
-            {{ LanguageKeys.SESSION_CREATE | translate }}
-        </button>
-        
-        <button
-        class="px-4 py-2 text-secondary bg-main-primary border border-accent rounded-lg shadow transition duration-200 focus:outline-none focus:ring focus:ring-accent hover:bg-accent"
-        type="button" (click)="onClose()">{{ LanguageKeys.CANCEL | translate }}</button>
       </div>
-    </form>
-  </div>
-  
+    }
+
+    <!-- Action Buttons -->
+    <div class="flex justify-end gap-2">
+      <button class="px-4 py-2 text-secondary bg-main-primary border border-accent rounded-lg shadow transition duration-200 focus:outline-none focus:ring focus:ring-accent"
+              [class]="sessionForm.invalid || isProcessing ? 'cursor-not-allowed' : 'hover:bg-accent'"
+              type="submit"
+              [disabled]="sessionForm.invalid || isProcessing">
+        {{ LanguageKeys.SESSION_CREATE | translate }}
+      </button>
+
+      <button class="px-4 py-2 text-secondary bg-main-primary border border-accent rounded-lg shadow transition duration-200 focus:outline-none focus:ring focus:ring-accent hover:bg-accent"
+              type="button" (click)="onClose()" [disabled]="isProcessing">
+        {{ LanguageKeys.CANCEL | translate }}
+      </button>
+    </div>
+  </form>
+</div>

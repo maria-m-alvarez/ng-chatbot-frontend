@@ -33,6 +33,12 @@ export class AppState {
     this.updateChatSessionState(session ? ChatSessionState.ActiveSession : ChatSessionState.NoSession);
   }
 
+  static isDocumentSession(): boolean {
+    const session = AppState.currentChatSession();
+    console.log(session);
+    return session?.hasFiles ?? false;
+  }
+
 
   // ------------------------------
   // Chat Session State

@@ -7,6 +7,7 @@ import { ChatSessionState } from '../../chatbot-models/chatbot-enums';
 import { LocalizationKeys } from '../../../../core/services/localization-service/localization.models';
 import { TranslatePipe } from "../../../../core/pipes/translate-pipe.pipe";
 import { MagiaPipe } from '../../../../core/pipes/magia.pipe';
+import { IconService } from '../../../../core/services/icon-service/icon.service';
 
 @Component({
   selector: 'app-chatbot-input-with-session',
@@ -19,4 +20,11 @@ export class ChatbotInputWithSessionComponent {
   chatSessionStateEnum = ChatSessionState;
   chatSessionState = AppState.chatSessionState;
   LocalizationKeys = LocalizationKeys;
+
+  get isDocSession(): boolean {
+    return AppState.isDocumentSession();
+  }
+
+  constructor(public iconService: IconService) {
+  }
 }
