@@ -11,10 +11,14 @@
     <div class="flex-1 flex flex-col whitespace-pre-wrap">
       <div class="h-full w-full p-2 flex flex-col">
         <!-- Message Markdown Content -->
-        <markdown
+        <!-- <markdown
           class="prose max-w-none"
           [innerHTML]="sanitizedMessage"
-        ></markdown>
+        ></markdown> -->
+        <p
+        class="max-w-none"
+        [innerHTML]="sanitizedMessage">
+        </p>
 
         <!-- References Display -->
         <div *ngIf="hasDocuments()" class="text-sm text-primary mt-2">

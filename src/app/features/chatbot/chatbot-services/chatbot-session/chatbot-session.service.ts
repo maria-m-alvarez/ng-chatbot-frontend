@@ -252,85 +252,84 @@ export class ChatbotSessionService {
     let currentSession = AppState.currentChatSession();
   
     if (!currentSession) {
-      console.warn('No current session found. Creating a new session...');
-      this.createEmptyChatSessionAndSendMessage(promptMessage);
-      return;
+        console.warn('No current session found. Creating a new session...');
+        this.createEmptyChatSessionAndSendMessage(promptMessage);
+        return;
     }
-  
+
     // Check if this is the first message in a new session
     const isFirstMessage = currentSession.messages.length === 0;
-    const isNewSession = currentSession.name === this.localizationService.translate(this.localizationService.LocalizationKeys.NEW_SESSION) || currentSession.name === this.localizationService.translate(this.localizationService.LocalizationKeys.NEW_DOC_SESSION);
-  
+    const isNewSession = 
+        currentSession.name === this.localizationService.translate(this.localizationService.LocalizationKeys.NEW_SESSION) || 
+        currentSession.name === this.localizationService.translate(this.localizationService.LocalizationKeys.NEW_DOC_SESSION);
+
     // 1) Add local user message with placeholder ID
     const userMessage = currentSession.addUserMessage(promptMessage);
     AppState.currentChatSession.set(currentSession);
     this.setInteractionState(ChatSessionInteractionState.Loading);
-  
+
     if (isFirstMessage) {
-      AppState.updateChatSessionState(ChatSessionState.ActiveSession);
+        AppState.updateChatSessionState(ChatSessionState.ActiveSession);
     }
-  
+
     this.chatbotEventService.onPromptSent.emit();
-  
+
     this.chatbotApiService
-      .requestUserChatCompletion(promptMessage, 'azure_openai', 'Azure gpt-4o-mini', null, +currentSession.sessionId)
-      .subscribe({
-        next: (apiResponse) => {
-          console.log('Chatbot API Response:', apiResponse);
-  
-          const serverUser = apiResponse.messages.find(m => m.role === 'user');
-          const serverAssistant = apiResponse.messages.find(m => m.role === 'assistant');
-  
-          if (serverUser?.message_id != null) {
-            userMessage.id = String(serverUser.message_id);
-          }
-  
-          const metadata = {
-            documents: apiResponse.references?.map((ref: any) => {
-              const doc = ref?.Document;
-              return doc
-                ? {
-                    doc_id: doc.doc_id ?? 0,
-                    doc_name: doc.doc_name ?? 'Unknown Document',
-                    doc_page: doc.doc_page ?? 1,
-                    doc_content: doc.doc_page_content ?? '',
-                  }
-                : null;
-            }).filter((doc): doc is DocumentReference => doc !== null) || [],
-          };
-  
-          if (serverAssistant?.message_id != null) {
-            const newAssistant = currentSession.addAssistantMessage(
-              userMessage.id,
-              serverAssistant.content || '',
-              metadata
-            );
-            newAssistant.id = String(serverAssistant.message_id);
-          }
-  
-          AppState.currentChatSession.set(currentSession);
-          this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Success);
-          this.setInteractionState(ChatSessionInteractionState.Idle);
-  
-          // Generate session name only after the first assistant response
-          if (isFirstMessage && isNewSession) {
-            console.log('Generating session name...');
-            this.chatbotApiService.generateSessionName(+currentSession.sessionId).subscribe({
-              next: (response) => {
-                console.log(`Generated session name: ${response.session_name}`);
-                this.renameSession(currentSession.sessionId, response.session_name);
-              },
-              error: (error) => console.error('Error generating session name:', error),
-            });
-          }
-        },
-        error: (error) => {
-          console.error('Error from chatbot API:', error);
-          this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Error);
-          this.setInteractionState(ChatSessionInteractionState.Error);
-        },
-      });
+        .requestUserChatCompletion(promptMessage, 'azure_openai', 'Azure gpt-4o-mini', null, +currentSession.sessionId)
+        .subscribe({
+            next: (apiResponse) => {
+                console.log('Chatbot API Response:', apiResponse);
+
+                const serverUser = apiResponse.messages.find(m => m.role === 'user');
+                const serverAssistant = apiResponse.messages.find(m => m.role === 'assistant');
+
+                if (serverUser?.message_id != null) {
+                    userMessage.id = String(serverUser.message_id);
+                }
+
+                // Corrected reference mapping
+                const metadata = {
+                    documents: apiResponse.references?.map(ref => ({
+                        doc_id: ref['doc_id'] ?? 0,
+                        doc_name: ref['doc_name'] ?? 'Unknown Document',
+                        doc_page: ref['doc_page'] ?? 1,
+                        doc_content: ref['content'] ?? '',
+                    })) || [],
+                };
+
+                if (serverAssistant?.message_id != null) {
+                    const newAssistant = currentSession.addAssistantMessage(
+                        userMessage.id,
+                        serverAssistant.content || '',
+                        metadata
+                    );
+                    newAssistant.id = String(serverAssistant.message_id);
+                }
+
+                AppState.currentChatSession.set(currentSession);
+                this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Success);
+                this.setInteractionState(ChatSessionInteractionState.Idle);
+
+                // Generate session name only after the first assistant response
+                if (isFirstMessage && isNewSession) {
+                    console.log('Generating session name...');
+                    this.chatbotApiService.generateSessionName(+currentSession.sessionId).subscribe({
+                        next: (response) => {
+                            console.log(`Generated session name: ${response.session_name}`);
+                            this.renameSession(currentSession.sessionId, response.session_name);
+                        },
+                        error: (error) => console.error('Error generating session name:', error),
+                    });
+                }
+            },
+            error: (error) => {
+                console.error('Error from chatbot API:', error);
+                this.chatbotEventService.onPromptAnswerReceived.emit(WebRequestResult.Error);
+                this.setInteractionState(ChatSessionInteractionState.Error);
+            },
+        });
   }
+
 
   sendAssistantMessageFeedback(messageId: string, rating: number, comments?: string): void {    
     if (!messageId || messageId == "-1" || !rating) {
@@ -378,19 +377,18 @@ export class ChatbotSessionService {
   }
 
   private transformMessage(message: ChatMessage): ClientChatMessage {
+    console.log('Transforming message:', message);
+
     const metadata: ChatMessageMetadata = {
-        documents: message.references?.map(ref => {
-            const doc = ref?.['Document']; // Ensure we safely access Document property
-            return doc
-                ? {
-                      doc_id: doc.doc_id,
-                      doc_name: doc.doc_name,
-                      doc_page: doc.doc_page,
-                      doc_content: doc.doc_page_content
-                  }
-                : null;
-        }).filter((doc): doc is DocumentReference => doc !== null) || [], // Remove null values
+        documents: message.references?.map(ref => ({
+            doc_id: ref['doc_id'] ?? 0,
+            doc_name: ref['doc_name'] ?? 'Unknown Document',
+            doc_page: ref['doc_page'] ?? 1,
+            doc_content: ref['content'] ?? '',
+        })) || [],
     };
+
+    console.log('Transformed metadata:', metadata);
 
     const feedback: ClientChatMessageFeedback | null = message.feedback
         ? {
@@ -401,7 +399,9 @@ export class ChatbotSessionService {
           }
         : null;
 
-    return new ClientChatMessage(
+    console.log('Transformed feedback:', feedback);
+
+    const transformedMessage = new ClientChatMessage(
         message.id.toString(),
         message.role,
         message.content ?? '',
@@ -414,8 +414,11 @@ export class ChatbotSessionService {
         message.generation_time ?? null,
         feedback
     );
-  }
 
+    console.log('Transformed message:', transformedMessage);
+
+    return transformedMessage;
+  }
 
   handleFiles(files: File[]): void {
     console.log('[WIP] Implement: Handling Files:', files);
