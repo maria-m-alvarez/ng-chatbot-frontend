@@ -10,11 +10,11 @@
           </div>
 
           <app-chatbot-input class="w-[60%]"></app-chatbot-input>
-          @if (isDocSession) {
+          <!-- @if (isDocSession) {
             <div class="p-4 bg-gray-100 rounded-lg shadow-md w-[60%] text-center">
               <p class="text-sm"><span [innerHTML]="iconService.getSanitizedIcon(iconService.icons.newDocumentSession)"></span> {{ LocalizationKeys.SUGGESTION_SUMMARIZE_DOCUMENT | translate }}</p>
             </div>
-          }
+          } -->
         </div>
         <app-chatbot-input-settings></app-chatbot-input-settings>
       </div>
