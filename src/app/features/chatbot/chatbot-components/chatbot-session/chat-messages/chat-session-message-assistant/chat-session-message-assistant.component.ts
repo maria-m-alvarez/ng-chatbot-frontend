@@ -5,12 +5,11 @@ import { FileService } from '../../../../../../core/services/file-service/file.s
 import { ChatbotBrainService } from '../../../../chatbot-services/chatbot-brain/chatbot-brain.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ChatbotChatMessageComponent } from '../chatbot-chat-message.component';
-import { MarkdownComponent } from 'ngx-markdown';
 
 @Component({
   selector: 'app-chat-session-message-assistant',
   standalone: true,
-  imports: [CommonModule, ChatSessionMessageVoteComponent, MarkdownComponent],
+  imports: [CommonModule, ChatSessionMessageVoteComponent],
   templateUrl: './chat-session-message-assistant.component.html',
   styleUrl: './chat-session-message-assistant.component.scss',
 })
