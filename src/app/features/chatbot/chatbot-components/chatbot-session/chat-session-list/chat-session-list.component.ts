@@ -25,7 +25,7 @@ export class ChatSessionListComponent {
   private translatePipe!: TranslatePipe;
 
   // Reactive Signals
-  selectedSession = computed(() => AppState.currentChatSession());
+  selectedSession = computed(() => AppState.activeChatSession());
 
   @ViewChild('sessionListContainer', { static: false }) containerRef!: ElementRef;
 
@@ -37,12 +37,13 @@ export class ChatSessionListComponent {
     this.translatePipe = new TranslatePipe(this.localizationService);
 
     this.brain.chatbotEventService.onSessionListUpdated.subscribe(() => {
+      console.log('Session list updated');
       this.chatSessions = this.brain.chatbotSessionService.sessions;
     });
   }
 
   isCurrentSession(sessionId: string): boolean {
-    return AppState.currentSessionID() === sessionId;
+    return AppState.activeChatSessionId() === sessionId;
   }
 
   selectSession(sessionId: string): void {

@@ -73,7 +73,7 @@ export class ChatbotInputComponent {
   submitMessage(): void {
     const message = this.chatTextInput?.nativeElement.value.trim();
     if (message) {
-      this.brain.chatbotSessionService.sendChatMessageForCurrentChatSession(message);
+      this.brain.chatbotSessionService.trySendChatMessageForCurrentChatSession(message);
 
       if (this.files.length > 0) {
         this.brain.chatbotSessionService.handleFiles(this.files);

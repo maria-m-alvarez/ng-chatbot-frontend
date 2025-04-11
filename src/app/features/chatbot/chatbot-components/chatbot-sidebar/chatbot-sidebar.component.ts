@@ -11,6 +11,7 @@ import { environment } from '../../../../../environments/environment';
 import { OverlayRef, Overlay } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { DocSessionModalComponent } from '../chatbot-session/doc-session-modal/doc-session-modal.component';
+import { AppState } from '../../../../core/app-state';
 
 @Component({
   selector: 'app-chatbot-sidebar',
@@ -34,6 +35,14 @@ export class ChatbotSidebarComponent implements OnInit, AfterViewInit {
   ) {
     // Subscribe to session updates using observable (eliminates manual state tracking)
     this.chatSessions = this.brain.chatbotSessionService.sessions;
+  }
+
+  getCurrentSessionState() {
+    return {
+      session: AppState.activeChatSession(),
+      state: AppState.chatSessionState(),
+      creationState: AppState.chatSessionCreationState(),
+    }
   }
 
   /** Get Sidebar Component */
@@ -63,7 +72,7 @@ export class ChatbotSidebarComponent implements OnInit, AfterViewInit {
   }
 
   createNewSession(): void {
-    this.brain.chatbotSessionService.createEmptyChatSession();
+    this.brain.chatbotSessionService.startCreationOfChatSession();
   }
 
   createNewDocumentSession(): void {

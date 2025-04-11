@@ -259,10 +259,10 @@
       "it": "Riferimenti"
     },
     "aiMessage": {
-      "pt": "O MagIA pode cometer erros. Por favor, validar informações importantes.",
-      "en": "MagIA may make mistakes. Please verify important information.",
-      "es": "MagIA puede cometer errores. Por favor, verifica la información importante.",
-      "it": "MagIA può commettere errori. Si prega di verificare le informazioni importanti."
+      "pt": "IA pode errar. Verifique informações importantes.",
+      "en": "AI may make mistakes. Check important info.",
+      "es": "IA puede errar. Verifica la información clave.",
+      "it": "IA può sbagliare. Verifica le info importanti."
     },
     "aiModel": {
       "pt": "Modelo",
@@ -373,10 +373,16 @@
       "it": "Sommario del documento"
     },
     "madeByMinsait": {
-      "pt": "Feito pela Minsait",
-      "en": "Made by Minsait",
-      "es": "Hecho por Minsait",
-      "it": "Fatto da Minsait"
+      "pt": "MagIA © Minsait an Indra Group Company",
+      "en": "MagIA © Minsait an Indra Group Company",
+      "es": "MagIA © Minsait an Indra Group Company",
+      "it": "MagIA © Minsait an Indra Group Company"
+    },
+    "madeByMinsaitMobile": {
+      "pt": "MagIA © Minsait",
+      "en": "MagIA © Minsait",
+      "es": "MagIA © Minsait",
+      "it": "MagIA © Minsait"
     }
   }
 }

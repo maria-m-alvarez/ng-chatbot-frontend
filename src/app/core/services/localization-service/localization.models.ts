@@ -65,6 +65,7 @@ export interface Language {
     AI_MODEL = "aiModel",
     SESSION_ERROR_PROCESSING_MESSAGE = "sessionErrorProcessingMessage",
     MADE_BY_MISNAIT = "madeByMinsait",
+    MADE_BY_MISNAIT_MOBILE = "madeByMinsaitMobile",
     
     // Session & Input
     PROMPT = "prompt",

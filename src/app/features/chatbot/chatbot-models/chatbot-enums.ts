@@ -4,12 +4,37 @@ export enum Role {
     User = 'user'
 }
 
-export enum ChatSessionState {
-    NoSession,          // when user logs in & sees the chatbot for the first time
-    NewSession,         // when user starts a new chatbot session
-    ActiveSession,      // when user is in the chatbot session
-    Transition
+export enum ChatSessionType {
+    Text,
+    Document
 }
+
+export enum ChatSessionState {
+    NoSession = "no_session",
+    Creating = "creating",
+    Active = "active",
+    Transitioning = "transitioning",
+}
+
+export enum ChatSessionCreationState {
+    Idle = "idle",
+    WaitingFirstMessage = "waiting_first_message",
+    Creating = "creating",
+    WaitingFirstMessageResponse = "waiting_first_message_response",
+    Renaming = "renaming",
+    Created = "created",
+    Error = "error"
+}
+
+export const creationOrder = [
+    ChatSessionCreationState.Idle,
+    ChatSessionCreationState.WaitingFirstMessage,
+    ChatSessionCreationState.Creating,
+    ChatSessionCreationState.WaitingFirstMessageResponse,
+    ChatSessionCreationState.Renaming,
+    ChatSessionCreationState.Created,
+    ChatSessionCreationState.Error
+];
 
 export enum ChatSessionInteractionState {
     Idle,
@@ -19,9 +44,9 @@ export enum ChatSessionInteractionState {
     Error
 }
 
-export enum ChatbotInputStates {
+export enum ChatbotInputState {
     Idle,
     Waiting,
     Dragging,
     Error, 
-  };
+}

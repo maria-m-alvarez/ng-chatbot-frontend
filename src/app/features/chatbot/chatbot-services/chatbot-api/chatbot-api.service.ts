@@ -117,6 +117,14 @@ export class ChatbotApiService {
       this.getAuthHeaders()
     );
   }
+
+  renameSessionBasedOnFirstMessage(sessionId: string | number): Observable<{ message: string; session: ChatSession }> {
+    return this.http.put<{ message: string; session: ChatSession }>(
+      `${this.baseChatbotUrl}/sessions/${sessionId}/rename_from_message`,
+      {},
+      this.getAuthHeaders()
+    );
+  }
   
   softDeleteSession(sessionId: string | number): Observable<{ message: string; session: ChatSession }> {
     return this.http.put<{ message: string; session: ChatSession }>(

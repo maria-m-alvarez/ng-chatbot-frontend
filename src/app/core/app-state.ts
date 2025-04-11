@@ -2,17 +2,22 @@ import { Injectable, signal } from '@angular/core';
 import { User } from '../features/user/models/userModels';
 import { HttpHeaders } from '@angular/common/http';
 import { ClientChatSession } from '../features/chatbot/chatbot-models/chatbot-client-session';
-import { ChatSessionInteractionState, ChatSessionState } from '../features/chatbot/chatbot-models/chatbot-enums';
+import { ChatSessionCreationState, ChatSessionInteractionState, ChatSessionState } from '../features/chatbot/chatbot-models/chatbot-enums';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AppState {
+  // User & Auth
+  // ------------------------------
   static readonly currentUser = signal<User | null>(null);
   static readonly authHeader = signal<HttpHeaders | null>(null);
-  static readonly currentSessionID = signal<string | null>(null);
-  static readonly currentChatSession = signal<ClientChatSession | null>(null);
+
+  // Chat Session
+  // ------------------------------
+  static readonly activeChatSession = signal<ClientChatSession | null>(null);
   static readonly chatSessionState = signal<ChatSessionState>(ChatSessionState.NoSession);
+  static readonly chatSessionCreationState = signal<ChatSessionCreationState>(ChatSessionCreationState.Idle);
   static readonly chatSessionInteractionState = signal<ChatSessionInteractionState>(ChatSessionInteractionState.Idle);
 
 
@@ -28,13 +33,12 @@ export class AppState {
   }
 
   static setCurrentChatSession(session: ClientChatSession | null): void {
-    this.currentChatSession.set(session);
-    this.currentSessionID.set(session ? session.sessionId : null);
-    this.updateChatSessionState(session ? ChatSessionState.ActiveSession : ChatSessionState.NoSession);
+    this.activeChatSession.set(session);
+    this.updateChatSessionState(session ? ChatSessionState.Active : ChatSessionState.NoSession);
   }
 
   static isDocumentSession(): boolean {
-    const session = AppState.currentChatSession();
+    const session = AppState.activeChatSession();
     console.log(session);
     return session?.hasFiles ?? false;
   }
@@ -43,8 +47,17 @@ export class AppState {
   // ------------------------------
   // Chat Session State
   // ------------------------------
+  static activeChatSessionId(): string | null {
+    const session = this.activeChatSession();
+    return session ? session.sessionId : null;
+  }
+
   static updateChatSessionState(state: ChatSessionState): void {
     this.chatSessionState.set(state);
+  }
+
+  static updateChatSessionCreationState(state: ChatSessionCreationState): void {
+    this.chatSessionCreationState.set(state);
   }
 
   static updateChatSessionInteractionState(state: ChatSessionInteractionState): void {
@@ -58,8 +71,7 @@ export class AppState {
   static resetState(): void {
     this.currentUser.set(null);
     this.authHeader.set(null);
-    this.currentSessionID.set(null);
-    this.currentChatSession.set(null);
+    this.activeChatSession.set(null);
     this.updateChatSessionState(ChatSessionState.NoSession);
   }
 }

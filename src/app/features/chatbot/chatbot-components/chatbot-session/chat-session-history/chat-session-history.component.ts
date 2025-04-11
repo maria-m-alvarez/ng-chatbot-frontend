@@ -17,7 +17,7 @@ export class ChatSessionHistoryComponent implements OnInit, AfterViewInit {
   @ViewChild(CdkScrollable) scrollable!: CdkScrollable;
   @ViewChild('chatHistoryContainer') readonly chatHistoryContainer!: ElementRef<HTMLDivElement>;
 
-  session = computed(() => AppState.currentChatSession());
+  session = computed(() => AppState.activeChatSession());
   isAtBottom = true;
 
   constructor(

@@ -5,7 +5,7 @@
 // Base Models
 // ------------------------------
 export interface DBModel {
-  id: number;
+  id: number | string;
   created_at: string;
   updated_at: string;
   state: 'a' | 'i' | 'd'; // 'active', 'inactive', 'deleted'
