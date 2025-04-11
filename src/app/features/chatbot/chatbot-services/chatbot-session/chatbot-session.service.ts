@@ -337,7 +337,10 @@ export class ChatbotSessionService {
     console.log('[Chat] Attempting to send user prompt...');
   
     // 1) Check if it's a new session (first message in a new session)
-    if (AppState.chatSessionCreationState() === ChatSessionCreationState.WaitingFirstMessage) {
+    if (
+      AppState.activeChatSession() == null ||
+      AppState.chatSessionCreationState() === ChatSessionCreationState.WaitingFirstMessage
+    ) {
       console.log('[Chat] No active session yet. Creating session, sending first message, and triggering rename...');
       this.createSessionSendChatMessageAndRename(promptMessage);
       return;
