@@ -146,16 +146,6 @@ export class ChatbotSessionService {
       error: (error) => console.error('Error fetching chat sessions:', error),
     });
   }
-
-  fetchLastAccessedChatSession(): void {
-    this.chatbotApiService.getRecentlyAccessedSession().subscribe({
-      next: (session) => {
-        this.switchChatSession(session.id.toString());
-        console.log('Fetched last accessed session:', session);
-      },
-      error: (error) => console.error('Error fetching last accessed session:', error),
-    });
-  }
   
   switchChatSession(sessionId: string | number): void {
     // 1) Check if the session is already active
@@ -164,31 +154,48 @@ export class ChatbotSessionService {
       console.warn('Session is already active:', sessionId);
       return;
     }
-
-    // 2) Change session state to 'Transitioning'
+  
+    console.log(`[SwitchSession] Switching to session ID: ${sessionId}`);
+  
+    // 2) Set session and interaction states to transitioning/loading
     this.setSessionState(ChatSessionState.Transitioning);
     this.setInteractionState(ChatSessionInteractionState.Loading);
+    console.log('[SwitchSession] State set to Transitioning and interaction set to Loading.');
   
-    // 3) Call the API to fetch the session with messages
+    // 3) Fetch session from API
     this.chatbotApiService.getSessionWithMessages(sessionId).subscribe({
       next: (chatSession) => {
+        console.log('[SwitchSession] Session fetched from API:', chatSession);
+  
+        // 4) Transform and set the session early
         const transformedSession = this.transformSessionWithMessages(chatSession);
         AppState.activeChatSession.set(transformedSession);
+        console.log('[SwitchSession] Transformed and set active session:', transformedSession);
   
-        // Determine session state
-        AppState.updateChatSessionState(transformedSession.messages.length > 0 
-          ? ChatSessionState.Active 
-          : ChatSessionState.Creating);
+        // 5) Now determine the session state based on message presence
+        if (transformedSession.messages.length > 0) {
+          this.setSessionState(ChatSessionState.Active);
+          this.setSessionCreationState(ChatSessionCreationState.Created);
+          console.log('[SwitchSession] Session is active with messages.');
+        } else {
+          this.setSessionState(ChatSessionState.Creating);
+          this.setSessionCreationState(ChatSessionCreationState.WaitingFirstMessageResponse);
+          console.log('[SwitchSession] Session is new. Waiting for first message response.');
+        }
   
+        // 6) Emit change and mark interaction complete
         this.chatbotEventService.onSessionChanged.emit();
         this.setInteractionState(ChatSessionInteractionState.Idle);
+        console.log('[SwitchSession] Session switch complete. Interaction state set to Idle.');
       },
       error: (error) => {
-        console.error('Error switching session:', error);
+        console.error('[SwitchSession] Error switching session:', error);
         this.setInteractionState(ChatSessionInteractionState.Error);
       },
     });
   }
+  
+  
 
   startCreationOfChatSession(): void {
     // 1) Check if the session is in a creatable state
