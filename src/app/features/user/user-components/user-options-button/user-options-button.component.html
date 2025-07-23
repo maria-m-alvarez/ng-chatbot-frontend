@@ -16,6 +16,7 @@
       <ul class="text-sm text-primary">
 
         <!-- Profile -->
+         <!--
         <li class="h-full px-4 py-2 flex items-center hover:text-secondary hover:bg-primary hover:rounded-t-md cursor-pointer"
           (click)="triggerOptionEvent('profile')">
           <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
@@ -26,7 +27,7 @@
           </svg>
           <span class="ml-2">{{ LanguageKeys.PROFILE | translate }}</span>
         </li>
-
+        -->
         <!-- Settings -->
         <li class="h-full px-4 py-2 flex items-center hover:text-secondary hover:bg-primary cursor-pointer"
           (click)="openUserSettings()">
@@ -39,11 +40,13 @@
           <span class="ml-2">{{ LanguageKeys.SETTINGS | translate }}</span>
         </li>
 
-        <!-- Theme -->
+        <!--Theme-->
+        <!--
         <li class="h-12 cursor-pointer hover:text-secondary hover:bg-primary flex items-center px-4"
-          (click)="themeToggle.toggleTheme()">
+            (click)="themeToggle.toggleTheme()">
           <app-theme-toggle [isIconOnly]="false" #themeToggle class="w-full"></app-theme-toggle>
         </li>
+        -->
 
         <!-- Logout -->
         <li class="h-full px-4 py-2 flex items-center hover:text-secondary hover:bg-accent hover:rounded-b-md cursor-pointer"
